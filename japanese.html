@@ -25,6 +25,9 @@
         .nav-btn.active { background: var(--primary); color: white; }
         .content-section { display: none; width: 100%; animation: fadeIn 0.3s ease; flex-direction: column; align-items: center; }
         .content-section.active { display: flex; }
+        .diff-toggle { display: flex; background: var(--bg); padding: 4px; border-radius: 10px; margin-bottom: 15px; width: 100%; gap: 4px; border: 1px solid var(--border); }
+        .diff-btn { flex: 1; padding: 10px 2px; font-size: 0.6rem; border: none; background: transparent; color: var(--text-dim); cursor: pointer; border-radius: 6px; font-weight: 800; }
+        .diff-btn.active { background: var(--card); color: var(--primary); }
         .flashcard-wrapper { perspective: 1000px; width: 100%; height: 320px; cursor: pointer; margin: 10px 0 20px 0; }
         .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.5s; transform-style: preserve-3d; }
         .flashcard-wrapper.is-flipped .flashcard-inner { transform: rotateY(180deg); }
@@ -34,7 +37,7 @@
         .btn-main { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 0 #be185d; }
         .romaji { font-size: 1rem; font-style: italic; color: #ffe4e6; margin-top: 10px; }
         input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: white; font-size: 1rem; margin-bottom: 10px; }
-        .vault-item { background: var(--card); padding: 12px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 8px; display: flex; justify-content: space-between; }
+        .vault-item { background: var(--card); padding: 12px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 8px; display: flex; justify-content: space-between; width: 100%; }
     </style>
 </head>
 <body>
@@ -56,6 +59,12 @@
         </nav>
 
         <div id="study" class="content-section active">
+            <div class="diff-toggle">
+                <button class="diff-btn active" onclick="setDiff('easy', this)">EASY</button>
+                <button class="diff-btn" onclick="setDiff('medium', this)">MED</button>
+                <button class="diff-btn" onclick="setDiff('hard', this)">HARD</button>
+                <button class="diff-btn" onclick="setDiff('vhard', this)">V. HARD</button>
+            </div>
             <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
                 <div class="flashcard-inner">
                     <div class="card-front">
@@ -98,6 +107,7 @@
 <script>
     let xp = parseInt(localStorage.getItem('pj_xp')) || 0;
     let localVault = JSON.parse(localStorage.getItem('pj_vault')) || [];
+    let currentDiff = 'easy';
     let sessionDeck = [];
     let currentTestCard = null;
 
@@ -117,8 +127,16 @@
         if(id === 'test') startTest();
     }
 
+    function setDiff(diff, btn) {
+        currentDiff = diff;
+        document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        sessionDeck = [];
+        nextCard();
+    }
+
     function nextCard() {
-        const master = JAPANESE_LIBRARY.words.easy;
+        const master = JAPANESE_LIBRARY.words[currentDiff];
         if (sessionDeck.length === 0) sessionDeck = [...master].sort(() => 0.5 - Math.random());
         const card = sessionDeck.pop();
         document.querySelector('.flashcard-wrapper').classList.remove('is-flipped');
@@ -131,7 +149,7 @@
     }
 
     function startTest() {
-        const pool = JAPANESE_LIBRARY.words.easy;
+        const pool = JAPANESE_LIBRARY.words[currentDiff];
         currentTestCard = pool[Math.floor(Math.random()*pool.length)];
         document.getElementById('test-jp').innerText = currentTestCard.jp;
         document.getElementById('test-input').value = "";
