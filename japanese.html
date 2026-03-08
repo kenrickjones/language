@@ -22,17 +22,19 @@
         .diff-toggle { display: flex; background: var(--bg); padding: 4px; border-radius: 10px; margin-bottom: 15px; width: 100%; gap: 4px; border: 1px solid var(--border); }
         .diff-btn { flex: 1; padding: 10px 2px; font-size: 0.6rem; border: none; background: transparent; color: var(--text-dim); cursor: pointer; border-radius: 6px; font-weight: 800; }
         .diff-btn.active { background: var(--card); color: var(--primary); }
-        .flashcard-wrapper { perspective: 1000px; width: 100%; height: 320px; cursor: pointer; margin: 10px 0 20px 0; }
+        .flashcard-wrapper { perspective: 1000px; width: 100%; height: 340px; cursor: pointer; margin: 10px 0 20px 0; }
         .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.5s; transform-style: preserve-3d; }
         .flashcard-wrapper.is-flipped .flashcard-inner { transform: rotateY(180deg); }
         .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px; border: 2px solid var(--primary); text-align: center; background: var(--card); }
         .card-back { background: var(--primary); transform: rotateY(180deg); color: white; }
         .btn-main { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 0 #be185d; }
+        .btn-hear { background: rgba(255,255,255,0.1); border: 1px solid var(--primary); color: var(--primary); padding: 8px 15px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; margin-top: 15px; cursor: pointer; }
+        .card-back .btn-hear { border-color: white; color: white; }
         .romaji { font-size: 1rem; font-style: italic; color: #ffe4e6; margin-top: 10px; }
         .card-front .romaji { color: var(--text-dim); }
         .video-list { width: 100%; display: grid; gap: 10px; }
         .video-item { display: flex; align-items: center; background: var(--card); padding: 15px; border-radius: 12px; text-decoration: none; color: white; border: 1px solid var(--border); font-weight: 600; font-size: 0.9rem; }
-        .video-item:hover { border-color: var(--primary); }
+        input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: white; margin-bottom: 10px; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -59,10 +61,12 @@
                     <div class="card-front">
                         <h2 id="jp-text" style="font-size: 2.6rem; margin:0;">--</h2>
                         <div class="jp-rj-view romaji">--</div>
+                        <button class="btn-hear" onclick="event.stopPropagation(); speak('jp-text')">🔊 HEAR</button>
                     </div>
                     <div class="card-back">
                         <h2 id="en-text" style="font-size: 2rem; margin:0;">--</h2>
                         <div class="jp-rj-view romaji">--</div>
+                        <button class="btn-hear" onclick="event.stopPropagation(); speak('jp-text')">🔊 HEAR</button>
                     </div>
                 </div>
             </div>
@@ -81,10 +85,12 @@
                     <div class="card-front">
                         <h2 id="phrase-jp" style="font-size: 1.8rem; margin:0;">--</h2>
                         <div class="phrase-rj-view romaji">--</div>
+                        <button class="btn-hear" onclick="event.stopPropagation(); speak('phrase-jp')">🔊 HEAR</button>
                     </div>
                     <div class="card-back">
                         <h2 id="phrase-en" style="font-size: 1.6rem; margin:0;">--</h2>
                         <div class="phrase-rj-view romaji">--</div>
+                        <button class="btn-hear" onclick="event.stopPropagation(); speak('phrase-jp')">🔊 HEAR</button>
                     </div>
                 </div>
             </div>
@@ -99,20 +105,10 @@
         </div>
 
         <div id="watch" class="content-section">
-            <h3 style="color:var(--primary)">🌸 Japanese Study Gallery</h3>
             <div class="video-list">
                 <a href="https://youtu.be/rGrBHiuPlT0" target="_blank" class="video-item">🇯🇵 Hiragana in 1 Hour</a>
                 <a href="https://youtu.be/6p9Il_j0zjc" target="_blank" class="video-item">🇯🇵 Katakana in 1 Hour</a>
                 <a href="https://youtu.be/k74yjmfFb_A" target="_blank" class="video-item">🇯🇵 100 Most Used Words</a>
-                <a href="https://youtu.be/JnoZE51WZg4" target="_blank" class="video-item">🇯🇵 Basic Japanese Grammar</a>
-                <a href="https://youtu.be/U09N3pY8uX8" target="_blank" class="video-item">🇯🇵 Particle 'WA' vs 'GA'</a>
-                <a href="https://youtu.be/y-vF5M_Q0uU" target="_blank" class="video-item">🇯🇵 Daily Greetings Guide</a>
-                <a href="https://youtu.be/bC95un0XpUA" target="_blank" class="video-item">🇯🇵 Survival Japanese for Travel</a>
-                <a href="https://youtu.be/X6XbF9f1Jpw" target="_blank" class="video-item">🇯🇵 Counting in Japanese</a>
-                <a href="https://youtu.be/C8N_p09YFvY" target="_blank" class="video-item">🇯🇵 Ordering at Restaurants</a>
-                <a href="https://youtu.be/pSREm0GqWkM" target="_blank" class="video-item">🇯🇵 Anime Japanese vs Real Life</a>
-                <a href="https://youtu.be/L9A_H_vUOfE" target="_blank" class="video-item">🇯🇵 Tell Time in Japanese</a>
-                <a href="https://youtu.be/zD1L48qA0Ew" target="_blank" class="video-item">🇯🇵 50 Essential Kanji</a>
             </div>
         </div>
     </div>
@@ -138,6 +134,14 @@
         nextCard(activeMode);
     }
 
+    function speak(elemId) {
+        window.speechSynthesis.cancel();
+        const ut = new SpeechSynthesisUtterance(document.getElementById(elemId).innerText);
+        ut.lang = 'ja-JP';
+        ut.rate = 0.75;
+        window.speechSynthesis.speak(ut);
+    }
+
     function nextCard(mode) {
         const pool = JAPANESE_LIBRARY[mode][currentDiff];
         currentCard = pool[Math.floor(Math.random() * pool.length)];
@@ -160,7 +164,6 @@
         currentCard = pool[Math.floor(Math.random()*pool.length)];
         document.getElementById('test-q').innerText = currentCard.jp;
         document.getElementById('test-input').value = "";
-        document.getElementById('feedback').innerText = "";
     }
 
     function checkAnswer() {

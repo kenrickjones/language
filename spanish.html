@@ -22,17 +22,19 @@
         .diff-toggle { display: flex; background: var(--bg); padding: 4px; border-radius: 10px; margin-bottom: 15px; width: 100%; gap: 4px; border: 1px solid var(--border); }
         .diff-btn { flex: 1; padding: 10px 2px; font-size: 0.6rem; border: none; background: transparent; color: var(--text-dim); cursor: pointer; border-radius: 6px; font-weight: 800; }
         .diff-btn.active { background: var(--card); color: var(--primary); }
-        .flashcard-wrapper { perspective: 1000px; width: 100%; height: 320px; cursor: pointer; margin: 10px 0 20px 0; }
+        .flashcard-wrapper { perspective: 1000px; width: 100%; height: 340px; cursor: pointer; margin: 10px 0 20px 0; }
         .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.5s; transform-style: preserve-3d; }
         .flashcard-wrapper.is-flipped .flashcard-inner { transform: rotateY(180deg); }
         .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px; border: 2px solid var(--primary); text-align: center; background: var(--card); }
         .card-back { background: var(--primary); transform: rotateY(180deg); color: white; }
         .btn-main { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 0 #92400e; }
+        .btn-hear { background: rgba(255,255,255,0.1); border: 1px solid var(--primary); color: var(--primary); padding: 8px 15px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; margin-top: 15px; cursor: pointer; }
+        .card-back .btn-hear { border-color: white; color: white; }
         .pronunciation { font-size: 0.9rem; font-style: italic; color: #fef3c7; margin-top: 8px; }
         .card-front .pronunciation { color: var(--text-dim); }
         .video-list { width: 100%; display: grid; gap: 10px; }
         .video-item { display: flex; align-items: center; background: var(--card); padding: 15px; border-radius: 12px; text-decoration: none; color: white; border: 1px solid var(--border); font-weight: 600; font-size: 0.9rem; }
-        .video-item:hover { border-color: var(--primary); }
+        input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: white; margin-bottom: 10px; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -59,10 +61,12 @@
                     <div class="card-front">
                         <h2 id="sp-text" style="font-size: 2.2rem; margin:0;">--</h2>
                         <div class="sp-ph-view pronunciation">--</div>
+                        <button class="btn-hear" onclick="event.stopPropagation(); speak('sp-text')">🔊 HEAR</button>
                     </div>
                     <div class="card-back">
                         <h2 id="en-text" style="font-size: 1.8rem; margin:0;">--</h2>
                         <div class="sp-ph-view pronunciation">--</div>
+                        <button class="btn-hear" onclick="event.stopPropagation(); speak('sp-text')">🔊 HEAR</button>
                     </div>
                 </div>
             </div>
@@ -81,10 +85,12 @@
                     <div class="card-front">
                         <h2 id="phrase-sp" style="font-size: 1.6rem; margin:0;">--</h2>
                         <div class="phrase-ph-view pronunciation">--</div>
+                        <button class="btn-hear" onclick="event.stopPropagation(); speak('phrase-sp')">🔊 HEAR</button>
                     </div>
                     <div class="card-back">
                         <h2 id="phrase-en" style="font-size: 1.4rem; margin:0;">--</h2>
                         <div class="phrase-ph-view pronunciation">--</div>
+                        <button class="btn-hear" onclick="event.stopPropagation(); speak('phrase-sp')">🔊 HEAR</button>
                     </div>
                 </div>
             </div>
@@ -92,27 +98,17 @@
         </div>
 
         <div id="test" class="content-section">
-             <h2 id="test-q">--</h2>
-             <input type="text" id="test-input" placeholder="Translation...">
-             <button class="btn-main" onclick="checkAnswer()">CHECK</button>
-             <p id="feedback"></p>
+            <h2 id="test-q">--</h2>
+            <input type="text" id="test-input" placeholder="Translation...">
+            <button class="btn-main" onclick="checkAnswer()">CHECK</button>
+            <p id="feedback"></p>
         </div>
 
         <div id="watch" class="content-section">
-            <h3 style="color:var(--primary)">🇪🇸 Spanish Study Gallery</h3>
             <div class="video-list">
                 <a href="https://youtu.be/m99_pXpX26U" target="_blank" class="video-item">🇪🇸 Learn Spanish in 10 Min</a>
                 <a href="https://youtu.be/68L4n5V4Xms" target="_blank" class="video-item">🇪🇸 100 Spanish Phrases</a>
                 <a href="https://youtu.be/k_3_6680G0M" target="_blank" class="video-item">🇪🇸 Spanish Pronunciation</a>
-                <a href="https://youtu.be/S_Q9-8N0XfU" target="_blank" class="video-item">🇪🇸 Greetings & Introductions</a>
-                <a href="https://youtu.be/Z_Qk-9n9oQk" target="_blank" class="video-item">🇪🇸 Must-Know Verbs</a>
-                <a href="https://youtu.be/G2zG9K3qW9U" target="_blank" class="video-item">🇪🇸 Ordering Food</a>
-                <a href="https://youtu.be/L88w_0Y_p_0" target="_blank" class="video-item">🇪🇸 Telling the Time</a>
-                <a href="https://youtu.be/Q7E1iL-yL98" target="_blank" class="video-item">🇪🇸 Travel Essentials</a>
-                <a href="https://youtu.be/jU3f8vO7C9I" target="_blank" class="video-item">🇪🇸 Ser vs Estar Explained</a>
-                <a href="https://youtu.be/m8Q80YF6nI4" target="_blank" class="video-item">🇪🇸 Slang in Spain vs Mexico</a>
-                <a href="https://youtu.be/9M_S4B97H9c" target="_blank" class="video-item">🇪🇸 Future Tense Basics</a>
-                <a href="https://youtu.be/P8HqR-W7i20" target="_blank" class="video-item">🇪🇸 Common Mistakes</a>
             </div>
         </div>
     </div>
@@ -138,6 +134,14 @@
         nextCard(activeMode);
     }
 
+    function speak(elemId) {
+        window.speechSynthesis.cancel();
+        const ut = new SpeechSynthesisUtterance(document.getElementById(elemId).innerText);
+        ut.lang = 'es-ES';
+        ut.rate = 0.85;
+        window.speechSynthesis.speak(ut);
+    }
+
     function nextCard(mode) {
         const pool = SPANISH_LIBRARY[mode][currentDiff];
         currentCard = pool[Math.floor(Math.random() * pool.length)];
@@ -160,7 +164,6 @@
         currentCard = pool[Math.floor(Math.random()*pool.length)];
         document.getElementById('test-q').innerText = currentCard.sp;
         document.getElementById('test-input').value = "";
-        document.getElementById('feedback').innerText = "";
     }
 
     function checkAnswer() {
