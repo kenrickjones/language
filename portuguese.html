@@ -10,15 +10,16 @@
         * { box-sizing: border-box; transition: all 0.2s ease; }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         .app-container { max-width: 600px; width: 95%; display: flex; flex-direction: column; align-items: center; padding-bottom: 50px; }
-        header { width: 100%; text-align: center; padding: 30px 0; }
-        h1 { font-size: 2.2rem; font-weight: 800; margin: 0; }
+        header { width: 100%; text-align: center; padding: 20px 0; position: relative; }
+        .home-link { position: absolute; left: 0; top: 25px; text-decoration: none; color: var(--text-dim); font-size: 0.8rem; font-weight: bold; border: 1px solid var(--border); padding: 5px 10px; border-radius: 8px; }
+        h1 { font-size: 2rem; font-weight: 800; margin: 0; }
         .stats-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; margin: 20px 0; }
         .stat-box { background: var(--card); padding: 12px; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
         .stat-val { font-size: 1.2rem; font-weight: 800; display: block; color: var(--secondary); }
         .stat-label { font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700; }
         progress { width: 100%; height: 8px; accent-color: var(--primary); border-radius: 10px; border: none; background: #334155; }
         nav { display: flex; flex-wrap: wrap; background: var(--card); padding: 5px; border-radius: 12px; gap: 5px; margin: 20px 0; border: 1px solid var(--border); width: 100%; }
-        .nav-btn { flex: 1; min-width: 70px; padding: 10px; border: none; background: transparent; color: var(--text-dim); cursor: pointer; border-radius: 8px; font-weight: 600; font-size: 0.7rem; }
+        .nav-btn { flex: 1; min-width: 60px; padding: 10px; border: none; background: transparent; color: var(--text-dim); cursor: pointer; border-radius: 8px; font-weight: 600; font-size: 0.7rem; }
         .nav-btn.active { background: var(--primary); color: white; }
         .content-section { display: none; width: 100%; animation: fadeIn 0.3s ease; }
         .content-section.active { display: flex; flex-direction: column; align-items: center; }
@@ -32,15 +33,18 @@
         .card-back { background: var(--primary); transform: rotateY(180deg); }
         .pronunciation { font-size: 1rem; font-style: italic; color: #dcfce7; margin-top: 15px; font-weight: 600; }
         .btn-main { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 0 #166534; }
+        .mode-toggle, .diff-toggle { display: flex; background: var(--bg); padding: 4px; border-radius: 10px; margin-bottom: 10px; width: 100%; gap: 4px; }
+        .mode-btn, .diff-btn { flex: 1; padding: 8px; font-size: 0.65rem; border: none; background: transparent; color: var(--text-dim); cursor: pointer; border-radius: 6px; font-weight: bold; border: 1px solid transparent; }
+        .mode-btn.active, .diff-btn.active { background: var(--card); color: var(--primary); border-color: var(--border); }
         .video-link-card { background: var(--card); border: 1px solid var(--border); padding: 15px; border-radius: 12px; width: 100%; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; text-decoration: none; color: white; }
-        .mode-toggle { display: flex; background: var(--bg); padding: 4px; border-radius: 10px; margin-bottom: 15px; width: 100%; }
-        .mode-btn { flex: 1; padding: 8px; font-size: 0.75rem; border: none; background: transparent; color: var(--text-dim); cursor: pointer; border-radius: 6px; font-weight: bold; }
-        .mode-btn.active { background: var(--card); color: var(--primary); border: 1px solid var(--border); }
     </style>
 </head>
 <body>
 <div class="app-container">
-    <header><h1>PROJETO <span style="color:var(--primary)">SAMBA</span> 🇧🇷</h1></header>
+    <header>
+        <a href="index.html" class="home-link">🏠 HOME</a>
+        <h1>PROJETO <span style="color:var(--primary)">SAMBA</span></h1>
+    </header>
     <div class="stats-bar">
         <div class="stat-box"><span class="stat-label">Level</span><span id="lvl-val" class="stat-val">1</span></div>
         <div class="stat-box"><span class="stat-label">XP</span><span id="xp-val" class="stat-val">0</span></div>
@@ -59,33 +63,38 @@
             <button class="mode-btn active" id="btn-words" onclick="setMode('words')">WORDS</button>
             <button class="mode-btn" id="btn-phrases" onclick="setMode('phrases')">PHRASES</button>
         </div>
+        <div class="diff-toggle">
+            <button class="diff-btn active" onclick="setDiff('easy', this)">EASY</button>
+            <button class="diff-btn" onclick="setDiff('medium', this)">MED</button>
+            <button class="diff-btn" onclick="setDiff('hard', this)">HARD</button>
+            <button class="diff-btn" onclick="setDiff('vhard', this)">V. HARD</button>
+        </div>
         <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
             <div class="flashcard-inner">
                 <div class="card-front">
-                    <h2 id="pt-text" style="font-size: 1.8rem; padding: 10px;">--</h2>
+                    <h2 id="pt-text" style="font-size: 1.8rem; padding:10px;">--</h2>
                     <button class="btn-main" style="width:auto; padding:8px 20px; font-size:0.7rem;" onclick="speakCurrent(); event.stopPropagation();">🔊 HEAR</button>
                 </div>
                 <div class="card-back">
-                    <h2 id="en-text" style="font-size: 1.8rem; padding: 10px;">--</h2>
+                    <h2 id="en-text" style="font-size: 1.5rem; padding:10px;">--</h2>
                     <div id="phonetic-text" class="pronunciation">--</div>
                 </div>
             </div>
         </div>
         <button class="btn-main" onclick="nextCard()">NEXT CARD →</button>
-        <div id="deck-status" style="font-size:0.7rem; color:var(--text-dim); margin-top:10px;">Cards: 0</div>
+        <div id="deck-status" style="font-size:0.7rem; color:var(--text-dim); margin-top:10px;">Ready</div>
     </div>
 
     <div id="watch" class="content-section">
         <h3>Immersion Hub</h3>
-        <a href="https://www.youtube.com/@StreetSmartBrazil/videos" target="_blank" class="video-link-card"><span>Street Smart Brazil (Daily)</span> ➔</a>
+        <a href="https://www.youtube.com/@StreetSmartBrazil/videos" target="_blank" class="video-link-card"><span>Street Smart Brazil</span> ➔</a>
         <a href="https://www.youtube.com/@PortugueseWithLeo/videos" target="_blank" class="video-link-card"><span>Portuguese With Leo</span> ➔</a>
-        <a href="https://www.youtube.com/results?search_query=brazilian+music+with+lyrics" target="_blank" class="video-link-card"><span>Music with Lyrics</span> ➔</a>
     </div>
 
     <div id="test" class="content-section">
         <div id="test-container" class="card">
             <h2 id="test-pt" style="font-size: 1.8rem;">--</h2>
-            <input type="text" id="test-input" placeholder="Translate to English..." onkeydown="if(event.key==='Enter') checkAnswer()">
+            <input type="text" id="test-input" placeholder="Type answer..." onkeydown="if(event.key==='Enter') checkAnswer()">
             <button class="btn-main" onclick="checkAnswer()">SUBMIT</button>
             <p id="feedback" style="margin-top:10px;"></p>
         </div>
@@ -99,31 +108,23 @@
 
 <script>
     const library = {
-        words: [
-            {pt: "Cachorro", en: "Dog", ph: "Ca-sho-ro"}, {pt: "Gato", en: "Cat", ph: "Gah-to"}, {pt: "Janela", en: "Window", ph: "Ja-neh-la"},
-            {pt: "Garfo", en: "Fork", ph: "Gar-fo"}, {pt: "Colher", en: "Spoon", ph: "Co-lyehr"}, {pt: "Faca", en: "Knife", ph: "Fa-ca"},
-            {pt: "Cerveja", en: "Beer", ph: "Sehr-vey-ja"}, {pt: "Vinho", en: "Wine", ph: "Vee-nyo"}, {pt: "Pão", en: "Bread", ph: "Powm"},
-            {pt: "Maçã", en: "Apple", ph: "Ma-san"}, {pt: "Praia", en: "Beach", ph: "Pra-ya"}, {pt: "Montanha", en: "Mountain", ph: "Mon-ta-nya"},
-            {pt: "Avião", en: "Airplane", ph: "A-vee-owm"}, {pt: "Carro", en: "Car", ph: "Ca-ho"}, {pt: "Bicicleta", en: "Bicycle", ph: "Bee-see-cleh-ta"},
-            {pt: "Feliz", en: "Happy", ph: "Feh-lees"}, {pt: "Triste", en: "Sad", ph: "Trees-chee"}, {pt: "Cansado", en: "Tired", ph: "Can-sah-do"}
-        ],
-        phrases: [
-            {pt: "Eu estou com fome", en: "I am hungry", ph: "Eu es-tow com fo-mee"},
-            {pt: "Onde fica a estação?", en: "Where is the station?", ph: "On-jee fee-ca ah es-ta-sown"},
-            {pt: "Eu gostaria de uma água", en: "I would like a water", ph: "Eu gos-ta-ree-a jee oo-ma ah-gwa"},
-            {pt: "Você pode me ajudar?", en: "Can you help me?", ph: "Vo-say po-jee me ah-ju-dar"},
-            {pt: "Quanto custa isto?", en: "How much is this?", ph: "Kwan-to koos-ta ees-to"},
-            {pt: "Eu não falo bem português", en: "I don't speak Portuguese well", ph: "Eu nowm fa-lo bem por-too-geys"},
-            {pt: "Que horas abre?", en: "What time does it open?", ph: "Kay o-ras ah-bree"},
-            {pt: "O tempo está bom hoje", en: "The weather is good today", ph: "O tem-po es-tah bom o-jee"},
-            {pt: "Eu amo viajar", en: "I love to travel", ph: "Eu ah-mo vee-a-jar"},
-            {pt: "Tudo bem com você?", en: "Is everything okay with you?", ph: "Too-do bem com vo-say"}
-        ]
+        words: {
+            easy: [{pt: "Olá", en: "Hello", ph: "Oh-la"}, {pt: "Sim", en: "Yes", ph: "Seem"}, {pt: "Não", en: "No", ph: "Nowm"}, {pt: "Água", en: "Water", ph: "Ah-gwa"}, {pt: "Pão", en: "Bread", ph: "Powm"}],
+            medium: [{pt: "Cachorro", en: "Dog", ph: "Ca-sho-ho"}, {pt: "Cozinha", en: "Kitchen", ph: "Co-zee-nya"}, {pt: "Trabalho", en: "Work", ph: "Tra-ba-lyo"}, {pt: "Viagem", en: "Trip", ph: "Vya-zhem"}],
+            hard: [{pt: "Empreendimento", en: "Enterprise/Venture", ph: "Em-pree-en-jee-men-to"}, {pt: "Inconstitucional", en: "Unconstitutional", ph: "In-cons-tee-too-syoh-nal"}, {pt: "Amanhecer", en: "Dawn", ph: "A-ma-nye-sehr"}],
+            vhard: [{pt: "Saudade", en: "Deep longing/Missing", ph: "Sow-dah-jee"}, {pt: "Desabafar", en: "To vent/Let it out", ph: "De-za-ba-far"}, {pt: "Caprichar", en: "To do something with great care", ph: "Ca-pree-shar"}]
+        },
+        phrases: {
+            easy: [{pt: "Como vai?", en: "How's it going?", ph: "Co-mo vay"}, {pt: "Tudo bem?", en: "Everything okay?", ph: "Too-do bem"}],
+            medium: [{pt: "Onde fica o hotel?", en: "Where is the hotel?", ph: "On-jee fee-ca o o-tehl"}, {pt: "Eu quero um café", en: "I want a coffee", ph: "Eu keh-ro um ca-feh"}],
+            hard: [{pt: "Você poderia me ajudar?", en: "Could you help me?", ph: "Vo-say po-deh-ree-a me ah-ju-dar"}, {pt: "Quanto tempo demora?", en: "How long does it take?", ph: "Kwan-to tem-po de-mo-ra"}],
+            vhard: [{pt: "Mais vale um pássaro na mão do que dois voando", en: "A bird in the hand is worth two in the bush", ph: "Id-i-om"}, {pt: "Enfiar o pé na jaca", en: "To overindulge/To kick over the traces", ph: "Id-i-om"}]
+        }
     };
 
     let xp = parseInt(localStorage.getItem('ps_xp')) || 0;
     let vault = JSON.parse(localStorage.getItem('ps_vault')) || [];
-    let currentMode = 'words'; let sessionDeck = [];
+    let currentMode = 'words'; let currentDiff = 'easy'; let sessionDeck = [];
 
     function updateUI() {
         document.getElementById('xp-val').innerText = xp;
@@ -148,31 +149,36 @@
         sessionDeck = []; nextCard();
     }
 
+    function setDiff(diff, btn) {
+        currentDiff = diff;
+        document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        sessionDeck = []; nextCard();
+    }
+
     function nextCard() {
         if (sessionDeck.length === 0) {
-            sessionDeck = [...library[currentMode], ...vault].sort(() => Math.random() - 0.5);
+            let base = library[currentMode][currentDiff] || [];
+            sessionDeck = [...base].sort(() => Math.random() - 0.5);
         }
         const card = sessionDeck.pop();
-        document.getElementById('deck-status').innerText = `Cards in cycle: ${sessionDeck.length + 1}`;
+        document.getElementById('deck-status').innerText = `${currentMode.toUpperCase()} | ${currentDiff.toUpperCase()}`;
         document.querySelector('.flashcard-wrapper').classList.remove('is-flipped');
         setTimeout(() => {
-            document.getElementById('pt-text').innerText = card.pt;
-            document.getElementById('en-text').innerText = card.en;
-            document.getElementById('phonetic-text').innerText = card.ph || "Custom Entry";
+            document.getElementById('pt-text').innerText = card ? card.pt : "Add more in Vault!";
+            document.getElementById('en-text').innerText = card ? card.en : "--";
+            document.getElementById('phonetic-text').innerText = card ? card.ph : "--";
         }, 150);
     }
 
     function speakCurrent() {
         const ut = new SpeechSynthesisUtterance(document.getElementById('pt-text').innerText);
-        const voices = window.speechSynthesis.getVoices();
-        ut.voice = voices.find(v => v.lang.includes('pt-BR')) || voices.find(v => v.lang.includes('pt'));
-        ut.lang = 'pt-BR'; ut.rate = 0.9;
-        window.speechSynthesis.cancel(); window.speechSynthesis.speak(ut);
+        ut.lang = 'pt-BR'; window.speechSynthesis.speak(ut);
     }
 
     function startTest() {
-        const full = [...library.words, ...library.phrases, ...vault];
-        window.currentTest = full[Math.floor(Math.random() * full.length)];
+        const all = [...library.words.easy, ...library.words.medium, ...library.words.hard, ...library.words.vhard, ...library.phrases.easy];
+        window.currentTest = all[Math.floor(Math.random() * all.length)];
         document.getElementById('test-pt').innerText = window.currentTest.pt;
         document.getElementById('test-input').value = "";
         document.getElementById('feedback').innerText = "";
@@ -180,15 +186,15 @@
 
     function checkAnswer() {
         if(document.getElementById('test-input').value.trim().toLowerCase() === window.currentTest.en.toLowerCase()) {
-            xp += 20; updateUI(); document.getElementById('feedback').innerText = "Correct! +20 XP"; setTimeout(startTest, 1200);
+            xp += 25; updateUI(); document.getElementById('feedback').innerText = "Correct! +25 XP"; setTimeout(startTest, 1200);
         } else {
-            document.getElementById('feedback').innerText = `Actually: ${window.currentTest.en}`;
+            document.getElementById('feedback').innerText = `Answer: ${window.currentTest.en}`;
         }
     }
 
     function addToVault() {
         const pt = document.getElementById('v-pt').value, en = document.getElementById('v-en').value;
-        if(pt && en) { vault.push({pt, en, ph: "Custom"}); xp += 15; updateUI(); }
+        if(pt && en) { vault.push({pt, en, ph: "Custom"}); updateUI(); }
     }
 
     function renderVault() {
