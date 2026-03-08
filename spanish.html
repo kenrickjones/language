@@ -38,6 +38,7 @@
         .pronunciation { font-size: 0.9rem; font-style: italic; color: #fef3c7; margin-top: 8px; }
         input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: white; font-size: 1rem; margin-bottom: 10px; }
         .vault-item { background: var(--card); padding: 12px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 8px; display: flex; justify-content: space-between; width: 100%; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -148,11 +149,17 @@
         }, 150);
     }
 
+    // iOS FORCED VOICE SELECTION
     function speakCurrent() {
         window.speechSynthesis.cancel();
-        const ut = new SpeechSynthesisUtterance(document.getElementById('sp-text').innerText);
-        ut.lang = 'es-ES'; 
-        ut.rate = 0.85; 
+        const text = document.getElementById('sp-text').innerText;
+        const ut = new SpeechSynthesisUtterance(text);
+        const voices = window.speechSynthesis.getVoices();
+        const esVoice = voices.find(v => (v.lang.includes('es-ES') || v.lang.includes('es_ES')));
+        
+        if (esVoice) ut.voice = esVoice;
+        ut.lang = 'es-ES';
+        ut.rate = 0.85;
         window.speechSynthesis.speak(ut);
     }
 
@@ -171,7 +178,7 @@
             document.getElementById('feedback').innerText = "✅ ¡Correcto! +50 XP";
             setTimeout(startTest, 1200);
         } else {
-            document.getElementById('feedback').innerText = "❌ No... ¡Intenta de nuevo!";
+            document.getElementById('feedback').innerText = "❌ No...";
         }
     }
 
@@ -182,7 +189,7 @@
             localVault.push({sp, en});
             localStorage.setItem('p-sol_vault', JSON.stringify(localVault));
             document.getElementById('v-sp').value = ""; document.getElementById('v-en').value = "";
-            updateUI();
+            renderVault();
         }
     }
 
@@ -192,6 +199,7 @@
         ).join('');
     }
 
+    window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
     updateUI(); nextCard();
 </script>
 </body>

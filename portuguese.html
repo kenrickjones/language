@@ -38,6 +38,7 @@
         .pronunciation { font-size: 0.9rem; font-style: italic; color: #dcfce7; margin-top: 8px; }
         input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: white; font-size: 1rem; margin-bottom: 10px; outline: none; }
         .vault-item { background: var(--card); padding: 12px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 8px; display: flex; justify-content: space-between; width: 100%; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -148,11 +149,17 @@
         }, 150);
     }
 
+    // iOS FORCED VOICE SELECTION
     function speakCurrent() {
         window.speechSynthesis.cancel();
-        const ut = new SpeechSynthesisUtterance(document.getElementById('pt-text').innerText);
-        ut.lang = 'pt-BR'; 
-        ut.rate = 0.85; 
+        const text = document.getElementById('pt-text').innerText;
+        const ut = new SpeechSynthesisUtterance(text);
+        const voices = window.speechSynthesis.getVoices();
+        const ptVoice = voices.find(v => (v.lang.includes('pt-BR') || v.lang.includes('pt_BR')));
+        
+        if (ptVoice) ut.voice = ptVoice;
+        ut.lang = 'pt-BR';
+        ut.rate = 0.85;
         window.speechSynthesis.speak(ut);
     }
 
@@ -171,7 +178,7 @@
             document.getElementById('feedback').innerText = "✅ Correct! +50 XP";
             setTimeout(startTest, 1200);
         } else {
-            document.getElementById('feedback').innerText = "❌ Not quite! Try again.";
+            document.getElementById('feedback').innerText = "❌ Not quite!";
         }
     }
 
@@ -182,7 +189,7 @@
             localVault.push({pt, en});
             localStorage.setItem('ps_vault', JSON.stringify(localVault));
             document.getElementById('v-pt').value = ""; document.getElementById('v-en').value = "";
-            updateUI();
+            renderVault();
         }
     }
 
@@ -192,6 +199,8 @@
         ).join('');
     }
 
+    // Warm up voices for iOS
+    window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
     updateUI(); nextCard();
 </script>
 </body>
