@@ -29,7 +29,10 @@
         .card-back { background: var(--primary); transform: rotateY(180deg); color: white; }
         .btn-main { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 0 #92400e; }
         .pronunciation { font-size: 0.9rem; font-style: italic; color: #fef3c7; margin-top: 8px; }
-        input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: white; font-size: 1rem; margin-bottom: 10px; outline: none; }
+        .card-front .pronunciation { color: var(--text-dim); }
+        .video-list { width: 100%; display: grid; gap: 10px; }
+        .video-item { display: flex; align-items: center; background: var(--card); padding: 15px; border-radius: 12px; text-decoration: none; color: white; border: 1px solid var(--border); font-weight: 600; font-size: 0.9rem; }
+        .video-item:hover { border-color: var(--primary); }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -55,8 +58,7 @@
                 <div class="flashcard-inner">
                     <div class="card-front">
                         <h2 id="sp-text" style="font-size: 2.2rem; margin:0;">--</h2>
-                        <div class="sp-ph-view pronunciation" style="color:var(--text-dim)">--</div>
-                        <button class="btn-main" style="width:auto; padding:8px 20px; font-size:0.7rem; margin-top:20px;" onclick="event.stopPropagation(); speakCurrent('sp-text');">🔊 HEAR</button>
+                        <div class="sp-ph-view pronunciation">--</div>
                     </div>
                     <div class="card-back">
                         <h2 id="en-text" style="font-size: 1.8rem; margin:0;">--</h2>
@@ -78,8 +80,7 @@
                 <div class="flashcard-inner">
                     <div class="card-front">
                         <h2 id="phrase-sp" style="font-size: 1.6rem; margin:0;">--</h2>
-                        <div class="phrase-ph-view pronunciation" style="color:var(--text-dim)">--</div>
-                        <button class="btn-main" style="width:auto; padding:8px 20px; font-size:0.7rem; margin-top:20px;" onclick="event.stopPropagation(); speakCurrent('phrase-sp');">🔊 HEAR</button>
+                        <div class="phrase-ph-view pronunciation">--</div>
                     </div>
                     <div class="card-back">
                         <h2 id="phrase-en" style="font-size: 1.4rem; margin:0;">--</h2>
@@ -91,19 +92,30 @@
         </div>
 
         <div id="test" class="content-section">
-            <div style="background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid var(--border); width: 100%; text-align: center;">
-                <h2 id="test-q">--</h2>
-                <input type="text" id="test-input" placeholder="English translation..." autocomplete="off">
-                <button class="btn-main" onclick="checkAnswer()">SUBMIT</button>
-                <p id="feedback" style="margin-top:15px; font-weight:bold;"></p>
-            </div>
+             <h2 id="test-q">--</h2>
+             <input type="text" id="test-input" placeholder="Translation...">
+             <button class="btn-main" onclick="checkAnswer()">CHECK</button>
+             <p id="feedback"></p>
         </div>
 
         <div id="watch" class="content-section">
-            <iframe id="sp-player" width="100%" height="315" src="https://www.youtube.com/embed?listType=playlist&list=PLmZ-LpXfRz_R-3-X50kK8_E30fXknd829" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="border-radius:20px; border:2px solid var(--primary);"></iframe>
+            <h3 style="color:var(--primary)">🇪🇸 Spanish Study Gallery</h3>
+            <div class="video-list">
+                <a href="https://youtu.be/m99_pXpX26U" target="_blank" class="video-item">🇪🇸 Learn Spanish in 10 Min</a>
+                <a href="https://youtu.be/68L4n5V4Xms" target="_blank" class="video-item">🇪🇸 100 Spanish Phrases</a>
+                <a href="https://youtu.be/k_3_6680G0M" target="_blank" class="video-item">🇪🇸 Spanish Pronunciation</a>
+                <a href="https://youtu.be/S_Q9-8N0XfU" target="_blank" class="video-item">🇪🇸 Greetings & Introductions</a>
+                <a href="https://youtu.be/Z_Qk-9n9oQk" target="_blank" class="video-item">🇪🇸 Must-Know Verbs</a>
+                <a href="https://youtu.be/G2zG9K3qW9U" target="_blank" class="video-item">🇪🇸 Ordering Food</a>
+                <a href="https://youtu.be/L88w_0Y_p_0" target="_blank" class="video-item">🇪🇸 Telling the Time</a>
+                <a href="https://youtu.be/Q7E1iL-yL98" target="_blank" class="video-item">🇪🇸 Travel Essentials</a>
+                <a href="https://youtu.be/jU3f8vO7C9I" target="_blank" class="video-item">🇪🇸 Ser vs Estar Explained</a>
+                <a href="https://youtu.be/m8Q80YF6nI4" target="_blank" class="video-item">🇪🇸 Slang in Spain vs Mexico</a>
+                <a href="https://youtu.be/9M_S4B97H9c" target="_blank" class="video-item">🇪🇸 Future Tense Basics</a>
+                <a href="https://youtu.be/P8HqR-W7i20" target="_blank" class="video-item">🇪🇸 Common Mistakes</a>
+            </div>
         </div>
     </div>
-
 <script>
     let currentDiff = 'easy';
     let activeMode = 'words';
@@ -130,7 +142,6 @@
         const pool = SPANISH_LIBRARY[mode][currentDiff];
         currentCard = pool[Math.floor(Math.random() * pool.length)];
         document.querySelectorAll('.flashcard-wrapper').forEach(w => w.classList.remove('is-flipped'));
-        
         setTimeout(() => {
             if(mode === 'words') {
                 document.getElementById('sp-text').innerText = currentCard.sp;
@@ -142,16 +153,6 @@
                 document.querySelectorAll('.phrase-ph-view').forEach(el => el.innerText = `[ ${currentCard.ph} ]`);
             }
         }, 150);
-    }
-
-    function speakCurrent(elemId) {
-        window.speechSynthesis.cancel();
-        const ut = new SpeechSynthesisUtterance(document.getElementById(elemId).innerText);
-        const voices = window.speechSynthesis.getVoices();
-        ut.voice = voices.find(v => v.lang.includes('es-ES')) || voices.find(v => v.lang.includes('es'));
-        ut.lang = 'es-ES';
-        ut.rate = 0.85;
-        window.speechSynthesis.speak(ut);
     }
 
     function startTest() {
@@ -167,10 +168,9 @@
             document.getElementById('feedback').innerText = "✅ Correcto!";
             setTimeout(startTest, 1200);
         } else {
-            document.getElementById('feedback').innerText = "❌ Inténtalo de nuevo.";
+            document.getElementById('feedback').innerText = "❌ No.";
         }
     }
-    window.speechSynthesis.getVoices();
     nextCard('words');
 </script>
 </body>

@@ -29,7 +29,10 @@
         .card-back { background: var(--primary); transform: rotateY(180deg); color: white; }
         .btn-main { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 0 #be185d; }
         .romaji { font-size: 1rem; font-style: italic; color: #ffe4e6; margin-top: 10px; }
-        input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: white; font-size: 1rem; margin-bottom: 10px; outline: none; }
+        .card-front .romaji { color: var(--text-dim); }
+        .video-list { width: 100%; display: grid; gap: 10px; }
+        .video-item { display: flex; align-items: center; background: var(--card); padding: 15px; border-radius: 12px; text-decoration: none; color: white; border: 1px solid var(--border); font-weight: 600; font-size: 0.9rem; }
+        .video-item:hover { border-color: var(--primary); }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -55,8 +58,7 @@
                 <div class="flashcard-inner">
                     <div class="card-front">
                         <h2 id="jp-text" style="font-size: 2.6rem; margin:0;">--</h2>
-                        <div class="jp-rj-view romaji" style="color:var(--text-dim)">--</div>
-                        <button class="btn-main" style="width:auto; padding:8px 20px; font-size:0.7rem; margin-top:20px;" onclick="event.stopPropagation(); speakCurrent('jp-text');">🔊 HEAR</button>
+                        <div class="jp-rj-view romaji">--</div>
                     </div>
                     <div class="card-back">
                         <h2 id="en-text" style="font-size: 2rem; margin:0;">--</h2>
@@ -78,8 +80,7 @@
                 <div class="flashcard-inner">
                     <div class="card-front">
                         <h2 id="phrase-jp" style="font-size: 1.8rem; margin:0;">--</h2>
-                        <div class="phrase-rj-view romaji" style="color:var(--text-dim)">--</div>
-                        <button class="btn-main" style="width:auto; padding:8px 20px; font-size:0.7rem; margin-top:20px;" onclick="event.stopPropagation(); speakCurrent('phrase-jp');">🔊 HEAR</button>
+                        <div class="phrase-rj-view romaji">--</div>
                     </div>
                     <div class="card-back">
                         <h2 id="phrase-en" style="font-size: 1.6rem; margin:0;">--</h2>
@@ -91,19 +92,30 @@
         </div>
 
         <div id="test" class="content-section">
-            <div style="background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid var(--border); width: 100%; text-align: center;">
-                <h2 id="test-q" style="font-size: 2.2rem;">--</h2>
-                <input type="text" id="test-input" placeholder="Meaning in English..." autocomplete="off">
-                <button class="btn-main" onclick="checkAnswer()">SUBMIT</button>
-                <p id="feedback" style="margin-top:15px; font-weight:bold;"></p>
-            </div>
+            <h2 id="test-q">--</h2>
+            <input type="text" id="test-input" placeholder="Meaning...">
+            <button class="btn-main" onclick="checkAnswer()">CHECK</button>
+            <p id="feedback"></p>
         </div>
 
         <div id="watch" class="content-section">
-            <iframe id="jp-player" width="100%" height="315" src="https://www.youtube.com/embed?listType=playlist&list=PL7uH9jN7X0Wv0TfD_N4G0oGf_4mP_rT5c" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="border-radius:20px; border:2px solid var(--primary);"></iframe>
+            <h3 style="color:var(--primary)">🌸 Japanese Study Gallery</h3>
+            <div class="video-list">
+                <a href="https://youtu.be/rGrBHiuPlT0" target="_blank" class="video-item">🇯🇵 Hiragana in 1 Hour</a>
+                <a href="https://youtu.be/6p9Il_j0zjc" target="_blank" class="video-item">🇯🇵 Katakana in 1 Hour</a>
+                <a href="https://youtu.be/k74yjmfFb_A" target="_blank" class="video-item">🇯🇵 100 Most Used Words</a>
+                <a href="https://youtu.be/JnoZE51WZg4" target="_blank" class="video-item">🇯🇵 Basic Japanese Grammar</a>
+                <a href="https://youtu.be/U09N3pY8uX8" target="_blank" class="video-item">🇯🇵 Particle 'WA' vs 'GA'</a>
+                <a href="https://youtu.be/y-vF5M_Q0uU" target="_blank" class="video-item">🇯🇵 Daily Greetings Guide</a>
+                <a href="https://youtu.be/bC95un0XpUA" target="_blank" class="video-item">🇯🇵 Survival Japanese for Travel</a>
+                <a href="https://youtu.be/X6XbF9f1Jpw" target="_blank" class="video-item">🇯🇵 Counting in Japanese</a>
+                <a href="https://youtu.be/C8N_p09YFvY" target="_blank" class="video-item">🇯🇵 Ordering at Restaurants</a>
+                <a href="https://youtu.be/pSREm0GqWkM" target="_blank" class="video-item">🇯🇵 Anime Japanese vs Real Life</a>
+                <a href="https://youtu.be/L9A_H_vUOfE" target="_blank" class="video-item">🇯🇵 Tell Time in Japanese</a>
+                <a href="https://youtu.be/zD1L48qA0Ew" target="_blank" class="video-item">🇯🇵 50 Essential Kanji</a>
+            </div>
         </div>
     </div>
-
 <script>
     let currentDiff = 'easy';
     let activeMode = 'words';
@@ -130,7 +142,6 @@
         const pool = JAPANESE_LIBRARY[mode][currentDiff];
         currentCard = pool[Math.floor(Math.random() * pool.length)];
         document.querySelectorAll('.flashcard-wrapper').forEach(w => w.classList.remove('is-flipped'));
-        
         setTimeout(() => {
             if(mode === 'words') {
                 document.getElementById('jp-text').innerText = currentCard.jp;
@@ -142,16 +153,6 @@
                 document.querySelectorAll('.phrase-rj-view').forEach(el => el.innerText = `[ ${currentCard.rj} ]`);
             }
         }, 150);
-    }
-
-    function speakCurrent(elemId) {
-        window.speechSynthesis.cancel();
-        const ut = new SpeechSynthesisUtterance(document.getElementById(elemId).innerText);
-        const voices = window.speechSynthesis.getVoices();
-        ut.voice = voices.find(v => v.lang.includes('ja-JP')) || voices.find(v => v.lang.includes('ja'));
-        ut.lang = 'ja-JP';
-        ut.rate = 0.75;
-        window.speechSynthesis.speak(ut);
     }
 
     function startTest() {
@@ -170,7 +171,6 @@
             document.getElementById('feedback').innerText = "❌ Incorrect!";
         }
     }
-    window.speechSynthesis.getVoices();
     nextCard('words');
 </script>
 </body>

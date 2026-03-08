@@ -19,8 +19,8 @@
         .nav-btn.active { background: var(--primary); color: white; }
         .content-section { display: none; width: 100%; flex-direction: column; align-items: center; }
         .content-section.active { display: flex; animation: fadeIn 0.3s ease; }
-        .diff-toggle { display: flex; background: var(--bg); padding: 4px; border-radius: 10px; margin-bottom: 15px; width: 100%; gap: 4px; border: 1px solid var(--border); overflow-x: auto; }
-        .diff-btn { flex: 1; min-width: 60px; padding: 10px 2px; font-size: 0.6rem; border: none; background: transparent; color: var(--text-dim); cursor: pointer; border-radius: 6px; font-weight: 800; }
+        .diff-toggle { display: flex; background: var(--bg); padding: 4px; border-radius: 10px; margin-bottom: 15px; width: 100%; gap: 4px; border: 1px solid var(--border); }
+        .diff-btn { flex: 1; padding: 10px 2px; font-size: 0.6rem; border: none; background: transparent; color: var(--text-dim); cursor: pointer; border-radius: 6px; font-weight: 800; }
         .diff-btn.active { background: var(--card); color: var(--primary); }
         .flashcard-wrapper { perspective: 1000px; width: 100%; height: 320px; cursor: pointer; margin: 10px 0 20px 0; }
         .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.5s; transform-style: preserve-3d; }
@@ -30,7 +30,10 @@
         .btn-main { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 0 #166534; }
         .pronunciation { font-size: 0.9rem; font-style: italic; color: #dcfce7; margin-top: 8px; }
         .card-front .pronunciation { color: var(--text-dim); }
-        input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: white; font-size: 1rem; margin-bottom: 10px; outline: none; }
+        .video-list { width: 100%; display: grid; gap: 10px; }
+        .video-item { display: flex; align-items: center; background: var(--card); padding: 15px; border-radius: 12px; text-decoration: none; color: white; border: 1px solid var(--border); font-weight: 600; font-size: 0.9rem; }
+        .video-item:hover { border-color: var(--primary); background: #2d3a4f; }
+        .video-icon { margin-right: 15px; font-size: 1.2rem; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -57,7 +60,6 @@
                     <div class="card-front">
                         <h2 id="pt-text" style="font-size: 2.2rem; margin:0;">--</h2>
                         <div class="pt-ph-view pronunciation">--</div>
-                        <button class="btn-main" style="width:auto; padding:8px 20px; font-size:0.7rem; margin-top:20px;" onclick="event.stopPropagation(); speakCurrent('pt-text');">🔊 HEAR</button>
                     </div>
                     <div class="card-back">
                         <h2 id="en-text" style="font-size: 1.8rem; margin:0;">--</h2>
@@ -80,7 +82,6 @@
                     <div class="card-front">
                         <h2 id="phrase-pt" style="font-size: 1.6rem; margin:0;">--</h2>
                         <div class="phrase-ph-view pronunciation">--</div>
-                        <button class="btn-main" style="width:auto; padding:8px 20px; font-size:0.7rem; margin-top:20px;" onclick="event.stopPropagation(); speakCurrent('phrase-pt');">🔊 HEAR</button>
                     </div>
                     <div class="card-back">
                         <h2 id="phrase-en" style="font-size: 1.4rem; margin:0;">--</h2>
@@ -92,19 +93,30 @@
         </div>
 
         <div id="test" class="content-section">
-            <div style="background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid var(--border); width: 100%; text-align: center;">
-                <h2 id="test-q">--</h2>
-                <input type="text" id="test-input" placeholder="English translation..." autocomplete="off">
-                <button class="btn-main" onclick="checkAnswer()">SUBMIT</button>
-                <p id="feedback" style="margin-top:15px; font-weight:bold;"></p>
-            </div>
+             <h2 id="test-q">--</h2>
+             <input type="text" id="test-input" placeholder="Translation...">
+             <button class="btn-main" onclick="checkAnswer()">CHECK</button>
+             <p id="feedback"></p>
         </div>
 
         <div id="watch" class="content-section">
-            <iframe width="100%" height="315" src="https://www.youtube.com/embed/videoseries?list=PL0m9S_3Y_IwfT-K_U_mC7S3pYI_X0vO1F" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:20px; border:2px solid var(--primary);"></iframe>
+            <h3 style="color:var(--primary)">🇧🇷 Portuguese Study Gallery</h3>
+            <div class="video-list">
+                <a href="https://youtu.be/zS_R-B99kU0" target="_blank" class="video-item"><span class="video-icon">▶️</span> Pronunciation Basics</a>
+                <a href="https://youtu.be/M9t7F9fG8tI" target="_blank" class="video-item"><span class="video-icon">▶️</span> 100 Common Phrases</a>
+                <a href="https://youtu.be/vW_rF7-A6-s" target="_blank" class="video-item"><span class="video-icon">▶️</span> Brazilian Slang Guide</a>
+                <a href="https://youtu.be/XyL62VqN4S0" target="_blank" class="video-item"><span class="video-icon">▶️</span> European vs Brazilian Pt</a>
+                <a href="https://youtu.be/S4p4xUIsm7M" target="_blank" class="video-item"><span class="video-icon">▶️</span> Essential Verbs</a>
+                <a href="https://youtu.be/Hk4G8S_m4uM" target="_blank" class="video-item"><span class="video-icon">▶️</span> Ordering Food in PT</a>
+                <a href="https://youtu.be/jC8pP9Y6JpA" target="_blank" class="video-item"><span class="video-icon">▶️</span> Portuguese for Travel</a>
+                <a href="https://youtu.be/6L-I86n1hRk" target="_blank" class="video-item"><span class="video-icon">▶️</span> Future Tense Explained</a>
+                <a href="https://youtu.be/b5_k2vS4_mI" target="_blank" class="video-item"><span class="video-icon">▶️</span> Daily Routine Vocab</a>
+                <a href="https://youtu.be/mF8p-pI1L7o" target="_blank" class="video-item"><span class="video-icon">▶️</span> Understanding Native Speakers</a>
+                <a href="https://youtu.be/1_9iE2V7-uU" target="_blank" class="video-item"><span class="video-icon">▶️</span> Top 10 Mistakes</a>
+                <a href="https://youtu.be/2K_H9Fp9JpM" target="_blank" class="video-item"><span class="video-icon">▶️</span> Portuguese Alphabet</a>
+            </div>
         </div>
     </div>
-
 <script>
     let currentDiff = 'easy';
     let activeMode = 'words';
@@ -131,7 +143,6 @@
         const pool = PORTUGUESE_LIBRARY[mode][currentDiff];
         currentCard = pool[Math.floor(Math.random() * pool.length)];
         document.querySelectorAll('.flashcard-wrapper').forEach(w => w.classList.remove('is-flipped'));
-        
         setTimeout(() => {
             if(mode === 'words') {
                 document.getElementById('pt-text').innerText = currentCard.pt;
@@ -143,16 +154,6 @@
                 document.querySelectorAll('.phrase-ph-view').forEach(el => el.innerText = `[ ${currentCard.ph} ]`);
             }
         }, 150);
-    }
-
-    function speakCurrent(elemId) {
-        window.speechSynthesis.cancel();
-        const ut = new SpeechSynthesisUtterance(document.getElementById(elemId).innerText);
-        const voices = window.speechSynthesis.getVoices();
-        ut.voice = voices.find(v => v.lang.includes('pt-BR')) || voices.find(v => v.lang.includes('pt'));
-        ut.lang = 'pt-BR';
-        ut.rate = 0.8;
-        window.speechSynthesis.speak(ut);
     }
 
     function startTest() {
@@ -171,7 +172,6 @@
             document.getElementById('feedback').innerText = "❌ Try again!";
         }
     }
-    window.speechSynthesis.getVoices();
     nextCard('words');
 </script>
 </body>
