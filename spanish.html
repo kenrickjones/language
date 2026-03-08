@@ -31,10 +31,8 @@
         .btn-hear { background: rgba(255,255,255,0.1); border: 1px solid var(--primary); color: var(--primary); padding: 8px 15px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; margin-top: 15px; cursor: pointer; }
         .card-back .btn-hear { border-color: white; color: white; }
         .pronunciation { font-size: 0.9rem; font-style: italic; color: #fef3c7; margin-top: 8px; }
-        .card-front .pronunciation { color: var(--text-dim); }
         .video-list { width: 100%; display: grid; gap: 10px; }
         .video-item { display: flex; align-items: center; background: var(--card); padding: 15px; border-radius: 12px; text-decoration: none; color: white; border: 1px solid var(--border); font-weight: 600; font-size: 0.9rem; }
-        input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: white; margin-bottom: 10px; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -99,7 +97,7 @@
 
         <div id="test" class="content-section">
             <h2 id="test-q">--</h2>
-            <input type="text" id="test-input" placeholder="Translation...">
+            <input type="text" id="test-input" placeholder="Translation..." style="width:100%; padding:15px; border-radius:12px; border:1px solid var(--border); background:var(--card); color:white;">
             <button class="btn-main" onclick="checkAnswer()">CHECK</button>
             <p id="feedback"></p>
         </div>
@@ -108,7 +106,6 @@
             <div class="video-list">
                 <a href="https://youtu.be/m99_pXpX26U" target="_blank" class="video-item">🇪🇸 Learn Spanish in 10 Min</a>
                 <a href="https://youtu.be/68L4n5V4Xms" target="_blank" class="video-item">🇪🇸 100 Spanish Phrases</a>
-                <a href="https://youtu.be/k_3_6680G0M" target="_blank" class="video-item">🇪🇸 Spanish Pronunciation</a>
             </div>
         </div>
     </div>
@@ -116,6 +113,26 @@
     let currentDiff = 'easy';
     let activeMode = 'words';
     let currentCard = null;
+    let voices = [];
+
+    function loadVoices() {
+        voices = window.speechSynthesis.getVoices();
+    }
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+    loadVoices();
+
+    function speak(elemId) {
+        window.speechSynthesis.cancel();
+        const text = document.getElementById(elemId).innerText;
+        const ut = new SpeechSynthesisUtterance(text);
+        
+        const esVoice = voices.find(v => v.lang.startsWith('es'));
+        if(esVoice) ut.voice = esVoice;
+        ut.lang = 'es-ES';
+        ut.rate = 0.85;
+        
+        window.speechSynthesis.speak(ut);
+    }
 
     function showTab(id, btn) {
         document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
@@ -132,14 +149,6 @@
         document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         nextCard(activeMode);
-    }
-
-    function speak(elemId) {
-        window.speechSynthesis.cancel();
-        const ut = new SpeechSynthesisUtterance(document.getElementById(elemId).innerText);
-        ut.lang = 'es-ES';
-        ut.rate = 0.85;
-        window.speechSynthesis.speak(ut);
     }
 
     function nextCard(mode) {
