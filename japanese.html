@@ -6,75 +6,53 @@
     <title>Project Sakura | Japanese</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #0f172a; --card: #1e293b; --primary: #f472b6; --secondary: #fbbf24; --accent: #8b5cf6; --text: #f8fafc; --text-dim: #94a3b8; --border: #334155; }
+        :root { --bg: #0f172a; --card: #1e293b; --primary: #f472b6; --secondary: #fbbf24; --text: #f8fafc; --text-dim: #94a3b8; --border: #334155; }
         * { box-sizing: border-box; transition: all 0.2s ease; -webkit-tap-highlight-color: transparent; }
-        
-        body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
-        
-        /* Fixed Top Bar - iPhone Notch Friendly */
-        .top-nav { width: 100%; display: flex; justify-content: flex-start; padding: 12px 15px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border); }
-        .home-link { text-decoration: none; color: var(--text-dim); font-size: 0.7rem; font-weight: 800; border: 1px solid var(--border); padding: 6px 14px; border-radius: 20px; background: var(--card); }
-        
+        body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .top-nav { width: 100%; display: flex; padding: 12px 15px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border); }
+        .home-link { text-decoration: none; color: var(--text-dim); font-size: 0.75rem; font-weight: 800; border: 1px solid var(--border); padding: 6px 14px; border-radius: 20px; background: var(--card); }
         .app-container { max-width: 600px; width: 92%; display: flex; flex-direction: column; align-items: center; padding-bottom: 50px; }
         header { width: 100%; text-align: center; padding: 20px 0 10px 0; }
-        h1 { font-size: 1.8rem; font-weight: 800; margin: 0; letter-spacing: -1px; }
-
+        h1 { font-size: 1.8rem; font-weight: 800; margin: 0; }
         .stats-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; margin: 15px 0; }
         .stat-box { background: var(--card); padding: 10px; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
         .stat-val { font-size: 1.1rem; font-weight: 800; display: block; color: var(--secondary); }
         .stat-label { font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700; }
         progress { width: 100%; height: 6px; accent-color: var(--primary); border-radius: 10px; border: none; background: #334155; }
-
         nav { display: flex; background: var(--card); padding: 4px; border-radius: 12px; gap: 4px; margin: 15px 0; border: 1px solid var(--border); width: 100%; }
         .nav-btn { flex: 1; padding: 12px 5px; border: none; background: transparent; color: var(--text-dim); cursor: pointer; border-radius: 8px; font-weight: 700; font-size: 0.75rem; }
         .nav-btn.active { background: var(--primary); color: white; }
-
         .content-section { display: none; width: 100%; animation: fadeIn 0.3s ease; flex-direction: column; align-items: center; }
         .content-section.active { display: flex; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
         .mode-toggle, .diff-toggle { display: flex; background: var(--bg); padding: 4px; border-radius: 10px; margin-bottom: 8px; width: 100%; gap: 4px; border: 1px solid var(--border); }
         .mode-btn, .diff-btn { flex: 1; padding: 10px 2px; font-size: 0.65rem; border: none; background: transparent; color: var(--text-dim); cursor: pointer; border-radius: 6px; font-weight: 800; }
-        .mode-btn.active, .diff-btn.active { background: var(--card); color: var(--primary); box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-
+        .mode-btn.active, .diff-btn.active { background: var(--card); color: var(--primary); }
         .flashcard-wrapper { perspective: 1000px; width: 100%; height: 320px; cursor: pointer; margin: 10px 0 20px 0; }
         .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.5s; transform-style: preserve-3d; }
         .flashcard-wrapper.is-flipped .flashcard-inner { transform: rotateY(180deg); }
         .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px; border: 2px solid var(--primary); }
         .card-front { background: var(--card); }
         .card-back { background: var(--primary); transform: rotateY(180deg); color: white; }
-
         .btn-main { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 0 #be185d; }
-        .btn-main:active { transform: translateY(2px); box-shadow: 0 2px 0 #be185d; }
-
         .romaji { font-size: 1.1rem; font-style: italic; color: #ffe4e6; margin-top: 15px; }
-        input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: white; font-size: 1rem; margin-bottom: 10px; outline: none; }
-        input:focus { border-color: var(--primary); }
+        input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: white; font-size: 1rem; margin-bottom: 10px; }
     </style>
 </head>
 <body>
-    <div class="top-nav">
-        <a href="index.html" class="home-link">← HOME</a>
-    </div>
-
+    <div class="top-nav"><a href="index.html" class="home-link">← HOME</a></div>
     <div class="app-container">
-        <header>
-            <h1>PROJECT <span style="color:var(--primary)">SAKURA</span> 🌸</h1>
-        </header>
-
+        <header><h1>PROJECT <span style="color:var(--primary)">SAKURA</span> 🌸</h1></header>
         <div class="stats-bar">
             <div class="stat-box"><span class="stat-label">Level</span><span id="lvl-val" class="stat-val">1</span></div>
             <div class="stat-box"><span class="stat-label">XP</span><span id="xp-val" class="stat-val">0</span></div>
             <div class="stat-box"><span class="stat-label">Streak</span><span id="streak-val" class="stat-val">0</span></div>
         </div>
         <progress id="xp-bar" value="0" max="1000"></progress>
-
         <nav>
             <button class="nav-btn active" onclick="showTab('study', this)">Training</button>
             <button class="nav-btn" onclick="showTab('test', this)">Test</button>
             <button class="nav-btn" onclick="showTab('vault', this)">Vault</button>
         </nav>
-
         <div id="study" class="content-section active">
             <div class="mode-toggle">
                 <button class="mode-btn active" id="btn-words" onclick="setMode('words')">WORDS</button>
@@ -86,57 +64,51 @@
                 <button class="diff-btn" onclick="setDiff('hard', this)">HARD</button>
                 <button class="diff-btn" onclick="setDiff('vhard', this)">V. HARD</button>
             </div>
-
             <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
                 <div class="flashcard-inner">
                     <div class="card-front">
-                        <h2 id="jp-text" style="font-size: 2.5rem; margin:0;">--</h2>
+                        <h2 id="jp-text" style="font-size: 2.5rem;">--</h2>
                         <button class="btn-main" style="width:auto; padding:8px 20px; font-size:0.7rem; margin-top:20px;" onclick="speakCurrent(); event.stopPropagation();">🔊 HEAR</button>
                     </div>
                     <div class="card-back">
-                        <h2 id="en-text" style="font-size: 1.6rem; margin:0;">--</h2>
+                        <h2 id="en-text" style="font-size: 1.6rem;">--</h2>
                         <div id="romaji-text" class="romaji">--</div>
                     </div>
                 </div>
             </div>
             <button class="btn-main" onclick="nextCard()">NEXT CARD →</button>
         </div>
-
         <div id="test" class="content-section">
             <div style="background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid var(--border); width: 100%; text-align: center;">
                 <h2 id="test-jp" style="font-size: 2.2rem;">--</h2>
                 <input type="text" id="test-input" placeholder="Meaning in English..." onkeydown="if(event.key==='Enter') checkAnswer()">
-                <button class="btn-main" onclick="checkAnswer()">SUBMIT ANSWER</button>
+                <button class="btn-main" onclick="checkAnswer()">SUBMIT</button>
                 <p id="feedback" style="margin-top:15px; font-weight:bold;"></p>
             </div>
         </div>
-
         <div id="vault" class="content-section">
             <div style="background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid var(--border); width: 100%;">
-                <input type="text" id="v-jp" placeholder="Japanese (Kanji/Kana)">
-                <input type="text" id="v-en" placeholder="English Meaning">
-                <button class="btn-main" onclick="addToVault()">SAVE TO VAULT</button>
+                <input type="text" id="v-jp" placeholder="Japanese Word"><input type="text" id="v-en" placeholder="English Meaning">
+                <button class="btn-main" onclick="addToVault()">SAVE</button>
             </div>
             <div id="vault-list" style="width:100%; margin-top:20px;"></div>
         </div>
     </div>
-
 <script>
     const library = {
         words: {
-            easy: [{jp: "水", en: "Water", rj: "Mizu"}, {jp: "本", en: "Book", rj: "Hon"}, {jp: "猫", en: "Cat", rj: "Neko"}, {jp: "犬", en: "Dog", rj: "Inu"}],
-            medium: [{jp: "飛行機", en: "Airplane", rj: "Hi-kou-ki"}, {jp: "雑誌", en: "Magazine", rj: "Zas-shi"}, {jp: "時計", en: "Watch", rj: "To-kei"}],
-            hard: [{jp: "経済", en: "Economy", rj: "Kei-zai"}, {jp: "環境", en: "Environment", rj: "Kan-kyou"}],
-            vhard: [{jp: "葛藤", en: "Conflict", rj: "Kat-tou"}, {jp: "曖昧", en: "Ambiguous", rj: "Ai-mai"}]
+            easy: [{jp:"水",en:"Water",rj:"Mizu"},{jp:"本",en:"Book",rj:"Hon"},{jp:"猫",en:"Cat",rj:"Neko"},{jp:"犬",en:"Dog",rj:"Inu"},{jp:"山",en:"Mountain",rj:"Yama"},{jp:"木",en:"Tree",rj:"Ki"},{jp:"人",en:"Person",rj:"Hito"},{jp:"空",en:"Sky",rj:"Sora"}],
+            medium: [{jp:"飛行機",en:"Airplane",rj:"Hi-kou-ki"},{jp:"雑誌",en:"Magazine",rj:"Zas-shi"},{jp:"時計",en:"Watch",rj:"To-kei"},{jp:"料理",en:"Cooking",rj:"Ryou-ri"},{jp:"電話",en:"Phone",rj:"Den-wa"},{jp:"勉強",en:"Study",rj:"Ben-kyou"},{jp:"家族",en:"Family",rj:"Ka-zo-ku"}],
+            hard: [{jp:"経済",en:"Economy",rj:"Kei-zai"},{jp:"環境",en:"Environment",rj:"Kan-kyou"},{jp:"歴史",en:"History",rj:"Re-ki-shi"},{jp:"複雑",en:"Complex",rj:"Fu-ku-za-tsu"},{jp:"政治",en:"Politics",rj:"Sei-ji"}],
+            vhard: [{jp:"葛藤",en:"Conflict",rj:"Kat-tou"},{jp:"曖昧",en:"Ambiguous",rj:"Ai-mai"},{jp:"憂鬱",en:"Melancholy",rj:"Yuu-utsu"},{jp:"忖度",en:"Surmising",rj:"Son-ta-ku"},{jp:"矛盾",en:"Contradiction",rj:"Mu-jun"}]
         },
         phrases: {
-            easy: [{jp: "こんにちは", en: "Hello", rj: "Kon-ni-chi-wa"}, {jp: "はい", en: "Yes", rj: "Hai"}],
-            medium: [{jp: "お元気ですか？", en: "How are you?", rj: "O-gen-ki desu ka?"}],
-            hard: [{jp: "お世話になっております", en: "Thank you for your business", rj: "O-se-wa ni nat-te..."}],
-            vhard: [{jp: "郷に入っては郷に従え", en: "When in Rome, do as the Romans do", rj: "Gou ni it-te wa..."}]
+            easy: [{jp:"こんにちは",en:"Hello",rj:"Kon-ni-chi-wa"},{jp:"はい",en:"Yes",rj:"Hai"},{jp:"いいえ",en:"No",rj:"Iie"},{jp:"ありがとう",en:"Thanks",rj:"Arigatou"}],
+            medium: [{jp:"お元気ですか？",en:"How are you?",rj:"O-gen-ki desu ka?"},{jp:"いくらですか",en:"How much?",rj:"Ikura desu ka"}],
+            hard: [{jp:"お世話になります",en:"Thank you for your help",rj:"O-se-wa ni na-ri-ma-su"}],
+            vhard: [{jp:"郷に入っては郷に従え",en:"When in Rome...",rj:"Gou ni it-te wa..."}]
         }
     };
-
     let xp = parseInt(localStorage.getItem('pj_xp')) || 0;
     let vault = JSON.parse(localStorage.getItem('pj_vault')) || [];
     let currentMode = 'words'; let currentDiff = 'easy'; let sessionDeck = [];
@@ -145,90 +117,56 @@
         document.getElementById('xp-val').innerText = xp;
         document.getElementById('lvl-val').innerText = Math.floor(xp / 1000) + 1;
         document.getElementById('xp-bar').value = xp % 1000;
-        localStorage.setItem('pj_xp', xp);
-        localStorage.setItem('pj_vault', JSON.stringify(vault));
+        localStorage.setItem('pj_xp', xp); localStorage.setItem('pj_vault', JSON.stringify(vault));
         renderVault();
     }
-
     function showTab(id, btn) {
         document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
         document.querySelectorAll('nav .nav-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.add('active'); 
-        btn.classList.add('active');
+        document.getElementById(id).classList.add('active'); btn.classList.add('active');
         if(id === 'test') startTest();
     }
-
-    function setMode(mode) {
-        currentMode = mode;
-        document.getElementById('btn-words').classList.toggle('active', mode === 'words');
-        document.getElementById('btn-phrases').classList.toggle('active', mode === 'phrases');
-        sessionDeck = []; nextCard();
-    }
-
+    function setMode(mode) { currentMode = mode; sessionDeck = []; nextCard(); }
     function setDiff(diff, btn) {
-        currentDiff = diff;
-        document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        sessionDeck = []; nextCard();
+        currentDiff = diff; document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active'); sessionDeck = []; nextCard();
     }
-
     function nextCard() {
-        if (sessionDeck.length === 0) {
-            let base = library[currentMode][currentDiff] || [];
-            sessionDeck = [...base].sort(() => Math.random() - 0.5);
-        }
+        if (sessionDeck.length === 0) { sessionDeck = [...library[currentMode][currentDiff]].sort(() => Math.random() - 0.5); }
         const card = sessionDeck.pop();
         document.querySelector('.flashcard-wrapper').classList.remove('is-flipped');
         setTimeout(() => {
-            document.getElementById('jp-text').innerText = card ? card.jp : "Add more!";
-            document.getElementById('en-text').innerText = card ? card.en : "--";
-            document.getElementById('romaji-text').innerText = card ? card.rj : "--";
+            document.getElementById('jp-text').innerText = card.jp;
+            document.getElementById('en-text').innerText = card.en;
+            document.getElementById('romaji-text').innerText = card.rj;
         }, 150);
     }
-
     function speakCurrent() {
+        window.speechSynthesis.cancel();
         const ut = new SpeechSynthesisUtterance(document.getElementById('jp-text').innerText);
-        ut.lang = 'ja-JP'; window.speechSynthesis.speak(ut);
+        const v = window.speechSynthesis.getVoices().find(v => v.lang.includes('ja-JP'));
+        if(v) ut.voice = v; ut.lang = 'ja-JP'; ut.rate = 0.8; window.speechSynthesis.speak(ut);
     }
-
     function startTest() {
-        const all = [...library.words.easy, ...library.words.medium, ...library.words.hard];
-        window.currentTest = all[Math.floor(Math.random() * all.length)];
+        const pool = library.words[currentDiff];
+        window.currentTest = pool[Math.floor(Math.random()*pool.length)];
         document.getElementById('test-jp').innerText = window.currentTest.jp;
-        document.getElementById('test-input').value = "";
-        document.getElementById('feedback').innerText = "";
+        document.getElementById('test-input').value = ""; document.getElementById('feedback').innerText = "";
     }
-
     function checkAnswer() {
-        const input = document.getElementById('test-input').value.trim().toLowerCase();
-        if(input === window.currentTest.en.toLowerCase()) {
-            xp += 30; updateUI(); 
-            document.getElementById('feedback').style.color = "var(--primary)";
-            document.getElementById('feedback').innerText = "Correct! +30 XP"; 
-            setTimeout(startTest, 1200);
-        } else {
-            document.getElementById('feedback').style.color = "var(--secondary)";
-            document.getElementById('feedback').innerText = `Try: ${window.currentTest.en}`;
-        }
+        if(document.getElementById('test-input').value.trim().toLowerCase() === window.currentTest.en.toLowerCase()) {
+            xp += 30; updateUI(); document.getElementById('feedback').innerText = "Correct! +30 XP"; setTimeout(startTest, 1200);
+        } else { document.getElementById('feedback').innerText = "Try again!"; }
     }
-
     function addToVault() {
         const jp = document.getElementById('v-jp').value, en = document.getElementById('v-en').value;
-        if(jp && en) { 
-            vault.push({jp, en, rj: "Added Word"}); 
-            updateUI(); 
-            document.getElementById('v-jp').value = ""; 
-            document.getElementById('v-en').value = ""; 
-        }
+        if(jp && en) { vault.push({jp, en, rj: "Added Word"}); updateUI(); }
     }
-
     function renderVault() {
         document.getElementById('vault-list').innerHTML = vault.map(i => `<div class="stat-box" style="margin-top:5px; text-align:left;">${i.jp} - ${i.en}</div>`).join('');
     }
-
-    // Initialize
-    updateUI(); 
-    nextCard();
+    window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
+    updateUI(); nextCard();
 </script>
 </body>
 </html>
