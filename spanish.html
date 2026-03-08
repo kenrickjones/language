@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
-    <title>Projeto Samba | Portuguese</title>
+    <title>Proyecto Sol | Spanish</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <script src="portuguese_vault.js"></script>
+    <script src="spanish_vault.js"></script>
     <style>
-        :root { --bg: #0f172a; --card: #1e293b; --primary: #22c55e; --secondary: #eab308; --text: #f8fafc; --text-dim: #94a3b8; --border: #334155; }
+        :root { --bg: #0f172a; --card: #1e293b; --primary: #f59e0b; --secondary: #38bdf8; --text: #f8fafc; --text-dim: #94a3b8; --border: #334155; }
         * { box-sizing: border-box; transition: all 0.2s ease; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-top: env(safe-area-inset-top); }
         .top-nav { width: 100%; display: flex; padding: 12px 15px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border); }
@@ -17,7 +17,7 @@
         h1 { font-size: 1.8rem; font-weight: 800; margin: 0; }
         .stats-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; margin: 15px 0; }
         .stat-box { background: var(--card); padding: 10px; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
-        .stat-val { font-size: 1.1rem; font-weight: 800; display: block; color: var(--secondary); }
+        .stat-val { font-size: 1.1rem; font-weight: 800; display: block; color: var(--primary); }
         .stat-label { font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700; }
         progress { width: 100%; height: 6px; accent-color: var(--primary); border-radius: 10px; border: none; background: #334155; margin-bottom: 20px; }
         nav { display: flex; background: var(--card); padding: 4px; border-radius: 12px; gap: 4px; margin-bottom: 20px; border: 1px solid var(--border); width: 100%; overflow-x: auto; }
@@ -31,16 +31,16 @@
         .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px; border: 2px solid var(--primary); text-align: center; }
         .card-front { background: var(--card); }
         .card-back { background: var(--primary); transform: rotateY(180deg); color: white; }
-        .btn-main { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 0 #166534; }
-        .pronunciation { font-size: 0.9rem; font-style: italic; color: #dcfce7; margin-top: 8px; }
-        input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: white; font-size: 1rem; margin-bottom: 10px; outline: none; }
+        .btn-main { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 0 #92400e; }
+        .pronunciation { font-size: 0.9rem; font-style: italic; color: #fef3c7; margin-top: 8px; }
+        input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: white; font-size: 1rem; margin-bottom: 10px; }
         .vault-item { background: var(--card); padding: 12px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 8px; display: flex; justify-content: space-between; }
     </style>
 </head>
 <body>
     <div class="top-nav"><a href="index.html" class="home-link">← HOME</a></div>
     <div class="app-container">
-        <header><h1>PROJETO <span style="color:var(--primary)">SAMBA</span> 🇧🇷</h1></header>
+        <header><h1>PROYECTO <span style="color:var(--primary)">SOL</span> 🇪🇸</h1></header>
         <div class="stats-bar">
             <div class="stat-box"><span class="stat-label">Level</span><span id="lvl-val" class="stat-val">1</span></div>
             <div class="stat-box"><span class="stat-label">XP</span><span id="xp-val" class="stat-val">0</span></div>
@@ -59,7 +59,7 @@
             <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
                 <div class="flashcard-inner">
                     <div class="card-front">
-                        <h2 id="pt-text" style="font-size: 2.2rem; margin:0;">--</h2>
+                        <h2 id="sp-text" style="font-size: 2.2rem; margin:0;">--</h2>
                         <div id="front-ph" class="pronunciation" style="color:var(--text-dim)">--</div>
                         <button class="btn-main" style="width:auto; padding:8px 20px; font-size:0.7rem; margin-top:20px;" onclick="speakCurrent(); event.stopPropagation();">🔊 HEAR</button>
                     </div>
@@ -74,7 +74,7 @@
 
         <div id="test" class="content-section">
             <div style="background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid var(--border); width: 100%; text-align: center;">
-                <h2 id="test-pt">--</h2>
+                <h2 id="test-sp">--</h2>
                 <input type="text" id="test-input" placeholder="English translation..." autocomplete="off">
                 <button class="btn-main" onclick="checkAnswer()">SUBMIT</button>
                 <p id="feedback" style="margin-top:15px; font-weight:bold;"></p>
@@ -83,9 +83,9 @@
 
         <div id="vault" class="content-section">
             <div style="background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid var(--border); width: 100%;">
-                <input type="text" id="v-pt" placeholder="Portuguese Word">
+                <input type="text" id="v-sp" placeholder="Spanish Word">
                 <input type="text" id="v-en" placeholder="English Meaning">
-                <button class="btn-main" onclick="addToVault()">SAVE TO VAULT</button>
+                <button class="btn-main" onclick="addToVault()">SAVE</button>
             </div>
             <div id="vault-list" style="width:100%; margin-top:20px;"></div>
         </div>
@@ -96,8 +96,8 @@
     </div>
 
 <script>
-    let xp = parseInt(localStorage.getItem('ps_xp')) || 0;
-    let localVault = JSON.parse(localStorage.getItem('ps_vault')) || [];
+    let xp = parseInt(localStorage.getItem('p-sol_xp')) || 0;
+    let localVault = JSON.parse(localStorage.getItem('p-sol_vault')) || [];
     let sessionDeck = [];
     let currentTestCard = null;
 
@@ -105,7 +105,7 @@
         document.getElementById('xp-val').innerText = xp;
         document.getElementById('lvl-val').innerText = Math.floor(xp / 1000) + 1;
         document.getElementById('xp-bar').value = xp % 1000;
-        localStorage.setItem('ps_xp', xp);
+        localStorage.setItem('p-sol_xp', xp);
         renderVault();
     }
 
@@ -118,12 +118,12 @@
     }
 
     function nextCard() {
-        const master = PORTUGUESE_LIBRARY.words.easy; // Pulls from your JS file
+        const master = SPANISH_LIBRARY.words.easy;
         if (sessionDeck.length === 0) sessionDeck = [...master].sort(() => 0.5 - Math.random());
         const card = sessionDeck.pop();
         document.querySelector('.flashcard-wrapper').classList.remove('is-flipped');
         setTimeout(() => {
-            document.getElementById('pt-text').innerText = card.pt;
+            document.getElementById('sp-text').innerText = card.sp;
             document.getElementById('front-ph').innerText = `[ ${card.ph} ]`;
             document.getElementById('en-text').innerText = card.en;
             document.getElementById('back-ph').innerText = card.ph;
@@ -131,9 +131,9 @@
     }
 
     function startTest() {
-        const pool = PORTUGUESE_LIBRARY.words.easy;
+        const pool = SPANISH_LIBRARY.words.easy;
         currentTestCard = pool[Math.floor(Math.random()*pool.length)];
-        document.getElementById('test-pt').innerText = currentTestCard.pt;
+        document.getElementById('test-sp').innerText = currentTestCard.sp;
         document.getElementById('test-input').value = "";
         document.getElementById('feedback').innerText = "";
     }
@@ -142,34 +142,34 @@
         const guess = document.getElementById('test-input').value.trim().toLowerCase();
         if(guess === currentTestCard.en.toLowerCase()) {
             xp += 50; updateUI();
-            document.getElementById('feedback').innerText = "✅ Correct! +50 XP";
+            document.getElementById('feedback').innerText = "✅ ¡Correcto! +50 XP";
             setTimeout(startTest, 1200);
         } else {
-            document.getElementById('feedback').innerText = "❌ Not quite! Try again.";
+            document.getElementById('feedback').innerText = "❌ No... ¡Intenta de nuevo!";
         }
     }
 
     function addToVault() {
-        const pt = document.getElementById('v-pt').value;
+        const sp = document.getElementById('v-sp').value;
         const en = document.getElementById('v-en').value;
-        if(pt && en) {
-            localVault.push({pt, en});
-            localStorage.setItem('ps_vault', JSON.stringify(localVault));
-            document.getElementById('v-pt').value = ""; document.getElementById('v-en').value = "";
+        if(sp && en) {
+            localVault.push({sp, en});
+            localStorage.setItem('p-sol_vault', JSON.stringify(localVault));
+            document.getElementById('v-sp').value = ""; document.getElementById('v-en').value = "";
             updateUI();
         }
     }
 
     function renderVault() {
         document.getElementById('vault-list').innerHTML = localVault.map(item => 
-            `<div class="vault-item"><span><b>${item.pt}</b></span><span>${item.en}</span></div>`
+            `<div class="vault-item"><span><b>${item.sp}</b></span><span>${item.en}</span></div>`
         ).join('');
     }
 
     function speakCurrent() {
         window.speechSynthesis.cancel();
-        const ut = new SpeechSynthesisUtterance(document.getElementById('pt-text').innerText);
-        ut.lang = 'pt-BR'; ut.rate = 0.9; window.speechSynthesis.speak(ut);
+        const ut = new SpeechSynthesisUtterance(document.getElementById('sp-text').innerText);
+        ut.lang = 'es-ES'; ut.rate = 0.9; window.speechSynthesis.speak(ut);
     }
 
     updateUI(); nextCard();

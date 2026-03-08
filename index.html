@@ -7,259 +7,64 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0f172a;
-            --card: #1e293b;
-            --pt-color: #22c55e;
-            --jp-color: #f472b6;
-            --text: #f8fafc;
-            --text-dim: #94a3b8;
-            --border: #334155;
-            --drawer-w: 260px;
+            --bg: #0f172a; --card: #1e293b; --pt-color: #22c55e;
+            --jp-color: #f472b6; --sp-color: #f59e0b;
+            --text: #f8fafc; --text-dim: #94a3b8; --border: #334155; --drawer-w: 260px;
         }
-
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* --- Header & Menu Button --- */
-        header {
-            padding: calc(env(safe-area-inset-top) + 20px) 20px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            background: rgba(15, 23, 42, 0.9);
-            backdrop-filter: blur(10px);
-            z-index: 80;
-        }
-
-        .menu-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .menu-btn span {
-            display: block;
-            width: 25px;
-            height: 3px;
-            background: var(--text);
-            border-radius: 3px;
-            transition: 0.3s;
-        }
-
-        h1 { font-size: 1.5rem; font-weight: 900; margin: 0; letter-spacing: -1px; }
-
-        /* --- Sidebar Drawer --- */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: calc(-1 * var(--drawer-w));
-            width: var(--drawer-w);
-            height: 100%;
-            background: var(--card);
-            z-index: 100;
-            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            padding: 40px 25px;
-            box-shadow: 10px 0 30px rgba(0,0,0,0.5);
-            border-right: 1px solid var(--border);
-        }
-
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+        header { padding: calc(env(safe-area-inset-top) + 20px) 20px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px); z-index: 80; }
+        .menu-btn { background: none; border: none; cursor: pointer; padding: 10px; display: flex; flex-direction: column; gap: 5px; }
+        .menu-btn span { display: block; width: 25px; height: 3px; background: var(--text); border-radius: 3px; }
+        h1 { font-size: 1.5rem; font-weight: 900; margin: 0; }
+        .sidebar { position: fixed; top: 0; left: calc(-1 * var(--drawer-w)); width: var(--drawer-w); height: 100%; background: var(--card); z-index: 100; transition: 0.4s; padding: 40px 25px; border-right: 1px solid var(--border); }
         .sidebar.open { left: 0; }
-
-        .sidebar h2 { font-size: 1.2rem; margin-bottom: 25px; color: var(--text-dim); }
-
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.6);
-            visibility: hidden;
-            opacity: 0;
-            transition: 0.3s;
-            z-index: 90;
-        }
-
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); visibility: hidden; opacity: 0; transition: 0.3s; z-index: 90; }
         .overlay.active { visibility: visible; opacity: 1; }
-
-        /* --- Toggle Switches in Sidebar --- */
-        .drawer-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            background: var(--bg);
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-        }
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 44px;
-            height: 24px;
-        }
-
+        .drawer-item { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; background: var(--bg); padding: 12px; border-radius: 12px; border: 1px solid var(--border); }
+        .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #475569;
-            transition: .4s;
-            border-radius: 24px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px; width: 18px;
-            left: 3px; bottom: 3px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #475569; transition: .4s; border-radius: 22px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--pt-color); }
-        input:checked + .slider:before { transform: translateX(20px); }
-
-        /* --- Main Grid Layout --- */
-        main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 40px 20px;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .tile {
-            text-decoration: none;
-            background: var(--card);
-            border: 2px solid var(--border);
-            border-radius: 24px;
-            padding: 45px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: 0.2s;
-        }
-
+        input:checked + .slider:before { transform: translateX(18px); }
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 30px 20px; }
+        .grid { display: grid; grid-template-columns: 1fr; gap: 20px; width: 100%; max-width: 400px; }
+        .tile { text-decoration: none; background: var(--card); border: 2px solid var(--border); border-radius: 24px; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; transition: 0.2s; }
         .tile:active { transform: scale(0.96); }
         .tile.hidden { display: none; }
-
         .tile.portuguese { border-color: var(--pt-color); }
         .tile.japanese { border-color: var(--jp-color); }
-
-        .flag { font-size: 3.5rem; margin-bottom: 10px; }
-        .title-text { font-size: 1.5rem; font-weight: 800; color: white; margin: 0; }
-        .sub-text { font-size: 0.8rem; color: var(--text-dim); margin-top: 5px; }
-
-        footer {
-            text-align: center;
-            padding: 40px 20px calc(env(safe-area-inset-bottom) + 20px);
-            color: var(--text-dim);
-            font-weight: 600;
-        }
-
-        @media (min-width: 768px) {
-            .grid { grid-template-columns: 1fr 1fr; max-width: 700px; }
-        }
+        .tile.spanish { border-color: var(--sp-color); }
+        .flag { font-size: 3rem; margin-bottom: 10px; }
+        .title-text { font-size: 1.3rem; font-weight: 800; color: white; margin: 0; }
+        footer { text-align: center; padding: 40px 20px calc(env(safe-area-inset-bottom) + 20px); color: var(--text-dim); font-weight: 600; }
     </style>
 </head>
 <body>
-
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
     <div class="sidebar" id="sidebar">
-        <h2>Settings</h2>
-        
-        <div class="drawer-item">
-            <span>Portuguese</span>
-            <label class="switch">
-                <input type="checkbox" checked id="check-pt" onclick="toggleTile('pt')">
-                <span class="slider"></span>
-            </label>
-        </div>
-
-        <div class="drawer-item">
-            <span>Japanese</span>
-            <label class="switch">
-                <input type="checkbox" checked id="check-jp" onclick="toggleTile('jp')">
-                <span class="slider"></span>
-            </label>
-        </div>
+        <h2 style="color:var(--text-dim)">Show/Hide</h2>
+        <div class="drawer-item"><span>Portuguese</span><label class="switch"><input type="checkbox" checked onclick="toggleTile('pt')"><span class="slider"></span></label></div>
+        <div class="drawer-item"><span>Japanese</span><label class="switch"><input type="checkbox" checked onclick="toggleTile('jp')"><span class="slider"></span></label></div>
+        <div class="drawer-item"><span>Spanish</span><label class="switch"><input type="checkbox" checked onclick="toggleTile('sp')"><span class="slider"></span></label></div>
     </div>
-
     <header>
-        <button class="menu-btn" onclick="toggleMenu()">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
+        <button class="menu-btn" onclick="toggleMenu()"><span></span><span></span><span></span></button>
         <h1>Language Learning</h1>
-        <div style="width: 45px;"></div> </header>
-
+        <div style="width: 45px;"></div>
+    </header>
     <main>
         <div class="grid">
-            <a href="portuguese.html" class="tile portuguese" id="card-pt">
-                <span class="flag">🇧🇷</span>
-                <p class="title-text">Projeto Samba</p>
-                <p class="sub-text">Portuguese</p>
-            </a>
-
-            <a href="japanese.html" class="tile japanese" id="card-jp">
-                <span class="flag">🇯🇵</span>
-                <p class="title-text">Project Sakura</p>
-                <p class="sub-text">Japanese</p>
-            </a>
+            <a href="portuguese.html" class="tile portuguese" id="card-pt"><span class="flag">🇧🇷</span><p class="title-text">Projeto Samba</p></a>
+            <a href="japanese.html" class="tile japanese" id="card-jp"><span class="flag">🇯🇵</span><p class="title-text">Project Sakura</p></a>
+            <a href="spanish.html" class="tile spanish" id="card-sp"><span class="flag">🇪🇸</span><p class="title-text">Proyecto Sol</p></a>
         </div>
     </main>
-
-    <footer>
-        Created by Kenny!
-    </footer>
-
+    <footer>Created by Kenny!</footer>
     <script>
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('overlay').classList.toggle('active');
-        }
-
-        function toggleTile(id) {
-            const isChecked = document.getElementById('check-' + id).checked;
-            const tile = document.getElementById('card-' + id);
-            
-            if (isChecked) {
-                tile.classList.remove('hidden');
-            } else {
-                tile.classList.add('hidden');
-            }
-        }
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('overlay').classList.toggle('active'); }
+        function toggleTile(id) { document.getElementById('card-' + id).classList.toggle('hidden'); }
     </script>
 </body>
 </html>
