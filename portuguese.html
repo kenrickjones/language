@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projeto Samba | Created by Kenny</title>
+    <title>Projeto Samba | Portuguese</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #0f172a; --card: #1e293b; --primary: #22c55e; --secondary: #eab308; --accent: #3b82f6; --text: #f8fafc; --text-dim: #94a3b8; --border: #334155; --error: #ef4444; }
@@ -24,32 +24,25 @@
         .content-section { display: none; width: 100%; animation: fadeIn 0.3s ease; }
         .content-section.active { display: flex; flex-direction: column; align-items: center; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        .card { background: var(--card); border-radius: 18px; padding: 25px; border: 1px solid var(--border); width: 100%; text-align: center; margin-bottom: 15px; position: relative; }
+        .card { background: var(--card); border-radius: 18px; padding: 25px; border: 1px solid var(--border); width: 100%; text-align: center; margin-bottom: 15px; }
         .difficulty-picker { display: flex; gap: 10px; margin-bottom: 20px; width: 100%; }
         .diff-btn { flex: 1; padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text-dim); cursor: pointer; font-size: 0.7rem; font-weight: bold; }
         .diff-btn.active { border-color: var(--primary); color: var(--primary); background: #16653422; }
-        .video-grid { width: 100%; display: grid; gap: 20px; }
-        .video-card { background: var(--card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
-        .video-card iframe { width: 100%; aspect-ratio: 16/9; border: none; }
-        .video-info { padding: 10px; font-size: 0.8rem; font-weight: 600; }
-        input[type="text"] { width: 100%; padding: 14px; border-radius: 10px; background: var(--bg); border: 2px solid var(--border); color: white; font-size: 1rem; margin-top: 10px; outline: none; }
-        .btn-main { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 0 #166534; }
-        .btn-main:active { transform: translateY(2px); box-shadow: 0 2px 0 #166534; }
         .flashcard-wrapper { perspective: 1000px; width: 100%; height: 280px; cursor: pointer; margin-bottom: 20px; }
         .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
         .flashcard-wrapper.is-flipped .flashcard-inner { transform: rotateY(180deg); }
         .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; border: 2px solid var(--primary); }
         .card-front { background: var(--card); }
         .card-back { background: var(--primary); transform: rotateY(180deg); }
-        .pronunciation { font-size: 0.9rem; font-style: italic; color: #dcfce7; margin-top: 10px; opacity: 0.9; }
-        .test-progress { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 10px; }
-        .deck-counter { font-size: 0.7rem; color: var(--text-dim); margin-top: 10px; }
+        .pronunciation { font-size: 1rem; font-style: italic; color: #dcfce7; margin-top: 15px; font-weight: 600; }
+        .btn-main { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 0 #166534; }
+        .btn-main:active { transform: translateY(2px); box-shadow: 0 2px 0 #166534; }
         footer { margin: 40px 0; font-size: 0.75rem; color: var(--text-dim); text-align: center; }
     </style>
 </head>
 <body>
 <div class="app-container">
-    <header><h1>PROJETO <span style="color:var(--primary)">SAMBA</span> 🇧🇷</h1><span class="sub-tag">Created by Kenny | 2026 Edition</span></header>
+    <header><h1>PROJETO <span style="color:var(--primary)">SAMBA</span> 🇧🇷</h1><span class="sub-tag">Created by Kenny</span></header>
     <div class="stats-bar">
         <div class="stat-box"><span class="stat-label">Level</span><span id="lvl-val" class="stat-val">1</span></div>
         <div class="stat-box"><span class="stat-label">XP</span><span id="xp-val" class="stat-val">0</span></div>
@@ -59,11 +52,10 @@
     <nav>
         <button class="nav-btn active" onclick="showTab('dash', this)">Mission</button>
         <button class="nav-btn" onclick="showTab('study', this)">Training</button>
-        <button class="nav-btn" onclick="showTab('watch', this)">Watch</button>
         <button class="nav-btn" onclick="showTab('test', this)">Test</button>
         <button class="nav-btn" onclick="showTab('vault', this)">Vault</button>
     </nav>
-    <div id="dash" class="content-section active"><div class="card"><h2>Daily Goal</h2><p>Ready to level up your Portuguese?</p><button class="btn-main" onclick="completeDaily()">LOG MISSION (+100 XP)</button></div></div>
+    <div id="dash" class="content-section active"><div class="card"><h2>Daily Goal</h2><p>Ready to level up?</p><button class="btn-main" onclick="completeDaily()">LOG MISSION (+100 XP)</button></div></div>
     <div id="study" class="content-section">
         <div class="difficulty-picker">
             <button class="diff-btn active" onclick="setDiff('easy', this)">EASY</button>
@@ -73,66 +65,49 @@
         <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
             <div class="flashcard-inner">
                 <div class="card-front">
-                    <span class="stat-label" style="margin-bottom: 20px;">Portuguese</span>
-                    <h2 id="pt-text" style="font-size: 2.2rem; margin: 0;">--</h2>
-                    <button class="btn-main" style="width:auto; padding:8px 20px; font-size:0.7rem; background:var(--accent); box-shadow:none; margin-top: 20px;" onclick="speakCurrent(); event.stopPropagation();">🔊 HEAR</button>
+                    <span class="stat-label">Portuguese</span>
+                    <h2 id="pt-text" style="font-size: 2.2rem; margin: 20px 0;">--</h2>
+                    <button class="btn-main" style="width:auto; padding:8px 20px; font-size:0.7rem; background:var(--accent); box-shadow:none;" onclick="speakCurrent(); event.stopPropagation();">🔊 HEAR</button>
                 </div>
                 <div class="card-back">
-                    <span class="stat-label" style="color:white; margin-bottom: 20px;">English</span>
-                    <h2 id="en-text" style="font-size: 2.2rem; margin: 0;">--</h2>
+                    <span class="stat-label" style="color:white;">English</span>
+                    <h2 id="en-text" style="font-size: 2.2rem; margin: 10px 0;">--</h2>
                     <div id="phonetic-text" class="pronunciation">--</div>
                 </div>
             </div>
         </div>
         <button class="btn-main" onclick="nextCard(); event.stopPropagation();">NEXT CARD →</button>
-        <div class="deck-counter" id="deck-status">Remaining: 0</div>
-    </div>
-    <div id="watch" class="content-section">
-        <h3>Recommended Daily Immersion</h3>
-        <div class="video-grid">
-            <div class="video-card"><iframe src="https://www.youtube.com/embed/VpZ9IID_n_Q" allowfullscreen></iframe><div class="video-info">Daily Portuguese Phrases</div></div>
-            <div class="video-card"><iframe src="https://www.youtube.com/embed/Z438Xidp7m0" allowfullscreen></iframe><div class="video-info">Brazilian Slang & Culture</div></div>
-        </div>
+        <div id="deck-status" style="font-size: 0.7rem; color: var(--text-dim); margin-top: 10px;">Remaining: 0</div>
     </div>
     <div id="test" class="content-section">
         <div id="test-container" class="card">
-            <div class="test-progress">Question <span id="q-count">1</span> / 20</div>
-            <span class="stat-label">Translate to English</span>
+            <div id="q-count" style="font-size: 0.8rem; color: var(--text-dim);">Question 1/20</div>
             <h2 id="test-pt" style="font-size: 2.2rem; margin: 20px 0;">--</h2>
-            <input type="text" id="test-input" placeholder="Type answer here..." onkeydown="if(event.key==='Enter') checkAnswer()">
-            <p id="feedback" style="margin-top: 15px; font-weight: 600; min-height: 1.2em;"></p>
-            <button class="btn-main" onclick="checkAnswer()">SUBMIT ANSWER</button>
+            <input type="text" id="test-input" placeholder="Type English answer..." onkeydown="if(event.key==='Enter') checkAnswer()">
+            <p id="feedback" style="margin-top: 15px; font-weight: 600;"></p>
+            <button class="btn-main" onclick="checkAnswer()">SUBMIT</button>
         </div>
         <div id="test-result" class="card" style="display:none;">
-            <h2>Test Complete!</h2><div style="font-size: 3rem; font-weight: 800; color: var(--secondary);" id="final-score">0/20</div><p id="score-msg"></p><button class="btn-main" onclick="startTest()">TRY AGAIN</button>
+            <h2>Test Complete!</h2><div id="final-score" style="font-size: 3rem; font-weight: 800; color: var(--secondary);">0/20</div>
+            <button class="btn-main" onclick="startTest()">TRY AGAIN</button>
         </div>
     </div>
     <div id="vault" class="content-section">
-        <div class="card"><h3>Add New Words</h3><input type="text" id="v-pt" placeholder="Portuguese Word"><input type="text" id="v-en" placeholder="English Translation"><button class="btn-main" onclick="addToVault()">SAVE TO VAULT (+15 XP)</button></div>
+        <div class="card"><h3>Add to Vault</h3><input type="text" id="v-pt" placeholder="Portuguese"><input type="text" id="v-en" placeholder="English"><button class="btn-main" onclick="addToVault()">SAVE (+15 XP)</button></div>
         <div id="vault-list" style="width:100%;"></div>
     </div>
-    <footer>Projeto Samba 2026<br><strong>Created by Kenny</strong></footer>
+    <footer>Projeto Samba 2026</footer>
 </div>
 <script>
     const bulkLibrary = {
-        easy: [
-            {pt: "Oi", en: "Hi", ph: "Oy"}, {pt: "Sim", en: "Yes", ph: "Seen"}, {pt: "Não", en: "No", ph: "Nowm"},
-            {pt: "Obrigado", en: "Thank you", ph: "Oh-bree-gah-doo"}, {pt: "Café", en: "Coffee", ph: "Cah-feh"},
-            {pt: "Amigo", en: "Friend", ph: "Ah-mee-goo"}, {pt: "Água", en: "Water", ph: "Ah-gwah"}
-        ],
-        medium: [
-            {pt: "Cerveja", en: "Beer", ph: "Sehr-vey-jah"}, {pt: "Cansado", en: "Tired", ph: "Can-sah-doo"},
-            {pt: "Banheiro", en: "Bathroom", ph: "Ban-yey-roo"}, {pt: "Almoço", en: "Lunch", ph: "Al-moh-soo"}
-        ],
-        hard: [
-            {pt: "Saudade", en: "Longing", ph: "Sow-dah-jee"}, {pt: "Infelizmente", en: "Unfortunately", ph: "In-feh-leez-men-chee"},
-            {pt: "Combinado", en: "Agreed", ph: "Com-bee-nah-doo"}, {pt: "Fique à vontade", en: "Make yourself at home", ph: "Fee-kee ah von-tah-jee"}
-        ]
+        easy: [{pt: "Oi", en: "Hi", ph: "Oy"}, {pt: "Sim", en: "Yes", ph: "Seen"}, {pt: "Não", en: "No", ph: "Nowm"}, {pt: "Obrigado", en: "Thank you", ph: "Oh-bree-gah-doo"}],
+        medium: [{pt: "Cerveja", en: "Beer", ph: "Sehr-vey-jah"}, {pt: "Cansado", en: "Tired", ph: "Can-sah-doo"}, {pt: "Banheiro", en: "Bathroom", ph: "Ban-yey-roo"}],
+        hard: [{pt: "Saudade", en: "Longing", ph: "Sow-dah-jee"}, {pt: "Infelizmente", en: "Unfortunately", ph: "In-feh-leez-men-chee"}]
     };
-    let xp = parseInt(localStorage.getItem('ps_xp')) || 0;
-    let streak = parseInt(localStorage.getItem('ps_streak')) || 0;
+    let xp = parseInt(localStorage.getItem('ps_xp')) || 0; let streak = parseInt(localStorage.getItem('ps_streak')) || 0;
     let vault = JSON.parse(localStorage.getItem('ps_vault')) || [];
-    let currentDiff = 'easy'; let sessionDeck = []; let testQuestionIndex = 0; let testScore = 0; let currentTestWord = null;
+    let currentDiff = 'easy'; let sessionDeck = []; let currentTestWord = null; let testIdx = 0; let testScore = 0;
+
     function updateUI() {
         document.getElementById('xp-val').innerText = xp; document.getElementById('lvl-val').innerText = Math.floor(xp / 1000) + 1;
         document.getElementById('streak-val').innerText = streak; document.getElementById('xp-bar').value = xp % 1000;
@@ -149,35 +124,36 @@
     function nextCard() {
         if (sessionDeck.length === 0) { sessionDeck = [...bulkLibrary[currentDiff], ...vault].sort(() => Math.random() - 0.5); }
         const card = sessionDeck.pop();
-        document.getElementById('deck-status').innerText = `Remaining in cycle: ${sessionDeck.length}`;
+        document.getElementById('deck-status').innerText = `Remaining: ${sessionDeck.length}`;
         document.querySelector('.flashcard-wrapper').classList.remove('is-flipped');
-        setTimeout(() => {
-            document.getElementById('pt-text').innerText = card.pt;
-            document.getElementById('en-text').innerText = card.en;
-            document.getElementById('phonetic-text').innerText = card.ph || "Custom word";
-        }, 150);
+        setTimeout(() => { document.getElementById('pt-text').innerText = card.pt; document.getElementById('en-text').innerText = card.en; document.getElementById('phonetic-text').innerText = card.ph || "Custom"; }, 150);
     }
-    function speakCurrent() { const ut = new SpeechSynthesisUtterance(document.getElementById('pt-text').innerText); ut.lang = 'pt-BR'; window.speechSynthesis.speak(ut); }
-    function startTest() { testQuestionIndex = 0; testScore = 0; document.getElementById('test-container').style.display = "block"; document.getElementById('test-result').style.display = "none"; nextTestQuestion(); }
-    function nextTestQuestion() {
-        testQuestionIndex++; if(testQuestionIndex > 20) { endTest(); return; }
-        document.getElementById('q-count').innerText = testQuestionIndex;
-        const fullDeck = [...bulkLibrary.easy, ...bulkLibrary.medium, ...bulkLibrary.hard, ...vault];
-        currentTestWord = fullDeck[Math.floor(Math.random() * fullDeck.length)];
+    function speakCurrent() {
+        const ut = new SpeechSynthesisUtterance(document.getElementById('pt-text').innerText);
+        const voices = window.speechSynthesis.getVoices();
+        ut.voice = voices.find(v => v.lang.includes('pt-BR')) || voices.find(v => v.lang.includes('pt'));
+        ut.lang = 'pt-BR'; ut.rate = 0.9;
+        window.speechSynthesis.cancel(); window.speechSynthesis.speak(ut);
+    }
+    function startTest() { testIdx = 0; testScore = 0; document.getElementById('test-container').style.display = "block"; document.getElementById('test-result').style.display = "none"; nextTestQ(); }
+    function nextTestQ() {
+        testIdx++; if(testIdx > 20) { endTest(); return; }
+        document.getElementById('q-count').innerText = `Question ${testIdx}/20`;
+        const full = [...bulkLibrary.easy, ...bulkLibrary.medium, ...bulkLibrary.hard, ...vault];
+        currentTestWord = full[Math.floor(Math.random() * full.length)];
         document.getElementById('test-pt').innerText = currentTestWord.pt;
-        document.getElementById('test-input').value = ""; document.getElementById('feedback').innerText = ""; document.getElementById('test-input').focus();
+        document.getElementById('test-input').value = ""; document.getElementById('feedback').innerText = "";
     }
     function checkAnswer() {
-        const userAns = document.getElementById('test-input').value.trim().toLowerCase();
-        if(userAns === currentTestWord.en.toLowerCase()) { document.getElementById('feedback').style.color = "var(--primary)"; document.getElementById('feedback').innerText = "Correct!"; testScore++; xp += 15; }
-        else { document.getElementById('feedback').style.color = "var(--error)"; document.getElementById('feedback').innerText = `Incorrect: ${currentTestWord.en}`; }
-        updateUI(); setTimeout(nextTestQuestion, 1500);
+        if(document.getElementById('test-input').value.trim().toLowerCase() === currentTestWord.en.toLowerCase()) { testScore++; xp += 15; document.getElementById('feedback').innerText = "Correct!"; }
+        else { document.getElementById('feedback').innerText = `Wrong: ${currentTestWord.en}`; }
+        updateUI(); setTimeout(nextTestQ, 1200);
     }
-    function endTest() { document.getElementById('test-container').style.display = "none"; document.getElementById('test-result').style.display = "block"; document.getElementById('final-score').innerText = `${testScore}/20`; document.getElementById('score-msg').innerText = testScore > 15 ? "Parabéns!" : "Keep training!"; xp += 50; updateUI(); }
+    function endTest() { document.getElementById('test-container').style.display = "none"; document.getElementById('test-result').style.display = "block"; document.getElementById('final-score').innerText = `${testScore}/20`; xp += 50; updateUI(); }
     function addToVault() { const pt = document.getElementById('v-pt').value, en = document.getElementById('v-en').value; if(pt && en) { vault.push({pt, en, ph: "Custom"}); xp += 15; updateUI(); document.getElementById('v-pt').value=''; document.getElementById('v-en').value=''; } }
     function renderVault() { document.getElementById('vault-list').innerHTML = vault.map(i => `<div class="stat-box" style="margin-bottom:5px; display:flex; justify-content:space-between;"><span>${i.pt}</span><small>${i.en}</small></div>`).join(''); }
-    function completeDaily() { const d = new Date().toLocaleDateString(); if(localStorage.getItem('ps_ld') === d) alert("Mission already completed today!"); else { xp += 100; streak++; localStorage.setItem('ps_ld', d); updateUI(); alert("Great job! +100 XP."); } }
-    updateUI(); nextCard();
+    function completeDaily() { const d = new Date().toLocaleDateString(); if(localStorage.getItem('ps_ld') === d) alert("Done!"); else { xp += 100; streak++; localStorage.setItem('ps_ld', d); updateUI(); alert("+100 XP!"); } }
+    window.speechSynthesis.onvoiceschanged = () => {}; updateUI(); nextCard();
 </script>
 </body>
 </html>
