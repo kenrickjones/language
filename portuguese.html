@@ -19,8 +19,8 @@
         .nav-btn.active { background: var(--primary); color: white; }
         .content-section { display: none; width: 100%; flex-direction: column; align-items: center; }
         .content-section.active { display: flex; animation: fadeIn 0.3s ease; }
-        .diff-toggle { display: flex; background: var(--bg); padding: 4px; border-radius: 10px; margin-bottom: 15px; width: 100%; gap: 4px; border: 1px solid var(--border); }
-        .diff-btn { flex: 1; padding: 10px 2px; font-size: 0.6rem; border: none; background: transparent; color: var(--text-dim); cursor: pointer; border-radius: 6px; font-weight: 800; }
+        .diff-toggle { display: flex; background: var(--bg); padding: 4px; border-radius: 10px; margin-bottom: 15px; width: 100%; gap: 4px; border: 1px solid var(--border); overflow-x: auto; }
+        .diff-btn { flex: 1; min-width: 60px; padding: 10px 2px; font-size: 0.6rem; border: none; background: transparent; color: var(--text-dim); cursor: pointer; border-radius: 6px; font-weight: 800; }
         .diff-btn.active { background: var(--card); color: var(--primary); }
         .flashcard-wrapper { perspective: 1000px; width: 100%; height: 320px; cursor: pointer; margin: 10px 0 20px 0; }
         .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.5s; transform-style: preserve-3d; }
@@ -29,6 +29,7 @@
         .card-back { background: var(--primary); transform: rotateY(180deg); color: white; }
         .btn-main { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 0 #166534; }
         .pronunciation { font-size: 0.9rem; font-style: italic; color: #dcfce7; margin-top: 8px; }
+        .card-front .pronunciation { color: var(--text-dim); }
         input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: white; font-size: 1rem; margin-bottom: 10px; outline: none; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
@@ -55,7 +56,7 @@
                 <div class="flashcard-inner">
                     <div class="card-front">
                         <h2 id="pt-text" style="font-size: 2.2rem; margin:0;">--</h2>
-                        <div class="pt-ph-view pronunciation" style="color:var(--text-dim)">--</div>
+                        <div class="pt-ph-view pronunciation">--</div>
                         <button class="btn-main" style="width:auto; padding:8px 20px; font-size:0.7rem; margin-top:20px;" onclick="event.stopPropagation(); speakCurrent('pt-text');">🔊 HEAR</button>
                     </div>
                     <div class="card-back">
@@ -78,7 +79,7 @@
                 <div class="flashcard-inner">
                     <div class="card-front">
                         <h2 id="phrase-pt" style="font-size: 1.6rem; margin:0;">--</h2>
-                        <div class="phrase-ph-view pronunciation" style="color:var(--text-dim)">--</div>
+                        <div class="phrase-ph-view pronunciation">--</div>
                         <button class="btn-main" style="width:auto; padding:8px 20px; font-size:0.7rem; margin-top:20px;" onclick="event.stopPropagation(); speakCurrent('phrase-pt');">🔊 HEAR</button>
                     </div>
                     <div class="card-back">
@@ -100,7 +101,7 @@
         </div>
 
         <div id="watch" class="content-section">
-            <iframe id="pt-player" width="100%" height="315" src="https://www.youtube.com/embed?listType=playlist&list=PLmZ-LpXfRz_R-3-X50kK8_E30fXknd829" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="border-radius:20px; border:2px solid var(--primary);"></iframe>
+            <iframe width="100%" height="315" src="https://www.youtube.com/embed/videoseries?list=PL0m9S_3Y_IwfT-K_U_mC7S3pYI_X0vO1F" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:20px; border:2px solid var(--primary);"></iframe>
         </div>
     </div>
 
