@@ -2,38 +2,47 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
     <title>Projeto Samba | Portuguese</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="portuguese_vault.js"></script>
     <style>
         :root { --bg: #0f172a; --card: #1e293b; --primary: #22c55e; --secondary: #eab308; --text: #f8fafc; --text-dim: #94a3b8; --border: #334155; }
         * { box-sizing: border-box; transition: all 0.2s ease; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; padding-top: env(safe-area-inset-top); }
+        
         .top-nav { width: 100%; display: flex; padding: 12px 15px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border); }
         .home-link { text-decoration: none; color: var(--text-dim); font-size: 0.75rem; font-weight: 800; border: 1px solid var(--border); padding: 6px 14px; border-radius: 20px; background: var(--card); }
+        
         .app-container { max-width: 600px; width: 92%; display: flex; flex-direction: column; align-items: center; padding-bottom: 50px; }
         header { width: 100%; text-align: center; padding: 20px 0 10px 0; }
-        h1 { font-size: 1.8rem; font-weight: 800; margin: 0; }
+        h1 { font-size: 1.8rem; font-weight: 800; margin: 0; letter-spacing: -1px; }
+
         .stats-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; margin: 15px 0; }
         .stat-box { background: var(--card); padding: 10px; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
         .stat-val { font-size: 1.1rem; font-weight: 800; display: block; color: var(--secondary); }
         .stat-label { font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700; }
         progress { width: 100%; height: 6px; accent-color: var(--primary); border-radius: 10px; border: none; background: #334155; }
+
         nav { display: flex; background: var(--card); padding: 4px; border-radius: 12px; gap: 4px; margin: 15px 0; border: 1px solid var(--border); width: 100%; }
         .nav-btn { flex: 1; padding: 12px 5px; border: none; background: transparent; color: var(--text-dim); cursor: pointer; border-radius: 8px; font-weight: 700; font-size: 0.75rem; }
         .nav-btn.active { background: var(--primary); color: white; }
+
         .content-section { display: none; width: 100%; animation: fadeIn 0.3s ease; flex-direction: column; align-items: center; }
         .content-section.active { display: flex; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
         .mode-toggle, .diff-toggle { display: flex; background: var(--bg); padding: 4px; border-radius: 10px; margin-bottom: 8px; width: 100%; gap: 4px; border: 1px solid var(--border); }
         .mode-btn, .diff-btn { flex: 1; padding: 10px 2px; font-size: 0.6rem; border: none; background: transparent; color: var(--text-dim); cursor: pointer; border-radius: 6px; font-weight: 800; }
         .mode-btn.active, .diff-btn.active { background: var(--card); color: var(--primary); }
+
         .flashcard-wrapper { perspective: 1000px; width: 100%; height: 320px; cursor: pointer; margin: 10px 0 20px 0; }
         .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.5s; transform-style: preserve-3d; }
         .flashcard-wrapper.is-flipped .flashcard-inner { transform: rotateY(180deg); }
         .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px; border: 2px solid var(--primary); text-align: center; }
         .card-front { background: var(--card); }
         .card-back { background: var(--primary); transform: rotateY(180deg); color: white; }
+
         .btn-main { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 0 #166534; }
         .pronunciation { font-size: 1rem; font-style: italic; color: #dcfce7; margin-top: 15px; }
         input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: white; font-size: 1rem; margin-bottom: 10px; outline: none; }
@@ -96,20 +105,7 @@
         </div>
     </div>
 <script>
-    const library = {
-        words: {
-            easy: [{pt:"Oi",en:"Hi",ph:"Oy"},{pt:"Sim",en:"Yes",ph:"Seem"},{pt:"Não",en:"No",ph:"Nowm"},{pt:"Pão",en:"Bread",ph:"Powm"},{pt:"Água",en:"Water",ph:"Ah-gwa"},{pt:"Bom",en:"Good",ph:"Boh-m"},{pt:"Casa",en:"House",ph:"Ca-za"},{pt:"Café",en:"Coffee",ph:"Ca-feh"}],
-            medium: [{pt:"Cachorro",en:"Dog",ph:"Ca-sho-ho"},{pt:"Cozinha",en:"Kitchen",ph:"Co-zeen-ya"},{pt:"Trabalho",en:"Work",ph:"Tra-ba-lyo"},{pt:"Viagem",en:"Trip",ph:"Vya-zhem"},{pt:"Garfo",en:"Fork",ph:"Gar-fo"},{pt:"Cerveja",en:"Beer",ph:"Sehr-vey-ja"},{pt:"Espelho",en:"Mirror",ph:"Es-pe-lyo"}],
-            hard: [{pt:"Empreendimento",en:"Venture",ph:"Em-pree-en-dee-men-to"},{pt:"Inconstitucional",en:"Unconstitutional",ph:"In-cons-tee-too-shon-al"},{pt:"Amanhecer",en:"Dawn",ph:"A-ma-nye-sehr"},{pt:"Paralelepípedo",en:"Cobblestone",ph:"Pa-ra-le-le-pee-pe-do"},{pt:"Borboleta",en:"Butterfly",ph:"Bor-bo-le-ta"}],
-            vhard: [{pt:"Saudade",en:"Longing",ph:"Sow-dah-jee"},{pt:"Desabafar",en:"To vent",ph:"De-za-ba-far"},{pt:"Caprichar",en:"To do with care",ph:"Ca-pree-shar"},{pt:"Gambiara",en:"Quick fix",ph:"Gam-be-ah-ra"},{pt:"Folgado",en:"Shameless/Lazy",ph:"Fol-ga-do"}]
-        },
-        phrases: {
-            easy: [{pt:"Tudo bem?",en:"How are you?",ph:"Too-do baym"},{pt:"Por favor",en:"Please",ph:"Por fa-vor"},{pt:"Obrigado",en:"Thank you",ph:"O-bree-ga-do"},{pt:"De nada",en:"You're welcome",ph:"De na-da"}],
-            medium: [{pt:"Onde fica?",en:"Where is it?",ph:"On-jee fee-ca"},{pt:"Eu quero",en:"I want",ph:"Eu keh-ro"},{pt:"Quanto custa?",en:"How much?",ph:"Kwan-to koos-ta"}],
-            hard: [{pt:"Você pode me ajudar?",en:"Can you help me?",ph:"Vo-say po-jee me ah-ju-dar"},{pt:"Eu não entendo",en:"I don't understand",ph:"Eu nowm en-ten-do"}],
-            vhard: [{pt:"Enfiar o pé na jaca",en:"To overindulge",ph:"Idiom"},{pt:"Quebrar o galho",en:"To improvise",ph:"Idiom"},{pt:"João sem braço",en:"Playing dumb",ph:"Idiom"}]
-        }
-    };
+    const library = PORTUGUESE_LIBRARY;
     let xp = parseInt(localStorage.getItem('ps_xp')) || 0;
     let vault = JSON.parse(localStorage.getItem('ps_vault')) || [];
     let currentMode = 'words'; let currentDiff = 'easy'; let sessionDeck = [];
@@ -133,7 +129,8 @@
         btn.classList.add('active'); sessionDeck = []; nextCard();
     }
     function nextCard() {
-        if (sessionDeck.length === 0) { sessionDeck = [...library[currentMode][currentDiff]].sort(() => Math.random() - 0.5); }
+        let master = library[currentMode][currentDiff];
+        if (sessionDeck.length === 0) { sessionDeck = [...master].sort(() => 0.5 - Math.random()); }
         const card = sessionDeck.pop();
         document.querySelector('.flashcard-wrapper').classList.remove('is-flipped');
         setTimeout(() => {
