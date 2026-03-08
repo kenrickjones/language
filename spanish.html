@@ -70,7 +70,7 @@
                     <div class="card-front">
                         <h2 id="sp-text" style="font-size: 2.2rem; margin:0;">--</h2>
                         <div id="front-ph" class="pronunciation" style="color:var(--text-dim)">--</div>
-                        <button class="btn-main" style="width:auto; padding:8px 20px; font-size:0.7rem; margin-top:20px;" onclick="speakCurrent(); event.stopPropagation();">🔊 HEAR</button>
+                        <button class="btn-main" style="width:auto; padding:8px 20px; font-size:0.7rem; margin-top:20px;" onclick="event.stopPropagation(); speakCurrent();">🔊 HEAR</button>
                     </div>
                     <div class="card-back">
                         <h2 id="en-text" style="font-size: 1.8rem; margin:0;">--</h2>
@@ -148,6 +148,14 @@
         }, 150);
     }
 
+    function speakCurrent() {
+        window.speechSynthesis.cancel();
+        const ut = new SpeechSynthesisUtterance(document.getElementById('sp-text').innerText);
+        ut.lang = 'es-ES'; 
+        ut.rate = 0.85; 
+        window.speechSynthesis.speak(ut);
+    }
+
     function startTest() {
         const pool = SPANISH_LIBRARY.words[currentDiff];
         currentTestCard = pool[Math.floor(Math.random()*pool.length)];
@@ -182,12 +190,6 @@
         document.getElementById('vault-list').innerHTML = localVault.map(item => 
             `<div class="vault-item"><span><b>${item.sp}</b></span><span>${item.en}</span></div>`
         ).join('');
-    }
-
-    function speakCurrent() {
-        window.speechSynthesis.cancel();
-        const ut = new SpeechSynthesisUtterance(document.getElementById('sp-text').innerText);
-        ut.lang = 'es-ES'; ut.rate = 0.9; window.speechSynthesis.speak(ut);
     }
 
     updateUI(); nextCard();
