@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kenny's Language Lab</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --pt-green: #22c55e;
+            --jp-pink: #f472b6;
+            --text: #f8fafc;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            z-index: 10;
+            width: 90%;
+            max-width: 800px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+
+        .selector-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .lang-card {
+            background: var(--card);
+            border: 2px solid #334155;
+            border-radius: 24px;
+            padding: 40px 20px;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lang-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--hover-color);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .lang-card.portuguese:hover { --hover-color: var(--pt-green); }
+        .lang-card.japanese:hover { --hover-color: var(--jp-pink); }
+
+        .flag {
+            font-size: 4rem;
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        .lang-name {
+            font-size: 1.5rem;
+            font-weight: 800;
+            display: block;
+        }
+
+        .stats-preview {
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .global-stats {
+            margin-top: 50px;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            display: inline-block;
+        }
+
+        /* Decorative Background Elements */
+        .blob {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            filter: blur(80px);
+            opacity: 0.2;
+            z-index: 1;
+            border-radius: 50%;
+        }
+
+        @media (max-width: 500px) {
+            .selector-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="blob" style="top: -10%; left: -10%;"></div>
+    <div class="blob" style="bottom: -10%; right: -10%; background: var(--jp-pink);"></div>
+
+    <div class="container">
+        <header>
+            <h1>LANGUAGE <span style="color: #3b82f6;">LAB</span></h1>
+            <p class="subtitle">Welcome back, Kenny. Choose your target for today.</p>
+        </header>
+
+        <div class="selector-grid">
+            <a href="portuguese.html" class="lang-card portuguese">
+                <span class="flag">🇧🇷</span>
+                <span class="lang-name">PORTUGUÊS</span>
+                <div class="stats-preview">PROJETO SAMBA</div>
+            </a>
+
+            <a href="japanese.html" class="lang-card japanese">
+                <span class="flag">🇯🇵</span>
+                <span class="lang-name">日本語</span>
+                <div class="stats-preview">PROJECT SAKURA</div>
+            </a>
+        </div>
+
+        <div class="global-stats">
+            <span id="total-xp-display">Total Mastery: 0 XP</span>
+        </div>
+    </div>
+
+    <script>
+        // Pulling data from the LocalStorage used in your other two sites
+        function loadGlobalStats() {
+            const ptXP = parseInt(localStorage.getItem('ps_xp')) || 0;
+            const jpXP = parseInt(localStorage.getItem('pj_xp')) || 0;
+            const total = ptXP + jpXP;
+            
+            document.getElementById('total-xp-display').innerText = `Global Mastery: ${total.toLocaleString()} XP`;
+        }
+
+        loadGlobalStats();
+    </script>
+</body>
+</html>

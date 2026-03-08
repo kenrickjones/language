@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Sakura | Japanese Master</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #0f172a; --card: #1e293b; --primary: #f472b6; --secondary: #fbbf24; --accent: #8b5cf6; --text: #f8fafc; --text-dim: #94a3b8; --border: #334155; --error: #ef4444; }
+        * { box-sizing: border-box; transition: all 0.2s ease; }
+        body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .app-container { max-width: 600px; width: 95%; display: flex; flex-direction: column; align-items: center; padding-bottom: 50px; }
+        header { width: 100%; text-align: center; padding: 30px 0; }
+        h1 { font-size: 2.2rem; font-weight: 800; margin: 0; }
+        .sub-tag { color: var(--text-dim); font-weight: 600; font-size: 0.85rem; margin-top: 5px; display: block; }
+        .stats-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; margin: 20px 0; }
+        .stat-box { background: var(--card); padding: 12px; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
+        .stat-val { font-size: 1.2rem; font-weight: 800; display: block; color: var(--secondary); }
+        .stat-label { font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }
+        progress { width: 100%; height: 8px; accent-color: var(--primary); border-radius: 10px; border: none; background: #334155; }
+        nav { display: flex; flex-wrap: wrap; background: var(--card); padding: 5px; border-radius: 12px; gap: 5px; margin: 20px 0; border: 1px solid var(--border); width: 100%; }
+        .nav-btn { flex: 1; min-width: 70px; padding: 10px; border: none; background: transparent; color: var(--text-dim); cursor: pointer; border-radius: 8px; font-weight: 600; font-size: 0.7rem; }
+        .nav-btn.active { background: var(--primary); color: white; }
+        .content-section { display: none; width: 100%; animation: fadeIn 0.3s ease; }
+        .content-section.active { display: flex; flex-direction: column; align-items: center; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .card { background: var(--card); border-radius: 18px; padding: 25px; border: 1px solid var(--border); width: 100%; text-align: center; margin-bottom: 15px; position: relative; }
+        .difficulty-picker { display: flex; gap: 10px; margin-bottom: 20px; width: 100%; }
+        .diff-btn { flex: 1; padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text-dim); cursor: pointer; font-size: 0.7rem; font-weight: bold; }
+        .diff-btn.active { border-color: var(--primary); color: var(--primary); background: #f472b615; }
+        .video-grid { width: 100%; display: grid; gap: 20px; }
+        .video-card { background: var(--card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+        .video-card iframe { width: 100%; aspect-ratio: 16/9; border: none; }
+        .video-info { padding: 10px; font-size: 0.8rem; font-weight: 600; }
+        input[type="text"] { width: 100%; padding: 14px; border-radius: 10px; background: var(--bg); border: 2px solid var(--border); color: white; font-size: 1rem; margin-top: 10px; outline: none; }
+        .btn-main { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 0 #be185d; }
+        .btn-main:active { transform: translateY(2px); box-shadow: 0 2px 0 #be185d; }
+        .flashcard-wrapper { perspective: 1000px; width: 100%; height: 280px; cursor: pointer; margin-bottom: 20px; }
+        .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+        .flashcard-wrapper.is-flipped .flashcard-inner { transform: rotateY(180deg); }
+        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; border: 2px solid var(--primary); }
+        .card-front { background: var(--card); }
+        .card-back { background: var(--primary); transform: rotateY(180deg); }
+        .romaji { font-size: 0.9rem; font-style: italic; color: #ffe4e6; margin-top: 10px; opacity: 0.9; }
+        .deck-counter { font-size: 0.7rem; color: var(--text-dim); margin-top: 10px; }
+        footer { margin: 40px 0; font-size: 0.75rem; color: var(--text-dim); text-align: center; }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <header><h1>PROJECT <span style="color:var(--primary)">SAKURA</span> 🌸</h1><span class="sub-tag">Japanese Language Lab | 2026 Edition</span></header>
+    <div class="stats-bar">
+        <div class="stat-box"><span class="stat-label">Level</span><span id="lvl-val" class="stat-val">1</span></div>
+        <div class="stat-box"><span class="stat-label">XP</span><span id="xp-val" class="stat-val">0</span></div>
+        <div class="stat-box"><span class="stat-label">Streak</span><span id="streak-val" class="stat-val">0</span></div>
+    </div>
+    <progress id="xp-bar" value="0" max="1000"></progress>
+    <nav>
+        <button class="nav-btn active" onclick="showTab('dash', this)">Mission</button>
+        <button class="nav-btn" onclick="showTab('study', this)">Training</button>
+        <button class="nav-btn" onclick="showTab('watch', this)">Watch</button>
+        <button class="nav-btn" onclick="showTab('test', this)">Test</button>
+        <button class="nav-btn" onclick="showTab('vault', this)">Vault</button>
+    </nav>
+    <div id="dash" class="content-section active"><div class="card"><h2>Today's Goal</h2><p>Master 20 new Japanese characters?</p><button class="btn-main" onclick="completeDaily()">LOG MISSION (+100 XP)</button></div></div>
+    <div id="study" class="content-section">
+        <div class="difficulty-picker">
+            <button class="diff-btn active" onclick="setDiff('easy', this)">EASY (Kana)</button>
+            <button class="diff-btn" onclick="setDiff('medium', this)">MEDIUM (Words)</button>
+            <button class="diff-btn" onclick="setDiff('hard', this)">HARD (Kanji)</button>
+        </div>
+        <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
+            <div class="flashcard-inner">
+                <div class="card-front">
+                    <span class="stat-label" style="margin-bottom: 20px;">Japanese</span>
+                    <h2 id="pt-text" style="font-size: 2.5rem; margin: 0;">--</h2>
+                    <button class="btn-main" style="width:auto; padding:8px 20px; font-size:0.7rem; background:var(--accent); box-shadow:none; margin-top: 20px;" onclick="speakCurrent(); event.stopPropagation();">🔊 HEAR</button>
+                </div>
+                <div class="card-back">
+                    <span class="stat-label" style="color:white; margin-bottom: 20px;">Meaning</span>
+                    <h2 id="en-text" style="font-size: 2.2rem; margin: 0;">--</h2>
+                    <div id="romaji-text" class="romaji">--</div>
+                </div>
+            </div>
+        </div>
+        <button class="btn-main" onclick="nextCard(); event.stopPropagation();">NEXT CARD →</button>
+        <div class="deck-counter" id="deck-status">Remaining: 0</div>
+    </div>
+    <div id="watch" class="content-section"><h3>Immersion Corner</h3><div class="video-grid"><div class="video-card"><iframe src="https://www.youtube.com/embed/r7Y4mUv4SNo" allowfullscreen></iframe><div class="video-info">Japanese with Misa</div></div><div class="video-card"><iframe src="https://www.youtube.com/embed/T06p5VfKj3Q" allowfullscreen></iframe><div class="video-info">Tokyo Daily Life</div></div></div></div>
+    <div id="test" class="content-section"><div id="test-container" class="card"><div class="test-progress">Question <span id="q-count">1</span> / 20</div><span class="stat-label">Translate to English</span><h2 id="test-pt" style="font-size: 2.5rem; margin: 20px 0;">--</h2><input type="text" id="test-input" placeholder="Type answer here..." onkeydown="if(event.key==='Enter') checkAnswer()"><p id="feedback" style="margin-top: 15px; font-weight: 600; min-height: 1.2em;"></p><button class="btn-main" onclick="checkAnswer()">SUBMIT ANSWER</button></div><div id="test-result" class="card" style="display:none;"><h2>Test Complete!</h2><div style="font-size: 3rem; font-weight: 800; color: var(--secondary);" id="final-score">0/20</div><p id="score-msg"></p><button class="btn-main" onclick="startTest()">TRY AGAIN</button></div></div>
+    <div id="vault" class="content-section"><div class="card"><h3>Custom Kanji Vault</h3><input type="text" id="v-pt" placeholder="Japanese (Kanji/Kana)"><input type="text" id="v-en" placeholder="English Meaning"><button class="btn-main" onclick="addToVault()">SAVE TO VAULT (+15 XP)</button></div><div id="vault-list" style="width:100%;"></div></div>
+    <footer>Project Sakura 2026<br><strong>Created by Kenny</strong></footer>
+</div>
+<script>
+    const bulkLibrary = {
+        easy: [
+            {pt: "こんにちは", en: "Hello", rj: "Kon-ni-chi-wa"}, {pt: "ありがとう", en: "Thank you", rj: "A-ri-ga-tou"},
+            {pt: "はい", en: "Yes", rj: "Hai"}, {pt: "いいえ", en: "No", rj: "I-i-e"}, {pt: "ねこ", en: "Cat", rj: "Ne-ko"}
+        ],
+        medium: [
+            {pt: "先生", en: "Teacher", rj: "Sen-sei"}, {pt: "学生", en: "Student", rj: "Gaku-sei"},
+            {pt: "日本語", en: "Japanese", rj: "Ni-hon-go"}, {pt: "美味しい", en: "Delicious", rj: "Oi-shii"}
+        ],
+        hard: [
+            {pt: "一生懸命", en: "With utmost effort", rj: "Is-shou-ken-mei"}, {pt: "木漏れ日", en: "Sunlight through trees", rj: "Ko-mo-re-bi"},
+            {pt: "自動販売機", en: "Vending machine", rj: "Ji-dou-han-bai-ki"}, {pt: "雰囲気", en: "Atmosphere", rj: "Fun-i-ki"}
+        ]
+    };
+    let xp = parseInt(localStorage.getItem('pj_xp')) || 0;
+    let streak = parseInt(localStorage.getItem('pj_streak')) || 0;
+    let vault = JSON.parse(localStorage.getItem('pj_vault')) || [];
+    let currentDiff = 'easy'; let sessionDeck = []; let testQuestionIndex = 0; let testScore = 0; let currentTestWord = null;
+    function updateUI() {
+        document.getElementById('xp-val').innerText = xp; document.getElementById('lvl-val').innerText = Math.floor(xp / 1000) + 1;
+        document.getElementById('streak-val').innerText = streak; document.getElementById('xp-bar').value = xp % 1000;
+        localStorage.setItem('pj_xp', xp); localStorage.setItem('pj_streak', streak); localStorage.setItem('pj_vault', JSON.stringify(vault));
+        renderVault();
+    }
+    function showTab(id, btn) {
+        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active'); btn.classList.add('active');
+        if(id === 'test') startTest();
+    }
+    function setDiff(d, btn) { currentDiff = d; document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); sessionDeck = []; nextCard(); }
+    function nextCard() {
+        if (sessionDeck.length === 0) { sessionDeck = [...bulkLibrary[currentDiff], ...vault].sort(() => Math.random() - 0.5); }
+        const card = sessionDeck.pop();
+        document.getElementById('deck-status').innerText = `Remaining in cycle: ${sessionDeck.length}`;
+        document.querySelector('.flashcard-wrapper').classList.remove('is-flipped');
+        setTimeout(() => {
+            document.getElementById('pt-text').innerText = card.pt;
+            document.getElementById('en-text').innerText = card.en;
+            document.getElementById('romaji-text').innerText = card.rj || "Custom word";
+        }, 150);
+    }
+    function speakCurrent() { const ut = new SpeechSynthesisUtterance(document.getElementById('pt-text').innerText); ut.lang = 'ja-JP'; window.speechSynthesis.speak(ut); }
+    function startTest() { testQuestionIndex = 0; testScore = 0; document.getElementById('test-container').style.display = "block"; document.getElementById('test-result').style.display = "none"; nextTestQuestion(); }
+    function nextTestQuestion() {
+        testQuestionIndex++; if(testQuestionIndex > 20) { endTest(); return; }
+        document.getElementById('q-count').innerText = testQuestionIndex;
+        const fullDeck = [...bulkLibrary.easy, ...bulkLibrary.medium, ...bulkLibrary.hard, ...vault];
+        currentTestWord = fullDeck[Math.floor(Math.random() * fullDeck.length)];
+        document.getElementById('test-pt').innerText = currentTestWord.pt;
+        document.getElementById('test-input').value = ""; document.getElementById('feedback').innerText = ""; document.getElementById('test-input').focus();
+    }
+    function checkAnswer() {
+        const userAns = document.getElementById('test-input').value.trim().toLowerCase();
+        if(userAns === currentTestWord.en.toLowerCase()) { document.getElementById('feedback').style.color = "var(--primary)"; document.getElementById('feedback').innerText = "Correct! すごい！"; testScore++; xp += 15; }
+        else { document.getElementById('feedback').style.color = "var(--error)"; document.getElementById('feedback').innerText = `Meaning: ${currentTestWord.en}`; }
+        updateUI(); setTimeout(nextTestQuestion, 1500);
+    }
+    function endTest() { document.getElementById('test-container').style.display = "none"; document.getElementById('test-result').style.display = "block"; document.getElementById('final-score').innerText = `${testScore}/20`; document.getElementById('score-msg').innerText = testScore > 15 ? "Excellent!" : "Ganbatte!"; xp += 50; updateUI(); }
+    function addToVault() { const pt = document.getElementById('v-pt').value, en = document.getElementById('v-en').value; if(pt && en) { vault.push({pt, en, rj: "Custom"}); xp += 15; updateUI(); document.getElementById('v-pt').value=''; document.getElementById('v-en').value=''; } }
+    function renderVault() { document.getElementById('vault-list').innerHTML = vault.map(i => `<div class="stat-box" style="margin-bottom:5px; display:flex; justify-content:space-between;"><span>${i.pt}</span><small>${i.en}</small></div>`).join(''); }
+    function completeDaily() { const d = new Date().toLocaleDateString(); if(localStorage.getItem('pj_ld') === d) alert("Finished today!"); else { xp += 100; streak++; localStorage.setItem('pj_ld', d); updateUI(); alert("Great job! +100 XP."); } }
+    updateUI(); nextCard();
+</script>
+</body>
+</html>
