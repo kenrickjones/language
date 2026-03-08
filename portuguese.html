@@ -7,201 +7,166 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="portuguese_vault.js"></script>
     <style>
-        :root { --bg: #0f172a; --card: #1e293b; --primary: #22c55e; --secondary: #eab308; --text: #f8fafc; --text-dim: #94a3b8; --border: #334155; }
+        :root { --bg: #0f172a; --card: #1e293b; --primary: #22c55e; --text: #f8fafc; --text-dim: #94a3b8; --border: #334155; }
         * { box-sizing: border-box; transition: all 0.2s ease; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-top: env(safe-area-inset-top); }
         .top-nav { width: 100%; display: flex; padding: 12px 15px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border); }
         .home-link { text-decoration: none; color: var(--text-dim); font-size: 0.75rem; font-weight: 800; border: 1px solid var(--border); padding: 6px 14px; border-radius: 20px; background: var(--card); }
         .app-container { max-width: 600px; width: 92%; display: flex; flex-direction: column; align-items: center; padding-bottom: 50px; }
-        header { width: 100%; text-align: center; padding: 20px 0 10px 0; }
-        h1 { font-size: 1.8rem; font-weight: 800; margin: 0; }
-        .stats-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; margin: 15px 0; }
-        .stat-box { background: var(--card); padding: 10px; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
-        .stat-val { font-size: 1.1rem; font-weight: 800; display: block; color: var(--secondary); }
-        .stat-label { font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700; }
-        progress { width: 100%; height: 6px; accent-color: var(--primary); border-radius: 10px; border: none; background: #334155; margin-bottom: 20px; }
-        nav { display: flex; background: var(--card); padding: 4px; border-radius: 12px; gap: 4px; margin-bottom: 20px; border: 1px solid var(--border); width: 100%; overflow-x: auto; }
-        .nav-btn { flex: 1; padding: 12px 5px; border: none; background: transparent; color: var(--text-dim); cursor: pointer; border-radius: 8px; font-weight: 700; font-size: 0.7rem; white-space: nowrap; }
+        header { width: 100%; text-align: center; padding: 25px 0; }
+        nav { display: flex; background: var(--card); padding: 4px; border-radius: 12px; gap: 4px; margin-bottom: 20px; width: 100%; border: 1px solid var(--border); }
+        .nav-btn { flex: 1; padding: 12px 5px; border: none; background: transparent; color: var(--text-dim); cursor: pointer; border-radius: 8px; font-weight: 700; font-size: 0.75rem; }
         .nav-btn.active { background: var(--primary); color: white; }
-        .content-section { display: none; width: 100%; animation: fadeIn 0.3s ease; flex-direction: column; align-items: center; }
-        .content-section.active { display: flex; }
+        .content-section { display: none; width: 100%; flex-direction: column; align-items: center; }
+        .content-section.active { display: flex; animation: fadeIn 0.3s ease; }
         .diff-toggle { display: flex; background: var(--bg); padding: 4px; border-radius: 10px; margin-bottom: 15px; width: 100%; gap: 4px; border: 1px solid var(--border); }
         .diff-btn { flex: 1; padding: 10px 2px; font-size: 0.6rem; border: none; background: transparent; color: var(--text-dim); cursor: pointer; border-radius: 6px; font-weight: 800; }
         .diff-btn.active { background: var(--card); color: var(--primary); }
         .flashcard-wrapper { perspective: 1000px; width: 100%; height: 320px; cursor: pointer; margin: 10px 0 20px 0; }
         .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.5s; transform-style: preserve-3d; }
         .flashcard-wrapper.is-flipped .flashcard-inner { transform: rotateY(180deg); }
-        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px; border: 2px solid var(--primary); text-align: center; }
-        .card-front { background: var(--card); }
+        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px; border: 2px solid var(--primary); text-align: center; background: var(--card); }
         .card-back { background: var(--primary); transform: rotateY(180deg); color: white; }
         .btn-main { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 0 #166534; }
         .pronunciation { font-size: 0.9rem; font-style: italic; color: #dcfce7; margin-top: 8px; }
         input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: white; font-size: 1rem; margin-bottom: 10px; outline: none; }
-        .vault-item { background: var(--card); padding: 12px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 8px; display: flex; justify-content: space-between; width: 100%; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
     <div class="top-nav"><a href="index.html" class="home-link">← HOME</a></div>
     <div class="app-container">
         <header><h1>PROJETO <span style="color:var(--primary)">SAMBA</span> 🇧🇷</h1></header>
-        <div class="stats-bar">
-            <div class="stat-box"><span class="stat-label">Level</span><span id="lvl-val" class="stat-val">1</span></div>
-            <div class="stat-box"><span class="stat-label">XP</span><span id="xp-val" class="stat-val">0</span></div>
-            <div class="stat-box"><span class="stat-label">Streak</span><span id="streak-val" class="stat-val">0</span></div>
-        </div>
-        <progress id="xp-bar" value="0" max="1000"></progress>
         
         <nav>
-            <button class="nav-btn active" onclick="showTab('study', this)">Training</button>
+            <button class="nav-btn active" onclick="showTab('words', this)">Words</button>
+            <button class="nav-btn" onclick="showTab('phrases', this)">Phrases</button>
             <button class="nav-btn" onclick="showTab('test', this)">Test</button>
-            <button class="nav-btn" onclick="showTab('vault', this)">Vault</button>
             <button class="nav-btn" onclick="showTab('watch', this)">Watch</button>
         </nav>
 
-        <div id="study" class="content-section active">
+        <div id="words" class="content-section active">
             <div class="diff-toggle">
                 <button class="diff-btn active" onclick="setDiff('easy', this)">EASY</button>
                 <button class="diff-btn" onclick="setDiff('medium', this)">MED</button>
                 <button class="diff-btn" onclick="setDiff('hard', this)">HARD</button>
-                <button class="diff-btn" onclick="setDiff('vhard', this)">V. HARD</button>
             </div>
             <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
                 <div class="flashcard-inner">
                     <div class="card-front">
                         <h2 id="pt-text" style="font-size: 2.2rem; margin:0;">--</h2>
-                        <div id="front-ph" class="pronunciation" style="color:var(--text-dim)">--</div>
-                        <button class="btn-main" style="width:auto; padding:8px 20px; font-size:0.7rem; margin-top:20px;" onclick="event.stopPropagation(); speakCurrent();">🔊 HEAR</button>
+                        <div id="pt-ph" class="pronunciation" style="color:var(--text-dim)">--</div>
+                        <button class="btn-main" style="width:auto; padding:8px 20px; font-size:0.7rem; margin-top:20px;" onclick="event.stopPropagation(); speakCurrent('pt-text');">🔊 HEAR</button>
                     </div>
                     <div class="card-back">
                         <h2 id="en-text" style="font-size: 1.8rem; margin:0;">--</h2>
-                        <div id="back-ph" class="pronunciation">--</div>
                     </div>
                 </div>
             </div>
-            <button class="btn-main" onclick="nextCard()">NEXT CARD →</button>
+            <button class="btn-main" onclick="nextCard('words')">NEXT WORD →</button>
+        </div>
+
+        <div id="phrases" class="content-section">
+            <div class="diff-toggle">
+                <button class="diff-btn active" onclick="setDiff('easy', this)">EASY</button>
+                <button class="diff-btn" onclick="setDiff('medium', this)">MED</button>
+                <button class="diff-btn" onclick="setDiff('hard', this)">HARD</button>
+            </div>
+            <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
+                <div class="flashcard-inner">
+                    <div class="card-front">
+                        <h2 id="phrase-pt" style="font-size: 1.6rem; margin:0;">--</h2>
+                        <button class="btn-main" style="width:auto; padding:8px 20px; font-size:0.7rem; margin-top:20px;" onclick="event.stopPropagation(); speakCurrent('phrase-pt');">🔊 HEAR</button>
+                    </div>
+                    <div class="card-back">
+                        <h2 id="phrase-en" style="font-size: 1.4rem; margin:0;">--</h2>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-main" onclick="nextCard('phrases')">NEXT PHRASE →</button>
         </div>
 
         <div id="test" class="content-section">
             <div style="background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid var(--border); width: 100%; text-align: center;">
-                <h2 id="test-pt">--</h2>
+                <h2 id="test-q">--</h2>
                 <input type="text" id="test-input" placeholder="English translation..." autocomplete="off">
                 <button class="btn-main" onclick="checkAnswer()">SUBMIT</button>
                 <p id="feedback" style="margin-top:15px; font-weight:bold;"></p>
             </div>
         </div>
 
-        <div id="vault" class="content-section">
-            <div style="background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid var(--border); width: 100%;">
-                <input type="text" id="v-pt" placeholder="Portuguese Word">
-                <input type="text" id="v-en" placeholder="English Meaning">
-                <button class="btn-main" onclick="addToVault()">SAVE TO VAULT</button>
-            </div>
-            <div id="vault-list" style="width:100%; margin-top:20px;"></div>
-        </div>
-
         <div id="watch" class="content-section">
-            <iframe width="100%" height="315" src="https://www.youtube.com/embed/videoseries?list=PLmZ-LpXfRz_R-3-X50kK8_E30fXknd829" frameborder="0" allowfullscreen style="border-radius:20px; border:2px solid var(--primary);"></iframe>
+            <iframe width="100%" height="315" src="https://www.youtube.com/embed/videoseries?list=PLmZ-LpXfRz_R-3-X50kK8_E30fXknd829" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:20px; border:2px solid var(--primary);"></iframe>
         </div>
     </div>
 
 <script>
-    let xp = parseInt(localStorage.getItem('ps_xp')) || 0;
-    let localVault = JSON.parse(localStorage.getItem('ps_vault')) || [];
     let currentDiff = 'easy';
-    let sessionDeck = [];
-    let currentTestCard = null;
-
-    function updateUI() {
-        document.getElementById('xp-val').innerText = xp;
-        document.getElementById('lvl-val').innerText = Math.floor(xp / 1000) + 1;
-        document.getElementById('xp-bar').value = xp % 1000;
-        localStorage.setItem('ps_xp', xp);
-        renderVault();
-    }
+    let activeMode = 'words';
+    let currentCard = null;
 
     function showTab(id, btn) {
         document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.add('active'); 
         btn.classList.add('active');
+        activeMode = (id === 'words' || id === 'phrases') ? id : activeMode;
         if(id === 'test') startTest();
+        else if(id === 'words' || id === 'phrases') nextCard(id);
     }
 
     function setDiff(diff, btn) {
         currentDiff = diff;
         document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        sessionDeck = [];
-        nextCard();
+        nextCard(activeMode);
     }
 
-    function nextCard() {
-        const master = PORTUGUESE_LIBRARY.words[currentDiff];
-        if (sessionDeck.length === 0) sessionDeck = [...master].sort(() => 0.5 - Math.random());
-        const card = sessionDeck.pop();
-        document.querySelector('.flashcard-wrapper').classList.remove('is-flipped');
+    function nextCard(mode) {
+        const pool = PORTUGUESE_LIBRARY[mode][currentDiff];
+        currentCard = pool[Math.floor(Math.random() * pool.length)];
+        document.querySelectorAll('.flashcard-wrapper').forEach(w => w.classList.remove('is-flipped'));
+        
         setTimeout(() => {
-            document.getElementById('pt-text').innerText = card.pt;
-            document.getElementById('front-ph').innerText = `[ ${card.ph} ]`;
-            document.getElementById('en-text').innerText = card.en;
-            document.getElementById('back-ph').innerText = card.ph;
+            if(mode === 'words') {
+                document.getElementById('pt-text').innerText = currentCard.pt;
+                document.getElementById('pt-ph').innerText = `[ ${currentCard.ph} ]`;
+                document.getElementById('en-text').innerText = currentCard.en;
+            } else {
+                document.getElementById('phrase-pt').innerText = currentCard.pt;
+                document.getElementById('phrase-en').innerText = currentCard.en;
+            }
         }, 150);
     }
 
-    // iOS FORCED VOICE SELECTION
-    function speakCurrent() {
+    function speakCurrent(elemId) {
         window.speechSynthesis.cancel();
-        const text = document.getElementById('pt-text').innerText;
-        const ut = new SpeechSynthesisUtterance(text);
+        const ut = new SpeechSynthesisUtterance(document.getElementById(elemId).innerText);
         const voices = window.speechSynthesis.getVoices();
-        const ptVoice = voices.find(v => (v.lang.includes('pt-BR') || v.lang.includes('pt_BR')));
-        
-        if (ptVoice) ut.voice = ptVoice;
+        ut.voice = voices.find(v => v.lang.includes('pt-BR')) || voices.find(v => v.lang.includes('pt'));
         ut.lang = 'pt-BR';
-        ut.rate = 0.85;
+        ut.rate = 0.8;
         window.speechSynthesis.speak(ut);
     }
 
     function startTest() {
-        const pool = PORTUGUESE_LIBRARY.words[currentDiff];
-        currentTestCard = pool[Math.floor(Math.random()*pool.length)];
-        document.getElementById('test-pt').innerText = currentTestCard.pt;
+        const pool = [...PORTUGUESE_LIBRARY.words[currentDiff], ...PORTUGUESE_LIBRARY.phrases[currentDiff]];
+        currentCard = pool[Math.floor(Math.random()*pool.length)];
+        document.getElementById('test-q').innerText = currentCard.pt;
         document.getElementById('test-input').value = "";
         document.getElementById('feedback').innerText = "";
     }
 
     function checkAnswer() {
-        const guess = document.getElementById('test-input').value.trim().toLowerCase();
-        if(guess === currentTestCard.en.toLowerCase()) {
-            xp += 50; updateUI();
-            document.getElementById('feedback').innerText = "✅ Correct! +50 XP";
+        if(document.getElementById('test-input').value.trim().toLowerCase() === currentCard.en.toLowerCase()) {
+            document.getElementById('feedback').innerText = "✅ Correct!";
             setTimeout(startTest, 1200);
         } else {
-            document.getElementById('feedback').innerText = "❌ Not quite!";
+            document.getElementById('feedback').innerText = "❌ Try again!";
         }
     }
-
-    function addToVault() {
-        const pt = document.getElementById('v-pt').value;
-        const en = document.getElementById('v-en').value;
-        if(pt && en) {
-            localVault.push({pt, en});
-            localStorage.setItem('ps_vault', JSON.stringify(localVault));
-            document.getElementById('v-pt').value = ""; document.getElementById('v-en').value = "";
-            renderVault();
-        }
-    }
-
-    function renderVault() {
-        document.getElementById('vault-list').innerHTML = localVault.map(item => 
-            `<div class="vault-item"><span><b>${item.pt}</b></span><span>${item.en}</span></div>`
-        ).join('');
-    }
-
-    // Warm up voices for iOS
-    window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
-    updateUI(); nextCard();
+    window.speechSynthesis.getVoices();
+    nextCard('words');
 </script>
 </body>
 </html>
