@@ -37,7 +37,6 @@
     <div class="top-nav"><a href="index.html" class="home-link">← HOME</a></div>
     <div class="app-container">
         <header><h1>PROJECT <span style="color:var(--primary)">SAKURA</span> 🌸</h1></header>
-        
         <nav>
             <button class="nav-btn active" onclick="showTab('words', this)">Words</button>
             <button class="nav-btn" onclick="showTab('phrases', this)">Phrases</button>
@@ -50,16 +49,18 @@
                 <button class="diff-btn active" onclick="setDiff('easy', this)">EASY</button>
                 <button class="diff-btn" onclick="setDiff('medium', this)">MED</button>
                 <button class="diff-btn" onclick="setDiff('hard', this)">HARD</button>
+                <button class="diff-btn" onclick="setDiff('vhard', this)">V. HARD</button>
             </div>
             <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
                 <div class="flashcard-inner">
                     <div class="card-front">
                         <h2 id="jp-text" style="font-size: 2.6rem; margin:0;">--</h2>
-                        <div id="jp-rj" class="romaji" style="color:var(--text-dim)">--</div>
+                        <div class="jp-rj-view romaji" style="color:var(--text-dim)">--</div>
                         <button class="btn-main" style="width:auto; padding:8px 20px; font-size:0.7rem; margin-top:20px;" onclick="event.stopPropagation(); speakCurrent('jp-text');">🔊 HEAR</button>
                     </div>
                     <div class="card-back">
                         <h2 id="en-text" style="font-size: 2rem; margin:0;">--</h2>
+                        <div class="jp-rj-view romaji">--</div>
                     </div>
                 </div>
             </div>
@@ -71,15 +72,18 @@
                 <button class="diff-btn active" onclick="setDiff('easy', this)">EASY</button>
                 <button class="diff-btn" onclick="setDiff('medium', this)">MED</button>
                 <button class="diff-btn" onclick="setDiff('hard', this)">HARD</button>
+                <button class="diff-btn" onclick="setDiff('vhard', this)">V. HARD</button>
             </div>
             <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
                 <div class="flashcard-inner">
                     <div class="card-front">
                         <h2 id="phrase-jp" style="font-size: 1.8rem; margin:0;">--</h2>
+                        <div class="phrase-rj-view romaji" style="color:var(--text-dim)">--</div>
                         <button class="btn-main" style="width:auto; padding:8px 20px; font-size:0.7rem; margin-top:20px;" onclick="event.stopPropagation(); speakCurrent('phrase-jp');">🔊 HEAR</button>
                     </div>
                     <div class="card-back">
                         <h2 id="phrase-en" style="font-size: 1.6rem; margin:0;">--</h2>
+                        <div class="phrase-rj-view romaji">--</div>
                     </div>
                 </div>
             </div>
@@ -96,7 +100,7 @@
         </div>
 
         <div id="watch" class="content-section">
-            <iframe width="100%" height="315" src="https://www.youtube.com/embed/videoseries?list=PL7uH9jN7X0Wv0TfD_N4G0oGf_4mP_rT5c" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:20px; border:2px solid var(--primary);"></iframe>
+            <iframe id="jp-player" width="100%" height="315" src="https://www.youtube.com/embed?listType=playlist&list=PL7uH9jN7X0Wv0TfD_N4G0oGf_4mP_rT5c" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="border-radius:20px; border:2px solid var(--primary);"></iframe>
         </div>
     </div>
 
@@ -130,11 +134,12 @@
         setTimeout(() => {
             if(mode === 'words') {
                 document.getElementById('jp-text').innerText = currentCard.jp;
-                document.getElementById('jp-rj').innerText = `[ ${currentCard.rj} ]`;
                 document.getElementById('en-text').innerText = currentCard.en;
+                document.querySelectorAll('.jp-rj-view').forEach(el => el.innerText = `[ ${currentCard.rj} ]`);
             } else {
                 document.getElementById('phrase-jp').innerText = currentCard.jp;
                 document.getElementById('phrase-en').innerText = currentCard.en;
+                document.querySelectorAll('.phrase-rj-view').forEach(el => el.innerText = `[ ${currentCard.rj} ]`);
             }
         }, 150);
     }
