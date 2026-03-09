@@ -7,380 +7,454 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="spanish_vault.js"></script>
     <style>
-        :root { --bg: #0f172a; --card: #1e293b; --primary: #f59e0b; --text: #f8fafc; --text-dim: #94a3b8; --border: #334155; }
-        * { box-sizing: border-box; transition: all 0.2s ease; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-top: env(safe-area-inset-top); }
-        .top-nav { width: 100%; display: flex; padding: 12px 15px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border); }
-        .home-link { text-decoration: none; color: var(--text-dim); font-size: 0.75rem; font-weight: 800; border: 1px solid var(--border); padding: 6px 14px; border-radius: 20px; background: var(--card); }
-        .app-container { max-width: 600px; width: 92%; display: flex; flex-direction: column; align-items: center; padding-bottom: 50px; }
-        header { width: 100%; text-align: center; padding: 25px 0; }
-        nav { display: flex; background: var(--card); padding: 4px; border-radius: 12px; gap: 4px; margin-bottom: 20px; width: 100%; border: 1px solid var(--border); }
-        .nav-btn { flex: 1; padding: 12px 5px; border: none; background: transparent; color: var(--text-dim); cursor: pointer; border-radius: 8px; font-weight: 700; font-size: 0.75rem; }
-        .nav-btn.active { background: var(--primary); color: white; }
-        .content-section { display: none; width: 100%; flex-direction: column; align-items: center; }
-        .content-section.active { display: flex; animation: fadeIn 0.3s ease; }
-        .diff-toggle { display: flex; background: var(--bg); padding: 4px; border-radius: 10px; margin-bottom: 15px; width: 100%; gap: 4px; border: 1px solid var(--border); }
-        .diff-btn { flex: 1; padding: 10px 2px; font-size: 0.6rem; border: none; background: transparent; color: var(--text-dim); cursor: pointer; border-radius: 6px; font-weight: 800; }
-        .diff-btn.active { background: var(--card); color: var(--primary); }
-        .flashcard-wrapper { perspective: 1000px; width: 100%; height: 340px; cursor: pointer; margin: 10px 0 15px 0; }
-        .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.5s; transform-style: preserve-3d; }
-        .flashcard-wrapper.is-flipped .flashcard-inner { transform: rotateY(180deg); }
-        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px; border: 2px solid var(--primary); text-align: center; background: var(--card); }
-        .card-back { background: var(--primary); transform: rotateY(180deg); color: white; }
-        .btn-main { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 0 #92400e; }
-        .btn-hear { background: rgba(255,255,255,0.1); border: 1px solid var(--primary); color: var(--primary); padding: 8px 15px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; margin-top: 15px; cursor: pointer; }
-        .card-back .btn-hear { border-color: white; color: white; }
-        .pronunciation { font-size: 0.9rem; font-style: italic; color: #fef3c7; margin-top: 8px; }
-        .video-list { width: 100%; display: grid; gap: 10px; }
-        .video-item { display: flex; align-items: center; background: var(--card); padding: 15px; border-radius: 12px; text-decoration: none; color: white; border: 1px solid var(--border); font-weight: 600; font-size: 0.9rem; }
-
-        /* List tab */
-        .list-type-toggle { display: flex; background: var(--bg); padding: 4px; border-radius: 10px; margin-bottom: 15px; width: 100%; gap: 4px; border: 1px solid var(--border); }
-        .list-type-btn { flex: 1; padding: 10px 2px; font-size: 0.7rem; border: none; background: transparent; color: var(--text-dim); cursor: pointer; border-radius: 6px; font-weight: 800; }
-        .list-type-btn.active { background: var(--card); color: var(--primary); }
-        .list-count { font-size: 0.72rem; color: var(--text-dim); font-weight: 700; margin-bottom: 10px; width: 100%; text-align: right; letter-spacing: 0.03em; }
-        .list-table { width: 100%; border-collapse: collapse; }
-        .list-table thead th { font-size: 0.65rem; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; }
-        .list-table tbody tr { border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s; }
-        .list-table tbody tr:last-child { border-bottom: none; }
-        .list-table tbody tr:hover, .list-table tbody tr:active { background: rgba(255,255,255,0.04); }
-        .list-table tbody td { padding: 13px 10px; vertical-align: middle; }
-        .list-native { font-size: 1.15rem; font-weight: 700; color: var(--text); }
-        .list-ph { font-size: 0.72rem; font-style: italic; color: var(--text-dim); margin-top: 3px; }
-        .list-en { font-size: 0.9rem; color: var(--text-dim); font-weight: 600; }
-        .list-hear { background: none; border: 1px solid var(--border); color: var(--text-dim); border-radius: 20px; padding: 5px 10px; font-size: 0.65rem; font-weight: 800; cursor: pointer; white-space: nowrap; }
-        .list-hear:hover { border-color: var(--primary); color: var(--primary); }
-        .list-scroll { width: 100%; background: var(--card); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
-
-        /* Prev / Next nav row */
-        .card-nav { display: flex; gap: 10px; width: 100%; margin-top: 8px; }
-        .btn-prev { flex: 1; padding: 14px; background: var(--card); color: var(--text-dim); border: 1px solid var(--border); border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 0.85rem; }
-        .btn-next { flex: 2; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 0 #92400e; font-size: 0.85rem; }
-        .btn-prev:active { opacity: 0.7; }
-        .btn-next:active { opacity: 0.85; }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        :root{--bg:#0f172a;--card:#1e293b;--primary:#f59e0b;--shadow:#92400e;--text:#f8fafc;--text-dim:#94a3b8;--border:#334155;}
+        *{box-sizing:border-box;transition:all 0.2s ease;-webkit-tap-highlight-color:transparent;}
+        body{font-family:'Inter',sans-serif;background-color:var(--bg);color:var(--text);margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding-top:env(safe-area-inset-top);}
+        .top-nav{width:100%;display:flex;padding:12px 15px;background:rgba(15,23,42,0.95);backdrop-filter:blur(10px);position:sticky;top:0;z-index:100;border-bottom:1px solid var(--border);}
+        .home-link{text-decoration:none;color:var(--text-dim);font-size:0.75rem;font-weight:800;border:1px solid var(--border);padding:6px 14px;border-radius:20px;background:var(--card);}
+        .app-container{max-width:600px;width:92%;display:flex;flex-direction:column;align-items:center;padding-bottom:50px;}
+        header{width:100%;text-align:center;padding:25px 0;}
+        nav{display:flex;background:var(--card);padding:4px;border-radius:12px;gap:4px;margin-bottom:20px;width:100%;border:1px solid var(--border);}
+        .nav-btn{flex:1;padding:10px 2px;border:none;background:transparent;color:var(--text-dim);cursor:pointer;border-radius:8px;font-weight:700;font-size:0.65rem;}
+        .nav-btn.active{background:var(--primary);color:white;}
+        .content-section{display:none;width:100%;flex-direction:column;align-items:center;}
+        .content-section.active{display:flex;animation:fadeIn 0.3s ease;}
+        .diff-toggle{display:flex;background:var(--bg);padding:4px;border-radius:10px;margin-bottom:15px;width:100%;gap:4px;border:1px solid var(--border);}
+        .diff-btn{flex:1;padding:10px 2px;font-size:0.6rem;border:none;background:transparent;color:var(--text-dim);cursor:pointer;border-radius:6px;font-weight:800;}
+        .diff-btn.active{background:var(--card);color:var(--primary);}
+        .flashcard-wrapper{perspective:1000px;width:100%;height:340px;cursor:pointer;margin:10px 0 15px 0;}
+        .flashcard-inner{position:relative;width:100%;height:100%;transition:transform 0.5s;transform-style:preserve-3d;}
+        .flashcard-wrapper.is-flipped .flashcard-inner{transform:rotateY(180deg);}
+        .card-front,.card-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:24px;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:25px;border:2px solid var(--primary);text-align:center;background:var(--card);}
+        .card-back{background:var(--primary);transform:rotateY(180deg);color:white;}
+        .btn-hear{background:rgba(255,255,255,0.1);border:1px solid var(--primary);color:var(--primary);padding:8px 15px;border-radius:20px;font-size:0.7rem;font-weight:800;margin-top:15px;cursor:pointer;}
+        .card-back .btn-hear{border-color:white;color:white;}
+        .pronunciation{font-size:0.9rem;font-style:italic;color:#fef3c7;margin-top:8px;}
+        .card-nav{display:flex;gap:10px;width:100%;margin-top:8px;}
+        .btn-prev{flex:1;padding:14px;background:var(--card);color:var(--text-dim);border:1px solid var(--border);border-radius:14px;font-weight:800;cursor:pointer;font-size:0.85rem;}
+        .btn-next{flex:2;padding:14px;background:var(--primary);color:white;border:none;border-radius:14px;font-weight:800;cursor:pointer;box-shadow:0 4px 0 var(--shadow);font-size:0.85rem;}
+        .btn-prev:active{opacity:0.7;} .btn-next:active{opacity:0.85;}
+        .list-type-toggle{display:flex;background:var(--bg);padding:4px;border-radius:10px;margin-bottom:15px;width:100%;gap:4px;border:1px solid var(--border);}
+        .list-type-btn{flex:1;padding:10px 2px;font-size:0.7rem;border:none;background:transparent;color:var(--text-dim);cursor:pointer;border-radius:6px;font-weight:800;}
+        .list-type-btn.active{background:var(--card);color:var(--primary);}
+        .list-count{font-size:0.72rem;color:var(--text-dim);font-weight:700;margin-bottom:10px;width:100%;text-align:right;letter-spacing:0.03em;}
+        .list-scroll{width:100%;background:var(--card);border-radius:16px;border:1px solid var(--border);overflow:hidden;}
+        .list-table{width:100%;border-collapse:collapse;}
+        .list-table thead th{font-size:0.65rem;font-weight:800;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em;padding:8px 10px;border-bottom:1px solid var(--border);text-align:left;}
+        .list-table tbody tr{border-bottom:1px solid var(--border);cursor:pointer;}
+        .list-table tbody tr:last-child{border-bottom:none;}
+        .list-table tbody tr:hover,.list-table tbody tr:active{background:rgba(255,255,255,0.04);}
+        .list-table tbody td{padding:13px 10px;vertical-align:middle;}
+        .list-native{font-size:1.1rem;font-weight:700;color:var(--text);}
+        .list-ph{font-size:0.7rem;font-style:italic;color:var(--text-dim);margin-top:3px;}
+        .list-en{font-size:0.88rem;color:var(--text-dim);font-weight:600;}
+        .list-hear{background:none;border:1px solid var(--border);color:var(--text-dim);border-radius:20px;padding:5px 10px;font-size:0.65rem;font-weight:800;cursor:pointer;white-space:nowrap;}
+        .list-hear:hover{border-color:var(--primary);color:var(--primary);}
+        .test-setup{width:100%;display:flex;flex-direction:column;gap:20px;}
+        .setup-label{font-size:0.68rem;font-weight:800;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;}
+        .setup-row{display:flex;gap:8px;width:100%;flex-wrap:wrap;}
+        .setup-opt{flex:1;min-width:70px;padding:14px 6px;background:var(--card);border:2px solid var(--border);border-radius:12px;color:var(--text-dim);font-weight:800;font-size:0.78rem;cursor:pointer;text-align:center;}
+        .setup-opt.active{border-color:var(--primary);color:var(--primary);background:rgba(245,158,11,0.08);}
+        .btn-start-test{width:100%;padding:18px;background:var(--primary);color:white;border:none;border-radius:14px;font-weight:800;font-size:1rem;cursor:pointer;box-shadow:0 4px 0 var(--shadow);margin-top:4px;}
+        .test-quiz{width:100%;display:none;flex-direction:column;align-items:center;}
+        .quiz-meta{display:flex;justify-content:space-between;width:100%;margin-bottom:10px;font-size:0.72rem;font-weight:800;color:var(--text-dim);}
+        .quiz-progress-bar{width:100%;height:6px;background:var(--border);border-radius:3px;margin-bottom:20px;overflow:hidden;}
+        .quiz-progress-fill{height:100%;background:var(--primary);border-radius:3px;transition:width 0.4s ease;}
+        .quiz-question-box{width:100%;background:var(--card);border:2px solid var(--primary);border-radius:20px;padding:28px 22px;text-align:center;margin-bottom:18px;}
+        .quiz-q-label{font-size:0.65rem;font-weight:800;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;}
+        .quiz-q-text{font-size:1.85rem;font-weight:800;color:var(--text);line-height:1.25;}
+        .quiz-options{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+        .quiz-opt{padding:16px 10px;background:var(--card);border:2px solid var(--border);border-radius:14px;color:var(--text);font-weight:700;font-size:0.85rem;cursor:pointer;text-align:center;line-height:1.3;transition:border-color 0.15s,background 0.15s;}
+        .quiz-opt:hover:not(:disabled){border-color:var(--primary);}
+        .quiz-opt.correct{border-color:#22c55e;background:rgba(34,197,94,0.15);color:#22c55e;}
+        .quiz-opt.wrong{border-color:#ef4444;background:rgba(239,68,68,0.12);color:#ef4444;}
+        .quiz-opt.reveal{border-color:#22c55e;background:rgba(34,197,94,0.1);color:#22c55e;}
+        .quiz-opt:disabled{cursor:default;}
+        .test-results{width:100%;display:none;flex-direction:column;align-items:center;}
+        .score-ring-wrap{position:relative;width:150px;height:150px;margin:8px auto 18px;}
+        .score-ring-wrap svg{position:absolute;top:0;left:0;transform:rotate(-90deg);}
+        .score-ring-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+        .score-big{font-size:3rem;font-weight:800;line-height:1;}
+        .score-denom{font-size:0.82rem;color:var(--text-dim);font-weight:700;}
+        .results-grade{font-size:1.3rem;font-weight:800;margin-bottom:5px;}
+        .results-sub{font-size:0.85rem;color:var(--text-dim);margin-bottom:22px;text-align:center;}
+        .results-breakdown{width:100%;display:flex;flex-direction:column;gap:8px;margin-bottom:22px;}
+        .result-row{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:12px;padding:12px 14px;border:1px solid var(--border);}
+        .result-row.r-correct{border-color:rgba(34,197,94,0.25);}
+        .result-row.r-wrong{border-color:rgba(239,68,68,0.3);}
+        .result-icon{font-size:1.1rem;flex-shrink:0;}
+        .result-q{font-size:0.98rem;font-weight:700;color:var(--text);}
+        .result-a{font-size:0.78rem;color:var(--text-dim);}
+        .btn-retry{width:100%;padding:16px;background:var(--primary);color:white;border:none;border-radius:14px;font-weight:800;cursor:pointer;box-shadow:0 4px 0 var(--shadow);font-size:0.95rem;}
+        .video-list{width:100%;display:grid;gap:10px;}
+        .video-item{display:flex;align-items:center;background:var(--card);padding:15px;border-radius:12px;text-decoration:none;color:white;border:1px solid var(--border);font-weight:600;font-size:0.9rem;}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
     </style>
 </head>
 <body>
-    <div class="top-nav"><a href="index.html" class="home-link">← HOME</a></div>
-    <div class="app-container">
-        <header><h1>PROYECTO <span style="color:var(--primary)">SOL</span> 🇪🇸</h1></header>
-        <nav>
-            <button class="nav-btn active" onclick="showTab('words', this)">Words</button>
-            <button class="nav-btn" onclick="showTab('phrases', this)">Phrases</button>
-            <button class="nav-btn" onclick="showTab('list', this)">List</button>
-            <button class="nav-btn" onclick="showTab('test', this)">Test</button>
-            <button class="nav-btn" onclick="showTab('watch', this)">Watch</button>
-        </nav>
+<div class="top-nav"><a href="index.html" class="home-link">← HOME</a></div>
+<div class="app-container">
+    <header><h1>PROYECTO <span style="color:var(--primary)">SOL</span> 🇪🇸</h1></header>
+    <nav>
+        <button class="nav-btn active" onclick="showTab('words',this)">Words</button>
+        <button class="nav-btn" onclick="showTab('phrases',this)">Phrases</button>
+        <button class="nav-btn" onclick="showTab('list',this)">List</button>
+        <button class="nav-btn" onclick="showTab('test',this)">Test</button>
+        <button class="nav-btn" onclick="showTab('watch',this)">Watch</button>
+    </nav>
 
-        <div id="words" class="content-section active">
-            <div class="diff-toggle">
-                <button class="diff-btn active" onclick="setDiff('easy', this)">EASY</button>
-                <button class="diff-btn" onclick="setDiff('medium', this)">MED</button>
-                <button class="diff-btn" onclick="setDiff('hard', this)">HARD</button>
-                <button class="diff-btn" onclick="setDiff('vhard', this)">V. HARD</button>
-            </div>
-            <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
-                <div class="flashcard-inner">
-                    <div class="card-front">
-                        <h2 id="sp-text" style="font-size: 2.2rem; margin:0;">--</h2>
-                        <div class="sp-ph-view pronunciation">--</div>
-                        <button class="btn-hear" onclick="event.stopPropagation(); speak('sp-text')">🔊 HEAR</button>
-                    </div>
-                    <div class="card-back">
-                        <h2 id="en-text" style="font-size: 1.8rem; margin:0;">--</h2>
-                        <div class="sp-ph-view pronunciation">--</div>
-                        <button class="btn-hear" onclick="event.stopPropagation(); speak('sp-text')">🔊 HEAR</button>
-                    </div>
+    <!-- WORDS -->
+    <div id="words" class="content-section active">
+        <div class="diff-toggle">
+            <button class="diff-btn active" onclick="setDiff('easy',this)">EASY</button>
+            <button class="diff-btn" onclick="setDiff('medium',this)">MED</button>
+            <button class="diff-btn" onclick="setDiff('hard',this)">HARD</button>
+            <button class="diff-btn" onclick="setDiff('vhard',this)">V.HARD</button>
+        </div>
+        <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
+            <div class="flashcard-inner">
+                <div class="card-front">
+                    <h2 id="sp-text" style="font-size:2.2rem;margin:0">--</h2>
+                    <div class="sp-ph-view pronunciation">--</div>
+                    <button class="btn-hear" onclick="event.stopPropagation();speak('sp-text')">🔊 HEAR</button>
+                </div>
+                <div class="card-back">
+                    <h2 id="en-text" style="font-size:1.8rem;margin:0">--</h2>
+                    <div class="sp-ph-view pronunciation">--</div>
+                    <button class="btn-hear" onclick="event.stopPropagation();speak('sp-text')">🔊 HEAR</button>
                 </div>
             </div>
-            <div class="card-nav">
-                <button class="btn-prev" onclick="prevCard('words')">← PREV</button>
-                <button class="btn-next" onclick="nextCard('words')">NEXT →</button>
-            </div>
         </div>
-
-        <div id="phrases" class="content-section">
-            <div class="diff-toggle">
-                <button class="diff-btn active" onclick="setDiff('easy', this)">EASY</button>
-                <button class="diff-btn" onclick="setDiff('medium', this)">MED</button>
-                <button class="diff-btn" onclick="setDiff('hard', this)">HARD</button>
-                <button class="diff-btn" onclick="setDiff('vhard', this)">V. HARD</button>
-            </div>
-            <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
-                <div class="flashcard-inner">
-                    <div class="card-front">
-                        <h2 id="phrase-sp" style="font-size: 1.6rem; margin:0;">--</h2>
-                        <div class="phrase-ph-view pronunciation">--</div>
-                        <button class="btn-hear" onclick="event.stopPropagation(); speak('phrase-sp')">🔊 HEAR</button>
-                    </div>
-                    <div class="card-back">
-                        <h2 id="phrase-en" style="font-size: 1.4rem; margin:0;">--</h2>
-                        <div class="phrase-ph-view pronunciation">--</div>
-                        <button class="btn-hear" onclick="event.stopPropagation(); speak('phrase-sp')">🔊 HEAR</button>
-                    </div>
-                </div>
-            </div>
-            <div class="card-nav">
-                <button class="btn-prev" onclick="prevCard('phrases')">← PREV</button>
-                <button class="btn-next" onclick="nextCard('phrases')">NEXT →</button>
-            </div>
-        </div>
-
-        <div id="list" class="content-section">
-            <div class="list-type-toggle">
-                <button class="list-type-btn active" onclick="setListType('words', this)">WORDS</button>
-                <button class="list-type-btn" onclick="setListType('phrases', this)">PHRASES</button>
-            </div>
-            <div class="diff-toggle">
-                <button class="diff-btn active" onclick="setListDiff('easy', this)">EASY</button>
-                <button class="diff-btn" onclick="setListDiff('medium', this)">MED</button>
-                <button class="diff-btn" onclick="setListDiff('hard', this)">HARD</button>
-                <button class="diff-btn" onclick="setListDiff('vhard', this)">V. HARD</button>
-            </div>
-            <div class="list-count" id="list-count">0 items</div>
-            <div class="list-scroll">
-                <table class="list-table">
-                    <thead>
-                        <tr>
-                            <th>SPANISH</th>
-                            <th>ENGLISH</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody id="list-body"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="test" class="content-section">
-            <h2 id="test-q">--</h2>
-            <input type="text" id="test-input" placeholder="Translation..." style="width:100%; padding:15px; border-radius:12px; border:1px solid var(--border); background:var(--card); color:white;">
-            <button class="btn-main" onclick="checkAnswer()">CHECK</button>
-            <p id="feedback"></p>
-        </div>
-
-        <div id="watch" class="content-section">
-            <div class="video-list">
-                <a href="https://www.youtube.com/watch?v=m99_pXpX26U" target="_blank" class="video-item">🇪🇸 Learn Spanish in 30 Min (Basics)</a>
-                <a href="https://www.youtube.com/watch?v=sFmOAVCROpo" target="_blank" class="video-item">🇪🇸 100 Common Spanish Phrases</a>
-                <a href="https://www.youtube.com/watch?v=LpWvPDaC0DQ" target="_blank" class="video-item">🇪🇸 Spanish Pronunciation Guide</a>
-                <a href="https://www.youtube.com/c/SpanishPod101" target="_blank" class="video-item">🇪🇸 SpanishPod101 Channel →</a>
-                <a href="https://www.youtube.com/c/Dreaming-Spanish" target="_blank" class="video-item">🇪🇸 Dreaming Spanish (Immersion) →</a>
-            </div>
+        <div class="card-nav">
+            <button class="btn-prev" onclick="prevCard('words')">← PREV</button>
+            <button class="btn-next" onclick="nextCard('words')">NEXT →</button>
         </div>
     </div>
+
+    <!-- PHRASES -->
+    <div id="phrases" class="content-section">
+        <div class="diff-toggle">
+            <button class="diff-btn active" onclick="setDiff('easy',this)">EASY</button>
+            <button class="diff-btn" onclick="setDiff('medium',this)">MED</button>
+            <button class="diff-btn" onclick="setDiff('hard',this)">HARD</button>
+            <button class="diff-btn" onclick="setDiff('vhard',this)">V.HARD</button>
+        </div>
+        <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
+            <div class="flashcard-inner">
+                <div class="card-front">
+                    <h2 id="phrase-sp" style="font-size:1.6rem;margin:0">--</h2>
+                    <div class="phrase-ph-view pronunciation">--</div>
+                    <button class="btn-hear" onclick="event.stopPropagation();speak('phrase-sp')">🔊 HEAR</button>
+                </div>
+                <div class="card-back">
+                    <h2 id="phrase-en" style="font-size:1.4rem;margin:0">--</h2>
+                    <div class="phrase-ph-view pronunciation">--</div>
+                    <button class="btn-hear" onclick="event.stopPropagation();speak('phrase-sp')">🔊 HEAR</button>
+                </div>
+            </div>
+        </div>
+        <div class="card-nav">
+            <button class="btn-prev" onclick="prevCard('phrases')">← PREV</button>
+            <button class="btn-next" onclick="nextCard('phrases')">NEXT →</button>
+        </div>
+    </div>
+
+    <!-- LIST -->
+    <div id="list" class="content-section">
+        <div class="list-type-toggle">
+            <button class="list-type-btn active" onclick="setListType('words',this)">WORDS</button>
+            <button class="list-type-btn" onclick="setListType('phrases',this)">PHRASES</button>
+        </div>
+        <div class="diff-toggle">
+            <button class="diff-btn active" onclick="setListDiff('easy',this)">EASY</button>
+            <button class="diff-btn" onclick="setListDiff('medium',this)">MED</button>
+            <button class="diff-btn" onclick="setListDiff('hard',this)">HARD</button>
+            <button class="diff-btn" onclick="setListDiff('vhard',this)">V.HARD</button>
+        </div>
+        <div class="list-count" id="list-count">0 items</div>
+        <div class="list-scroll">
+            <table class="list-table">
+                <thead><tr><th>SPANISH</th><th>ENGLISH</th><th></th></tr></thead>
+                <tbody id="list-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- TEST -->
+    <div id="test" class="content-section">
+        <div id="test-setup" class="test-setup">
+            <div>
+                <div class="setup-label">What to test</div>
+                <div class="setup-row">
+                    <button class="setup-opt active" onclick="pickSetup('testType','words',this)">Words</button>
+                    <button class="setup-opt" onclick="pickSetup('testType','phrases',this)">Phrases</button>
+                    <button class="setup-opt" onclick="pickSetup('testType','both',this)">Both</button>
+                </div>
+            </div>
+            <div>
+                <div class="setup-label">Difficulty</div>
+                <div class="setup-row">
+                    <button class="setup-opt active" onclick="pickSetup('testDiff','easy',this)">Easy</button>
+                    <button class="setup-opt" onclick="pickSetup('testDiff','medium',this)">Med</button>
+                    <button class="setup-opt" onclick="pickSetup('testDiff','hard',this)">Hard</button>
+                    <button class="setup-opt" onclick="pickSetup('testDiff','vhard',this)">V.Hard</button>
+                </div>
+            </div>
+            <button class="btn-start-test" onclick="beginTest()">START TEST →</button>
+        </div>
+
+        <div id="test-quiz" class="test-quiz">
+            <div class="quiz-meta">
+                <span id="q-counter">Question 1 / 10</span>
+                <span id="q-score-live">Score: 0</span>
+            </div>
+            <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="q-progress"></div></div>
+            <div class="quiz-question-box">
+                <div class="quiz-q-label">What does this mean?</div>
+                <div class="quiz-q-text" id="q-text">--</div>
+            </div>
+            <div class="quiz-options" id="q-options"></div>
+        </div>
+
+        <div id="test-results" class="test-results">
+            <div class="score-ring-wrap">
+                <svg width="150" height="150" viewBox="0 0 150 150">
+                    <circle cx="75" cy="75" r="65" fill="none" stroke="#334155" stroke-width="10"/>
+                    <circle id="score-arc" cx="75" cy="75" r="65" fill="none" stroke="#f59e0b"
+                        stroke-width="10" stroke-dasharray="408.4" stroke-dashoffset="408.4" stroke-linecap="round"/>
+                </svg>
+                <div class="score-ring-inner">
+                    <div class="score-big" id="results-num">0</div>
+                    <div class="score-denom">/ 10</div>
+                </div>
+            </div>
+            <div class="results-grade" id="results-grade"></div>
+            <div class="results-sub" id="results-sub"></div>
+            <div class="results-breakdown" id="results-breakdown"></div>
+            <button class="btn-retry" onclick="showSetup()">↩ TRY AGAIN</button>
+        </div>
+    </div>
+
+    <!-- WATCH -->
+    <div id="watch" class="content-section">
+        <div class="video-list">
+            <a href="https://www.youtube.com/watch?v=m99_pXpX26U" target="_blank" class="video-item">🇪🇸 Learn Spanish in 30 Min (Basics)</a>
+            <a href="https://www.youtube.com/watch?v=sFmOAVCROpo" target="_blank" class="video-item">🇪🇸 100 Common Spanish Phrases</a>
+            <a href="https://www.youtube.com/watch?v=LpWvPDaC0DQ" target="_blank" class="video-item">🇪🇸 Spanish Pronunciation Guide</a>
+            <a href="https://www.youtube.com/c/SpanishPod101" target="_blank" class="video-item">🇪🇸 SpanishPod101 Channel →</a>
+            <a href="https://www.youtube.com/c/Dreaming-Spanish" target="_blank" class="video-item">🇪🇸 Dreaming Spanish (Immersion) →</a>
+        </div>
+    </div>
+</div>
+
 <script>
-    let currentDiff = 'easy';
-    let activeMode = 'words';
-    let currentCard = null;
-    let voices = [];
+// ── Core state ─────────────────────────────────────────────────
+let currentDiff='easy', activeMode='words', currentCard=null, voices=[];
+const cardHistory={words:[],phrases:[]}, cardPools={words:{},phrases:{}};
 
-    const history = { words: [], phrases: [] };
-    const pools   = { words: {}, phrases: {} };
+// ── TTS ────────────────────────────────────────────────────────
+function loadVoices(){ voices=window.speechSynthesis.getVoices(); }
+window.speechSynthesis.onvoiceschanged=loadVoices; loadVoices();
+function _speak(text){
+    window.speechSynthesis.cancel();
+    const ut=new SpeechSynthesisUtterance(text);
+    const v=voices.find(v=>v.lang.startsWith('es'));
+    if(v) ut.voice=v; ut.lang='es-ES'; ut.rate=0.85;
+    window.speechSynthesis.speak(ut);
+}
+function speak(id){ _speak(document.getElementById(id).innerText); }
+function speakText(t){ _speak(t); }
 
-    function loadVoices() {
-        voices = window.speechSynthesis.getVoices();
+// ── Fallback library ───────────────────────────────────────────
+function getFallback(mode){
+    if(mode==='words') return [
+        {sp:'Hola',en:'Hello',ph:'OH-lah'},{sp:'Gracias',en:'Thank you',ph:'GRAH-see-ahs'},
+        {sp:'Por favor',en:'Please',ph:'por fah-VOR'},{sp:'Agua',en:'Water',ph:'AH-gwah'},
+        {sp:'Casa',en:'House',ph:'KAH-sah'},{sp:'Amigo',en:'Friend',ph:'ah-MEE-goh'},
+        {sp:'Bueno',en:'Good',ph:'BWEH-noh'},{sp:'Día',en:'Day',ph:'DEE-ah'},
+        {sp:'No',en:'No',ph:'noh'},{sp:'Sí',en:'Yes',ph:'see'},
+        {sp:'Comer',en:'To eat',ph:'koh-MAIR'},{sp:'Beber',en:'To drink',ph:'beh-BAIR'}
+    ];
+    return [
+        {sp:'Buenos días',en:'Good morning',ph:'BWEH-nos DEE-ahs'},{sp:'¿Cómo estás?',en:'How are you?',ph:'KOH-moh ehs-TAHS'},
+        {sp:'Mucho gusto',en:'Nice to meet you',ph:'MOO-choh GOOS-toh'},{sp:'Con permiso',en:'Excuse me',ph:'kon pehr-MEE-soh'},
+        {sp:'¿Dónde está?',en:'Where is it?',ph:'DON-deh ehs-TAH'},{sp:'¿Cuánto cuesta?',en:'How much?',ph:'KWAN-toh KWEHS-tah'},
+        {sp:'No entiendo',en:"I don't understand",ph:'noh ehn-TYEHN-doh'},{sp:'¿Puede repetir?',en:'Can you repeat?',ph:'PWEH-deh reh-peh-TEER'},
+        {sp:'Muchas gracias',en:'Thank you very much',ph:'MOO-chas GRAH-see-ahs'},{sp:'De nada',en:"You're welcome",ph:'deh NAH-dah'},
+        {sp:'Hasta luego',en:'See you later',ph:'AHS-tah LWEH-goh'},{sp:'Buenas noches',en:'Good night',ph:'BWEH-nas NOH-ches'}
+    ];
+}
+function getLib(mode,diff){
+    return (typeof SPANISH_LIBRARY!=='undefined') ? SPANISH_LIBRARY[mode][diff] : getFallback(mode);
+}
+
+// ── Shuffle ────────────────────────────────────────────────────
+function shuffle(arr){
+    const a=[...arr];
+    for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+    return a;
+}
+
+// ── Flashcard engine ───────────────────────────────────────────
+function getPool(mode){
+    if(!cardPools[mode][currentDiff]){
+        cardPools[mode][currentDiff]=shuffle(getLib(mode,currentDiff));
+        cardPools[mode][currentDiff]._idx=0;
     }
-    window.speechSynthesis.onvoiceschanged = loadVoices;
-    loadVoices();
-
-    function speak(elemId) {
-        window.speechSynthesis.cancel();
-        const text = document.getElementById(elemId).innerText;
-        const ut = new SpeechSynthesisUtterance(text);
-        const esVoice = voices.find(v => v.lang.startsWith('es'));
-        if(esVoice) ut.voice = esVoice;
-        ut.lang = 'es-ES';
-        ut.rate = 0.85;
-        window.speechSynthesis.speak(ut);
-    }
-
-    function shuffle(arr) {
-        for(let i = arr.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [arr[i], arr[j]] = [arr[j], arr[i]];
-        }
-        return arr;
-    }
-
-    function generateFallback(mode) {
-        if(mode === 'words') return [
-            {sp:'Hola', en:'Hello', ph:'OH-lah'},
-            {sp:'Gracias', en:'Thank you', ph:'GRAH-see-ahs'},
-            {sp:'Por favor', en:'Please', ph:'por fah-VOR'},
-            {sp:'Agua', en:'Water', ph:'AH-gwah'},
-            {sp:'Casa', en:'House', ph:'KAH-sah'}
-        ];
-        return [
-            {sp:'Buenos días', en:'Good morning', ph:'BWEH-nos DEE-ahs'},
-            {sp:'¿Cómo estás?', en:'How are you?', ph:'KOH-moh ehs-TAHS'},
-            {sp:'Mucho gusto', en:'Nice to meet you', ph:'MOO-choh GOOS-toh'}
-        ];
-    }
-
-    function getPool(mode) {
-        if(!pools[mode][currentDiff]) {
-            const src = (typeof SPANISH_LIBRARY !== 'undefined')
-                ? [...SPANISH_LIBRARY[mode][currentDiff]]
-                : generateFallback(mode);
-            pools[mode][currentDiff] = shuffle(src);
-            pools[mode][currentDiff]._idx = 0;
-        }
-        return pools[mode][currentDiff];
-    }
-
-    function showCard(mode, card) {
-        document.querySelectorAll('.flashcard-wrapper').forEach(w => w.classList.remove('is-flipped'));
-        currentCard = card;
-        setTimeout(() => {
-            if(mode === 'words') {
-                document.getElementById('sp-text').innerText = card.sp;
-                document.getElementById('en-text').innerText = card.en;
-                document.querySelectorAll('.sp-ph-view').forEach(el => el.innerText = `[ ${card.ph} ]`);
-            } else {
-                document.getElementById('phrase-sp').innerText = card.sp;
-                document.getElementById('phrase-en').innerText = card.en;
-                document.querySelectorAll('.phrase-ph-view').forEach(el => el.innerText = `[ ${card.ph} ]`);
-            }
-        }, 150);
-    }
-
-    function nextCard(mode) {
-        const pool = getPool(mode);
-        if(pool._idx === undefined) pool._idx = 0;
-        else pool._idx = (pool._idx + 1) % pool.length;
-        history[mode].push(pool._idx);
-        if(history[mode].length > 200) history[mode].shift();
-        showCard(mode, pool[pool._idx]);
-    }
-
-    function prevCard(mode) {
-        const pool = getPool(mode);
-        const hist = history[mode];
-        if(hist.length > 1) {
-            hist.pop();
-            pool._idx = hist[hist.length - 1];
+    return cardPools[mode][currentDiff];
+}
+function showCard(mode,card){
+    document.querySelectorAll('.flashcard-wrapper').forEach(w=>w.classList.remove('is-flipped'));
+    currentCard=card;
+    setTimeout(()=>{
+        if(mode==='words'){
+            document.getElementById('sp-text').innerText=card.sp;
+            document.getElementById('en-text').innerText=card.en;
+            document.querySelectorAll('.sp-ph-view').forEach(el=>el.innerText=`[ ${card.ph} ]`);
         } else {
-            pool._idx = ((pool._idx || 0) - 1 + pool.length) % pool.length;
+            document.getElementById('phrase-sp').innerText=card.sp;
+            document.getElementById('phrase-en').innerText=card.en;
+            document.querySelectorAll('.phrase-ph-view').forEach(el=>el.innerText=`[ ${card.ph} ]`);
         }
-        showCard(mode, pool[pool._idx]);
-    }
+    },150);
+}
+function nextCard(mode){
+    const p=getPool(mode);
+    p._idx=(p._idx===undefined)?0:(p._idx+1)%p.length;
+    cardHistory[mode].push(p._idx); if(cardHistory[mode].length>200) cardHistory[mode].shift();
+    showCard(mode,p[p._idx]);
+}
+function prevCard(mode){
+    const p=getPool(mode),h=cardHistory[mode];
+    if(h.length>1){h.pop();p._idx=h[h.length-1];}
+    else p._idx=((p._idx||0)-1+p.length)%p.length;
+    showCard(mode,p[p._idx]);
+}
 
-    function showTab(id, btn) {
-        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.add('active'); 
-        btn.classList.add('active');
-        activeMode = (id === 'words' || id === 'phrases') ? id : activeMode;
-        if(id === 'test') startTest();
-        else if(id === 'words' || id === 'phrases') nextCard(id);
-    }
+// ── Tabs ───────────────────────────────────────────────────────
+function showTab(id,btn){
+    document.querySelectorAll('.content-section').forEach(s=>s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById(id).classList.add('active'); btn.classList.add('active');
+    activeMode=(id==='words'||id==='phrases')?id:activeMode;
+    if(id==='words'||id==='phrases') nextCard(id);
+    else if(id==='list') renderList();
+    else if(id==='test') showSetup();
+}
+function setDiff(diff,btn){
+    currentDiff=diff;
+    document.querySelectorAll(`#${activeMode} .diff-btn`).forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    cardPools[activeMode][diff]=null; cardHistory[activeMode]=[];
+    nextCard(activeMode);
+}
 
-    function setDiff(diff, btn) {
-        currentDiff = diff;
-        document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        pools[activeMode][currentDiff] = null;
-        history[activeMode] = [];
-        nextCard(activeMode);
-    }
-
-    function startTest() {
-        const wPool = (typeof SPANISH_LIBRARY !== 'undefined')
-            ? SPANISH_LIBRARY.words[currentDiff]
-            : generateFallback('words');
-        const pPool = (typeof SPANISH_LIBRARY !== 'undefined')
-            ? SPANISH_LIBRARY.phrases[currentDiff]
-            : generateFallback('phrases');
-        const pool = [...wPool, ...pPool];
-        currentCard = pool[Math.floor(Math.random()*pool.length)];
-        document.getElementById('test-q').innerText = currentCard.sp;
-        document.getElementById('test-input').value = '';
-        document.getElementById('feedback').innerText = '';
-    }
-
-    function checkAnswer() {
-        const ans = document.getElementById('test-input').value.trim().toLowerCase();
-        if(ans === currentCard.en.toLowerCase()) {
-            document.getElementById('feedback').innerText = "✅ Correcto!";
-            setTimeout(startTest, 1200);
-        } else {
-            document.getElementById('feedback').innerText = "❌ No.";
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('test-input').addEventListener('keydown', e => {
-            if(e.key === 'Enter') checkAnswer();
-        });
+// ── List ───────────────────────────────────────────────────────
+let listType='words', listDiff='easy';
+function setListType(type,btn){
+    listType=type;
+    document.querySelectorAll('.list-type-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active'); renderList();
+}
+function setListDiff(diff,btn){
+    listDiff=diff;
+    document.querySelectorAll('#list .diff-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active'); renderList();
+}
+function renderList(){
+    const data=getLib(listType,listDiff);
+    document.getElementById('list-count').innerText=`${data.length} ${listType}`;
+    const tb=document.getElementById('list-body'); tb.innerHTML='';
+    data.forEach(item=>{
+        const native=item.sp, tr=document.createElement('tr');
+        tr.innerHTML=`<td><div class="list-native">${native}</div><div class="list-ph">[ ${item.ph} ]</div></td>
+            <td><span class="list-en">${item.en}</span></td>
+            <td><button class="list-hear" onclick="event.stopPropagation();speakText('${native.replace(/'/g,"\\'")}')">🔊</button></td>`;
+        tr.onclick=()=>speakText(native); tb.appendChild(tr);
     });
+}
 
-    // ── List tab ──────────────────────────────────────────
-    let listType = 'words';
-    let listDiff = 'easy';
+// ── TEST ───────────────────────────────────────────────────────
+let testType='words', testDiff='easy';
+let quizQs=[], quizIdx=0, quizScore=0, quizLog=[];
 
-    function setListType(type, btn) {
-        listType = type;
-        document.querySelectorAll('.list-type-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        renderList();
-    }
+function pickSetup(key,val,btn){
+    if(key==='testType') testType=val; else testDiff=val;
+    btn.parentElement.querySelectorAll('.setup-opt').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+}
+function showSetup(){
+    document.getElementById('test-setup').style.display='flex';
+    document.getElementById('test-quiz').style.display='none';
+    document.getElementById('test-results').style.display='none';
+}
+function buildPool(){
+    let p=[];
+    if(testType==='words'||testType==='both') p=[...p,...getLib('words',testDiff)];
+    if(testType==='phrases'||testType==='both') p=[...p,...getLib('phrases',testDiff)];
+    return shuffle(p);
+}
+function beginTest(){
+    const pool=buildPool();
+    if(pool.length<4){alert('Not enough items for a quiz (need 4+). Try a different difficulty or type.');return;}
+    quizQs=pool.slice(0,10); quizIdx=0; quizScore=0; quizLog=[];
+    document.getElementById('test-setup').style.display='none';
+    document.getElementById('test-quiz').style.display='flex';
+    document.getElementById('test-results').style.display='none';
+    showQuestion();
+}
+function showQuestion(){
+    const total=quizQs.length, q=quizQs[quizIdx];
+    document.getElementById('q-counter').innerText=`Question ${quizIdx+1} / ${total}`;
+    document.getElementById('q-score-live').innerText=`Score: ${quizScore}`;
+    document.getElementById('q-progress').style.width=`${(quizIdx/total)*100}%`;
+    document.getElementById('q-text').innerText=q.sp;
+    const allPool=buildPool();
+    const others=shuffle(allPool.filter(x=>x.en!==q.en));
+    const opts=shuffle([q,...others.slice(0,3)]);
+    const wrap=document.getElementById('q-options'); wrap.innerHTML='';
+    opts.forEach(opt=>{
+        const b=document.createElement('button');
+        b.className='quiz-opt'; b.textContent=opt.en;
+        b.onclick=()=>answerChosen(b,opt.en===q.en,q,wrap);
+        wrap.appendChild(b);
+    });
+}
+function answerChosen(btn,correct,q,wrap){
+    wrap.querySelectorAll('.quiz-opt').forEach(b=>{b.disabled=true;b.onclick=null;});
+    if(correct){btn.classList.add('correct');quizScore++;}
+    else{ btn.classList.add('wrong'); wrap.querySelectorAll('.quiz-opt').forEach(b=>{if(b.textContent===q.en)b.classList.add('reveal');}); }
+    quizLog.push({sp:q.sp,en:q.en,ok:correct});
+    setTimeout(()=>{quizIdx++;if(quizIdx<quizQs.length)showQuestion();else showResults();},950);
+}
+function showResults(){
+    document.getElementById('test-quiz').style.display='none';
+    document.getElementById('test-results').style.display='flex';
+    const s=quizScore,t=quizQs.length;
+    document.getElementById('results-num').innerText=s;
+    const circ=2*Math.PI*65;
+    document.getElementById('score-arc').style.strokeDashoffset=circ-(circ*(s/t));
+    const pct=s/t;
+    let grade,sub;
+    if(pct===1){grade='🏆 Perfect Score!';sub='Absolutely flawless. Incredible work!';}
+    else if(pct>=0.8){grade='🌟 Excellent!';sub='Really impressive — almost perfect!';}
+    else if(pct>=0.6){grade='👍 Good Job!';sub="Solid effort. A little more practice and you'll ace it!";}
+    else if(pct>=0.4){grade='📚 Keep Going!';sub='Check the List tab to review, then try again.';}
+    else{grade='💪 Keep Practising!';sub="Don't give up — practice makes perfect!";}
+    document.getElementById('results-grade').innerText=grade;
+    document.getElementById('results-sub').innerText=sub;
+    const bd=document.getElementById('results-breakdown'); bd.innerHTML='';
+    quizLog.forEach(r=>{
+        const row=document.createElement('div');
+        row.className=`result-row ${r.ok?'r-correct':'r-wrong'}`;
+        row.innerHTML=`<div class="result-icon">${r.ok?'✅':'❌'}</div>
+            <div><div class="result-q">${r.sp}</div><div class="result-a">${r.en}</div></div>`;
+        bd.appendChild(row);
+    });
+}
 
-    function setListDiff(diff, btn) {
-        listDiff = diff;
-        document.querySelectorAll('#list .diff-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        renderList();
-    }
-
-    function speakText(text) {
-        window.speechSynthesis.cancel();
-        const ut = new SpeechSynthesisUtterance(text);
-        const esVoice = voices.find(v => v.lang.startsWith('es'));
-        if(esVoice) ut.voice = esVoice;
-        ut.lang = 'es-ES';
-        ut.rate = 0.85;
-        window.speechSynthesis.speak(ut);
-    }
-
-    function renderList() {
-        const data = (typeof SPANISH_LIBRARY !== 'undefined')
-            ? SPANISH_LIBRARY[listType][listDiff]
-            : generateFallback(listType);
-        const tbody = document.getElementById('list-body');
-        const count = document.getElementById('list-count');
-        count.innerText = `${data.length} ${listType}`;
-        tbody.innerHTML = '';
-        data.forEach((item) => {
-            const native = item.sp;
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>
-                    <div class="list-native">${native}</div>
-                    <div class="list-ph">[ ${item.ph} ]</div>
-                </td>
-                <td><span class="list-en">${item.en}</span></td>
-                <td><button class="list-hear" onclick="event.stopPropagation(); speakText('${native.replace(/'/g,"\\'")}')">🔊</button></td>
-            `;
-            tr.onclick = () => speakText(native);
-            tbody.appendChild(tr);
-        });
-    }
-
-    function showTab(id, btn) {
-        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        btn.classList.add('active');
-        activeMode = (id === 'words' || id === 'phrases') ? id : activeMode;
-        if(id === 'test') startTest();
-        else if(id === 'words' || id === 'phrases') nextCard(id);
-        else if(id === 'list') renderList();
-    }
-
-    nextCard('words');
+nextCard('words');
+showSetup();
 </script>
 </body>
 </html>
