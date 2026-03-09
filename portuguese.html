@@ -34,6 +34,25 @@
         .video-list { width: 100%; display: grid; gap: 10px; }
         .video-item { display: flex; align-items: center; background: var(--card); padding: 15px; border-radius: 12px; text-decoration: none; color: white; border: 1px solid var(--border); font-weight: 600; font-size: 0.9rem; }
 
+        /* List tab */
+        .list-type-toggle { display: flex; background: var(--bg); padding: 4px; border-radius: 10px; margin-bottom: 15px; width: 100%; gap: 4px; border: 1px solid var(--border); }
+        .list-type-btn { flex: 1; padding: 10px 2px; font-size: 0.7rem; border: none; background: transparent; color: var(--text-dim); cursor: pointer; border-radius: 6px; font-weight: 800; }
+        .list-type-btn.active { background: var(--card); color: var(--primary); }
+        .list-diff-toggle { display: flex; background: var(--bg); padding: 4px; border-radius: 10px; margin-bottom: 15px; width: 100%; gap: 4px; border: 1px solid var(--border); }
+        .list-count { font-size: 0.72rem; color: var(--text-dim); font-weight: 700; margin-bottom: 10px; width: 100%; text-align: right; letter-spacing: 0.03em; }
+        .list-table { width: 100%; border-collapse: collapse; }
+        .list-table thead th { font-size: 0.65rem; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; }
+        .list-table tbody tr { border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s; }
+        .list-table tbody tr:last-child { border-bottom: none; }
+        .list-table tbody tr:hover, .list-table tbody tr:active { background: rgba(255,255,255,0.04); }
+        .list-table tbody td { padding: 13px 10px; vertical-align: middle; }
+        .list-native { font-size: 1.15rem; font-weight: 700; color: var(--text); }
+        .list-ph { font-size: 0.72rem; font-style: italic; color: var(--text-dim); margin-top: 3px; }
+        .list-en { font-size: 0.9rem; color: var(--text-dim); font-weight: 600; }
+        .list-hear { background: none; border: 1px solid var(--border); color: var(--text-dim); border-radius: 20px; padding: 5px 10px; font-size: 0.65rem; font-weight: 800; cursor: pointer; white-space: nowrap; }
+        .list-hear:hover { border-color: var(--primary); color: var(--primary); }
+        .list-scroll { width: 100%; background: var(--card); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+
         /* Prev / Next nav row */
         .card-nav { display: flex; gap: 10px; width: 100%; margin-top: 8px; }
         .btn-prev { flex: 1; padding: 14px; background: var(--card); color: var(--text-dim); border: 1px solid var(--border); border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 0.85rem; }
@@ -51,6 +70,7 @@
         <nav>
             <button class="nav-btn active" onclick="showTab('words', this)">Words</button>
             <button class="nav-btn" onclick="showTab('phrases', this)">Phrases</button>
+            <button class="nav-btn" onclick="showTab('list', this)">List</button>
             <button class="nav-btn" onclick="showTab('test', this)">Test</button>
             <button class="nav-btn" onclick="showTab('watch', this)">Watch</button>
         </nav>
@@ -106,6 +126,32 @@
             <div class="card-nav">
                 <button class="btn-prev" onclick="prevCard('phrases')">← PREV</button>
                 <button class="btn-next" onclick="nextCard('phrases')">NEXT →</button>
+            </div>
+        </div>
+
+        <div id="list" class="content-section">
+            <div class="list-type-toggle">
+                <button class="list-type-btn active" onclick="setListType('words', this)">WORDS</button>
+                <button class="list-type-btn" onclick="setListType('phrases', this)">PHRASES</button>
+            </div>
+            <div class="diff-toggle">
+                <button class="diff-btn active" onclick="setListDiff('easy', this)">EASY</button>
+                <button class="diff-btn" onclick="setListDiff('medium', this)">MED</button>
+                <button class="diff-btn" onclick="setListDiff('hard', this)">HARD</button>
+                <button class="diff-btn" onclick="setListDiff('vhard', this)">V. HARD</button>
+            </div>
+            <div class="list-count" id="list-count">0 items</div>
+            <div class="list-scroll">
+                <table class="list-table">
+                    <thead>
+                        <tr>
+                            <th>PORTUGUESE</th>
+                            <th>ENGLISH</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="list-body"></tbody>
+                </table>
             </div>
         </div>
 
@@ -279,6 +325,72 @@
             if(e.key === 'Enter') checkAnswer();
         });
     });
+
+    // ── List tab ──────────────────────────────────────────
+    let listType = 'words';
+    let listDiff = 'easy';
+
+    function setListType(type, btn) {
+        listType = type;
+        document.querySelectorAll('.list-type-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderList();
+    }
+
+    function setListDiff(diff, btn) {
+        listDiff = diff;
+        // sync the list-section diff buttons only
+        document.querySelectorAll('#list .diff-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderList();
+    }
+
+    function speakText(text) {
+        window.speechSynthesis.cancel();
+        const ut = new SpeechSynthesisUtterance(text);
+        const ptVoice = voices.find(v => v.lang.startsWith('pt'));
+        if(ptVoice) ut.voice = ptVoice;
+        ut.lang = 'pt-BR';
+        ut.rate = 0.8;
+        window.speechSynthesis.speak(ut);
+    }
+
+    function renderList() {
+        const data = (typeof PORTUGUESE_LIBRARY !== 'undefined')
+            ? PORTUGUESE_LIBRARY[listType][listDiff]
+            : generateFallback(listType);
+        const tbody = document.getElementById('list-body');
+        const count = document.getElementById('list-count');
+        count.innerText = `${data.length} ${listType}`;
+        tbody.innerHTML = '';
+        data.forEach((item, i) => {
+            const native = item.pt;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>
+                    <div class="list-native">${native}</div>
+                    <div class="list-ph">[ ${item.ph} ]</div>
+                </td>
+                <td><span class="list-en">${item.en}</span></td>
+                <td><button class="list-hear" onclick="event.stopPropagation(); speakText('${native.replace(/'/g,"\\'")}')">🔊</button></td>
+            `;
+            tr.onclick = () => speakText(native);
+            tbody.appendChild(tr);
+        });
+    }
+
+    // patch showTab to render list when switching to it
+    const _origShowTab = showTab;
+    function showTab(id, btn) {
+        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        btn.classList.add('active');
+        activeMode = (id === 'words' || id === 'phrases') ? id : activeMode;
+        if(id === 'test') startTest();
+        else if(id === 'words' || id === 'phrases') nextCard(id);
+        else if(id === 'list') renderList();
+    }
 
     nextCard('words');
 </script>
