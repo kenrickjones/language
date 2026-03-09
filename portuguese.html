@@ -73,6 +73,9 @@
         .quiz-question-box{width:100%;background:var(--card);border:2px solid var(--primary);border-radius:20px;padding:28px 22px;text-align:center;margin-bottom:18px;}
         .quiz-q-label{font-size:0.65rem;font-weight:800;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;}
         .quiz-q-text{font-size:1.85rem;font-weight:800;color:var(--text);line-height:1.25;}
+        .quiz-q-phonetic{font-size:0.85rem;font-style:italic;color:var(--text-dim);margin-top:8px;min-height:1.2em;}
+        .quiz-q-hear{background:transparent;border:1px solid var(--border);color:var(--text-dim);padding:6px 14px;border-radius:20px;font-size:0.68rem;font-weight:800;margin-top:10px;cursor:pointer;transition:border-color 0.15s,color 0.15s;}
+        .quiz-q-hear:hover{border-color:var(--primary);color:var(--primary);}
         .quiz-options{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
         .quiz-opt{padding:16px 10px;background:var(--card);border:2px solid var(--border);border-radius:14px;color:var(--text);font-weight:700;font-size:0.85rem;cursor:pointer;text-align:center;line-height:1.3;transition:border-color 0.15s,background 0.15s;}
         .quiz-opt:hover:not(:disabled){border-color:var(--primary);}
@@ -230,6 +233,8 @@
             <div class="quiz-question-box">
                 <div class="quiz-q-label">What does this mean?</div>
                 <div class="quiz-q-text" id="q-text">--</div>
+                <div class="quiz-q-phonetic" id="q-phonetic"></div>
+                <button class="quiz-q-hear" id="q-hear-btn" onclick="speakCurrentQ()">🔊 HEAR</button>
             </div>
             <div class="quiz-options" id="q-options"></div>
         </div>
@@ -270,6 +275,7 @@
 // ── Core state ─────────────────────────────────────────────────
 let currentDiff='easy', activeMode='words', currentCard=null, voices=[];
 const cardHistory={words:[],phrases:[]}, cardPools={words:{},phrases:{}};
+let currentQuizItem=null;
 
 // ── TTS ────────────────────────────────────────────────────────
 function loadVoices(){ voices=window.speechSynthesis.getVoices(); }
@@ -283,6 +289,7 @@ function _speak(text){
 }
 function speak(id){ _speak(document.getElementById(id).innerText); }
 function speakText(t){ _speak(t); }
+function speakCurrentQ(){ if(currentQuizItem) _speak(currentQuizItem.pt); }
 
 // ── Fallback library ───────────────────────────────────────────
 function getFallback(mode){
@@ -429,10 +436,12 @@ function beginTest(){
 
 function showQuestion(){
     const total=quizQs.length, q=quizQs[quizIdx];
+    currentQuizItem=q;
     document.getElementById('q-counter').innerText=`Question ${quizIdx+1} / ${total}`;
     document.getElementById('q-score-live').innerText=`Score: ${quizScore}`;
     document.getElementById('q-progress').style.width=`${(quizIdx/total)*100}%`;
     document.getElementById('q-text').innerText=q.pt;
+    document.getElementById('q-phonetic').innerText=q.ph ? `[ ${q.ph} ]` : '';
 
     // Build 4 options: correct + 3 distractors from entire pool
     const allPool=buildPool();
@@ -465,7 +474,6 @@ function showResults(){
     const s=quizScore, t=quizQs.length;
     document.getElementById('results-num').innerText=s;
 
-    // Animate SVG ring (r=65, circ=408.4)
     const circ=2*Math.PI*65;
     document.getElementById('score-arc').style.strokeDashoffset=circ-(circ*(s/t));
 
