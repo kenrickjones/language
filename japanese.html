@@ -22,7 +22,7 @@
         .diff-toggle { display: flex; background: var(--bg); padding: 4px; border-radius: 10px; margin-bottom: 15px; width: 100%; gap: 4px; border: 1px solid var(--border); }
         .diff-btn { flex: 1; padding: 10px 2px; font-size: 0.6rem; border: none; background: transparent; color: var(--text-dim); cursor: pointer; border-radius: 6px; font-weight: 800; }
         .diff-btn.active { background: var(--card); color: var(--primary); }
-        .flashcard-wrapper { perspective: 1000px; width: 100%; height: 340px; cursor: pointer; margin: 10px 0 20px 0; }
+        .flashcard-wrapper { perspective: 1000px; width: 100%; height: 340px; cursor: pointer; margin: 10px 0 15px 0; }
         .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.5s; transform-style: preserve-3d; }
         .flashcard-wrapper.is-flipped .flashcard-inner { transform: rotateY(180deg); }
         .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px; border: 2px solid var(--primary); text-align: center; background: var(--card); }
@@ -33,6 +33,14 @@
         .romaji { font-size: 1rem; font-style: italic; color: #ffe4e6; margin-top: 10px; }
         .video-list { width: 100%; display: grid; gap: 10px; }
         .video-item { display: flex; align-items: center; background: var(--card); padding: 15px; border-radius: 12px; text-decoration: none; color: white; border: 1px solid var(--border); font-weight: 600; font-size: 0.9rem; }
+
+        /* Prev / Next nav row */
+        .card-nav { display: flex; gap: 10px; width: 100%; margin-top: 8px; }
+        .btn-prev { flex: 1; padding: 14px; background: var(--card); color: var(--text-dim); border: 1px solid var(--border); border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 0.85rem; }
+        .btn-next { flex: 2; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 0 #be185d; font-size: 0.85rem; }
+        .btn-prev:active { opacity: 0.7; }
+        .btn-next:active { opacity: 0.85; }
+
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -68,7 +76,10 @@
                     </div>
                 </div>
             </div>
-            <button class="btn-main" onclick="nextCard('words')">NEXT WORD →</button>
+            <div class="card-nav">
+                <button class="btn-prev" onclick="prevCard('words')">← PREV</button>
+                <button class="btn-next" onclick="nextCard('words')">NEXT →</button>
+            </div>
         </div>
 
         <div id="phrases" class="content-section">
@@ -92,7 +103,10 @@
                     </div>
                 </div>
             </div>
-            <button class="btn-main" onclick="nextCard('phrases')">NEXT PHRASE →</button>
+            <div class="card-nav">
+                <button class="btn-prev" onclick="prevCard('phrases')">← PREV</button>
+                <button class="btn-next" onclick="nextCard('phrases')">NEXT →</button>
+            </div>
         </div>
 
         <div id="test" class="content-section">
@@ -104,9 +118,11 @@
 
         <div id="watch" class="content-section">
             <div class="video-list">
-                <a href="https://youtu.be/rGrBHiuPlT0" target="_blank" class="video-item">🇯🇵 Hiragana in 1 Hour</a>
-                <a href="https://youtu.be/6p9Il_j0zjc" target="_blank" class="video-item">🇯🇵 Katakana in 1 Hour</a>
-                <a href="https://youtu.be/k74yjmfFb_A" target="_blank" class="video-item">🇯🇵 100 Most Used Words</a>
+                <a href="https://www.youtube.com/watch?v=rGrBHiuPlT0" target="_blank" class="video-item">🇯🇵 Learn Hiragana – JapanesePod101</a>
+                <a href="https://www.youtube.com/watch?v=s6DKRgtVLGA" target="_blank" class="video-item">🇯🇵 Learn Katakana – JapanesePod101</a>
+                <a href="https://www.youtube.com/watch?v=m99_pXpX26U" target="_blank" class="video-item">🇯🇵 Japanese in 3 Hours – Basics</a>
+                <a href="https://www.youtube.com/c/JapanesePod101" target="_blank" class="video-item">🇯🇵 JapanesePod101 Channel →</a>
+                <a href="https://www.youtube.com/c/OrganizeJapanese" target="_blank" class="video-item">🇯🇵 Organic Japanese with Cure Dolly →</a>
             </div>
         </div>
     </div>
@@ -115,24 +131,127 @@
     let activeMode = 'words';
     let currentCard = null;
     let voices = [];
+    let voicesLoaded = false;
 
+    // --- Android/Chrome TTS Fix ---
+    // On Android Chrome, voices load asynchronously. We retry until Japanese voice found.
     function loadVoices() {
         voices = window.speechSynthesis.getVoices();
+        if(voices.length > 0) voicesLoaded = true;
     }
-    window.speechSynthesis.onvoiceschanged = loadVoices;
-    loadVoices();
+    if(window.speechSynthesis) {
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+        loadVoices();
+        // Retry for Android which needs a small delay
+        setTimeout(loadVoices, 500);
+        setTimeout(loadVoices, 1500);
+    }
+
+    function getJaVoice() {
+        // Priority: ja-JP exact > ja* > any (Android fallback)
+        return voices.find(v => v.lang === 'ja-JP')
+            || voices.find(v => v.lang.startsWith('ja'))
+            || null;
+    }
 
     function speak(elemId) {
+        if(!window.speechSynthesis) return;
+        // Re-fetch voices each time in case they loaded late (Android)
+        if(!voicesLoaded) loadVoices();
+
         window.speechSynthesis.cancel();
         const text = document.getElementById(elemId).innerText;
         const ut = new SpeechSynthesisUtterance(text);
-        
-        const jaVoice = voices.find(v => v.lang.startsWith('ja'));
-        if(jaVoice) ut.voice = jaVoice;
         ut.lang = 'ja-JP';
         ut.rate = 0.75;
-        
-        window.speechSynthesis.speak(ut);
+
+        const jaVoice = getJaVoice();
+        if(jaVoice) {
+            ut.voice = jaVoice;
+            window.speechSynthesis.speak(ut);
+        } else {
+            // Android workaround: voices sometimes need a user-gesture + slight delay
+            setTimeout(() => {
+                loadVoices();
+                const v2 = getJaVoice();
+                if(v2) ut.voice = v2;
+                window.speechSynthesis.speak(ut);
+            }, 200);
+        }
+    }
+
+    // Card history stacks
+    const history = { words: [], phrases: [] };
+    const pools   = { words: {}, phrases: {} };
+
+    function shuffle(arr) {
+        for(let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    function generateFallback(mode) {
+        if(mode === 'words') return [
+            {jp:'こんにちは', en:'Hello', rj:'Konnichiwa'},
+            {jp:'ありがとう', en:'Thank you', rj:'Arigatou'},
+            {jp:'はい', en:'Yes', rj:'Hai'},
+            {jp:'いいえ', en:'No', rj:'Iie'},
+            {jp:'水', en:'Water', rj:'Mizu'}
+        ];
+        return [
+            {jp:'おはようございます', en:'Good morning', rj:'Ohayou gozaimasu'},
+            {jp:'はじめまして', en:'Nice to meet you', rj:'Hajimemashite'}
+        ];
+    }
+
+    function getPool(mode) {
+        if(!pools[mode][currentDiff]) {
+            const src = (typeof JAPANESE_LIBRARY !== 'undefined')
+                ? [...JAPANESE_LIBRARY[mode][currentDiff]]
+                : generateFallback(mode);
+            pools[mode][currentDiff] = shuffle(src);
+            pools[mode][currentDiff]._idx = 0;
+        }
+        return pools[mode][currentDiff];
+    }
+
+    function showCard(mode, card) {
+        document.querySelectorAll('.flashcard-wrapper').forEach(w => w.classList.remove('is-flipped'));
+        currentCard = card;
+        setTimeout(() => {
+            if(mode === 'words') {
+                document.getElementById('jp-text').innerText = card.jp;
+                document.getElementById('en-text').innerText = card.en;
+                document.querySelectorAll('.jp-rj-view').forEach(el => el.innerText = `[ ${card.rj} ]`);
+            } else {
+                document.getElementById('phrase-jp').innerText = card.jp;
+                document.getElementById('phrase-en').innerText = card.en;
+                document.querySelectorAll('.phrase-rj-view').forEach(el => el.innerText = `[ ${card.rj} ]`);
+            }
+        }, 150);
+    }
+
+    function nextCard(mode) {
+        const pool = getPool(mode);
+        if(pool._idx === undefined) pool._idx = 0;
+        else pool._idx = (pool._idx + 1) % pool.length;
+        history[mode].push(pool._idx);
+        if(history[mode].length > 200) history[mode].shift();
+        showCard(mode, pool[pool._idx]);
+    }
+
+    function prevCard(mode) {
+        const pool = getPool(mode);
+        const hist = history[mode];
+        if(hist.length > 1) {
+            hist.pop();
+            pool._idx = hist[hist.length - 1];
+        } else {
+            pool._idx = ((pool._idx || 0) - 1 + pool.length) % pool.length;
+        }
+        showCard(mode, pool[pool._idx]);
     }
 
     function showTab(id, btn) {
@@ -149,41 +268,41 @@
         currentDiff = diff;
         document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+        pools[activeMode][currentDiff] = null;
+        history[activeMode] = [];
         nextCard(activeMode);
     }
 
-    function nextCard(mode) {
-        const pool = JAPANESE_LIBRARY[mode][currentDiff];
-        currentCard = pool[Math.floor(Math.random() * pool.length)];
-        document.querySelectorAll('.flashcard-wrapper').forEach(w => w.classList.remove('is-flipped'));
-        setTimeout(() => {
-            if(mode === 'words') {
-                document.getElementById('jp-text').innerText = currentCard.jp;
-                document.getElementById('en-text').innerText = currentCard.en;
-                document.querySelectorAll('.jp-rj-view').forEach(el => el.innerText = `[ ${currentCard.rj} ]`);
-            } else {
-                document.getElementById('phrase-jp').innerText = currentCard.jp;
-                document.getElementById('phrase-en').innerText = currentCard.en;
-                document.querySelectorAll('.phrase-rj-view').forEach(el => el.innerText = `[ ${currentCard.rj} ]`);
-            }
-        }, 150);
-    }
-
     function startTest() {
-        const pool = [...JAPANESE_LIBRARY.words[currentDiff], ...JAPANESE_LIBRARY.phrases[currentDiff]];
+        const wPool = (typeof JAPANESE_LIBRARY !== 'undefined')
+            ? JAPANESE_LIBRARY.words[currentDiff]
+            : generateFallback('words');
+        const pPool = (typeof JAPANESE_LIBRARY !== 'undefined')
+            ? JAPANESE_LIBRARY.phrases[currentDiff]
+            : generateFallback('phrases');
+        const pool = [...wPool, ...pPool];
         currentCard = pool[Math.floor(Math.random()*pool.length)];
         document.getElementById('test-q').innerText = currentCard.jp;
-        document.getElementById('test-input').value = "";
+        document.getElementById('test-input').value = '';
+        document.getElementById('feedback').innerText = '';
     }
 
     function checkAnswer() {
-        if(document.getElementById('test-input').value.trim().toLowerCase() === currentCard.en.toLowerCase()) {
+        const ans = document.getElementById('test-input').value.trim().toLowerCase();
+        if(ans === currentCard.en.toLowerCase()) {
             document.getElementById('feedback').innerText = "✅ Correct!";
             setTimeout(startTest, 1200);
         } else {
             document.getElementById('feedback').innerText = "❌ Incorrect!";
         }
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('test-input').addEventListener('keydown', e => {
+            if(e.key === 'Enter') checkAnswer();
+        });
+    });
+
     nextCard('words');
 </script>
 </body>

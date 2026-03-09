@@ -22,7 +22,7 @@
         .diff-toggle { display: flex; background: var(--bg); padding: 4px; border-radius: 10px; margin-bottom: 15px; width: 100%; gap: 4px; border: 1px solid var(--border); }
         .diff-btn { flex: 1; padding: 10px 2px; font-size: 0.6rem; border: none; background: transparent; color: var(--text-dim); cursor: pointer; border-radius: 6px; font-weight: 800; }
         .diff-btn.active { background: var(--card); color: var(--primary); }
-        .flashcard-wrapper { perspective: 1000px; width: 100%; height: 340px; cursor: pointer; margin: 10px 0 20px 0; }
+        .flashcard-wrapper { perspective: 1000px; width: 100%; height: 340px; cursor: pointer; margin: 10px 0 15px 0; }
         .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.5s; transform-style: preserve-3d; }
         .flashcard-wrapper.is-flipped .flashcard-inner { transform: rotateY(180deg); }
         .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px; border: 2px solid var(--primary); text-align: center; background: var(--card); }
@@ -33,6 +33,14 @@
         .pronunciation { font-size: 0.9rem; font-style: italic; color: #dcfce7; margin-top: 8px; }
         .video-list { width: 100%; display: grid; gap: 10px; }
         .video-item { display: flex; align-items: center; background: var(--card); padding: 15px; border-radius: 12px; text-decoration: none; color: white; border: 1px solid var(--border); font-weight: 600; font-size: 0.9rem; }
+
+        /* Prev / Next nav row */
+        .card-nav { display: flex; gap: 10px; width: 100%; margin-top: 8px; }
+        .btn-prev { flex: 1; padding: 14px; background: var(--card); color: var(--text-dim); border: 1px solid var(--border); border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 0.85rem; }
+        .btn-next { flex: 2; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 0 #166534; font-size: 0.85rem; }
+        .btn-prev:active { opacity: 0.7; }
+        .btn-next:active { opacity: 0.85; }
+
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -68,7 +76,10 @@
                     </div>
                 </div>
             </div>
-            <button class="btn-main" onclick="nextCard('words')">NEXT WORD →</button>
+            <div class="card-nav">
+                <button class="btn-prev" onclick="prevCard('words')">← PREV</button>
+                <button class="btn-next" onclick="nextCard('words')">NEXT →</button>
+            </div>
         </div>
 
         <div id="phrases" class="content-section">
@@ -92,7 +103,10 @@
                     </div>
                 </div>
             </div>
-            <button class="btn-main" onclick="nextCard('phrases')">NEXT PHRASE →</button>
+            <div class="card-nav">
+                <button class="btn-prev" onclick="prevCard('phrases')">← PREV</button>
+                <button class="btn-next" onclick="nextCard('phrases')">NEXT →</button>
+            </div>
         </div>
 
         <div id="test" class="content-section">
@@ -104,11 +118,11 @@
 
         <div id="watch" class="content-section">
             <div class="video-list">
-                <a href="https://youtu.be/zS_R-B99kU0" target="_blank" class="video-item">▶️ Pronunciation Basics</a>
-                <a href="https://youtu.be/M9t7F9fG8tI" target="_blank" class="video-item">▶️ 100 Common Phrases</a>
-                <a href="https://youtu.be/vW_rF7-A6-s" target="_blank" class="video-item">▶️ Brazilian Slang Guide</a>
-                <a href="https://youtu.be/S4p4xUIsm7M" target="_blank" class="video-item">▶️ Essential Verbs</a>
-                <a href="https://youtu.be/Hk4G8S_m4uM" target="_blank" class="video-item">▶️ Ordering Food in PT</a>
+                <a href="https://www.youtube.com/watch?v=PkZnDv_ZNGk" target="_blank" class="video-item">▶️ Portuguese in 30 Min (Basics)</a>
+                <a href="https://www.youtube.com/watch?v=gQkHOcLHpbk" target="_blank" class="video-item">▶️ 100 Phrases for Beginners</a>
+                <a href="https://www.youtube.com/watch?v=XQBN3TlPVHo" target="_blank" class="video-item">▶️ Brazilian Pronunciation Guide</a>
+                <a href="https://www.youtube.com/watch?v=pBrBCouyIvk" target="_blank" class="video-item">▶️ Essential Verbs (Speaking Brazilian)</a>
+                <a href="https://www.youtube.com/c/PortuguesePod101" target="_blank" class="video-item">▶️ PortuguesePod101 Channel →</a>
             </div>
         </div>
     </div>
@@ -118,7 +132,10 @@
     let currentCard = null;
     let voices = [];
 
-    // Safari-Specific Voice Fix
+    // Card history stacks per mode
+    const history = { words: [], phrases: [] };
+    const pools = { words: {}, phrases: {} };
+
     function loadVoices() {
         voices = window.speechSynthesis.getVoices();
     }
@@ -129,14 +146,87 @@
         window.speechSynthesis.cancel();
         const text = document.getElementById(elemId).innerText;
         const ut = new SpeechSynthesisUtterance(text);
-        
-        // Find PT Voice
         const ptVoice = voices.find(v => v.lang.startsWith('pt'));
         if(ptVoice) ut.voice = ptVoice;
         ut.lang = 'pt-BR';
         ut.rate = 0.8;
-        
         window.speechSynthesis.speak(ut);
+    }
+
+    function getPool(mode) {
+        if(!pools[mode][currentDiff]) {
+            // Shuffle a copy of the pool
+            const src = (typeof PORTUGUESE_LIBRARY !== 'undefined')
+                ? [...PORTUGUESE_LIBRARY[mode][currentDiff]]
+                : generateFallback(mode);
+            pools[mode][currentDiff] = shuffle(src);
+        }
+        return pools[mode][currentDiff];
+    }
+
+    function shuffle(arr) {
+        for(let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    // Fallback demo data if vault not loaded
+    function generateFallback(mode) {
+        if(mode === 'words') return [
+            {pt:'Olá', en:'Hello', ph:'oh-LAH'},
+            {pt:'Obrigado', en:'Thank you', ph:'oh-bree-GAH-doo'},
+            {pt:'Por favor', en:'Please', ph:'por fah-VOR'},
+            {pt:'Água', en:'Water', ph:'AH-gwah'},
+            {pt:'Casa', en:'House', ph:'KAH-zah'}
+        ];
+        return [
+            {pt:'Bom dia!', en:'Good morning!', ph:'bom JEE-ah'},
+            {pt:'Como vai?', en:'How are you?', ph:'KOH-moo VY'},
+            {pt:'Tudo bem.', en:'All good.', ph:'TOO-doo beng'}
+        ];
+    }
+
+    function showCard(mode, card) {
+        document.querySelectorAll('.flashcard-wrapper').forEach(w => w.classList.remove('is-flipped'));
+        currentCard = card;
+        setTimeout(() => {
+            if(mode === 'words') {
+                document.getElementById('pt-text').innerText = card.pt;
+                document.getElementById('en-text').innerText = card.en;
+                document.querySelectorAll('.pt-ph-view').forEach(el => el.innerText = `[ ${card.ph} ]`);
+            } else {
+                document.getElementById('phrase-pt').innerText = card.pt;
+                document.getElementById('phrase-en').innerText = card.en;
+                document.querySelectorAll('.phrase-ph-view').forEach(el => el.innerText = `[ ${card.ph} ]`);
+            }
+        }, 150);
+    }
+
+    function nextCard(mode) {
+        const pool = getPool(mode);
+        const hist = history[mode];
+        // Track position: use index stored on pool
+        if(!pool._idx && pool._idx !== 0) pool._idx = 0;
+        else pool._idx = (pool._idx + 1) % pool.length;
+
+        const card = pool[pool._idx];
+        hist.push(pool._idx);
+        if(hist.length > 200) hist.shift();
+        showCard(mode, card);
+    }
+
+    function prevCard(mode) {
+        const pool = getPool(mode);
+        const hist = history[mode];
+        if(hist.length > 1) {
+            hist.pop(); // remove current
+            pool._idx = hist[hist.length - 1];
+        } else {
+            pool._idx = ((pool._idx || 0) - 1 + pool.length) % pool.length;
+        }
+        showCard(mode, pool[pool._idx]);
     }
 
     function showTab(id, btn) {
@@ -153,41 +243,43 @@
         currentDiff = diff;
         document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+        // Reset pools for new difficulty
+        pools[activeMode][currentDiff] = null;
+        history[activeMode] = [];
         nextCard(activeMode);
     }
 
-    function nextCard(mode) {
-        const pool = PORTUGUESE_LIBRARY[mode][currentDiff];
-        currentCard = pool[Math.floor(Math.random() * pool.length)];
-        document.querySelectorAll('.flashcard-wrapper').forEach(w => w.classList.remove('is-flipped'));
-        setTimeout(() => {
-            if(mode === 'words') {
-                document.getElementById('pt-text').innerText = currentCard.pt;
-                document.getElementById('en-text').innerText = currentCard.en;
-                document.querySelectorAll('.pt-ph-view').forEach(el => el.innerText = `[ ${currentCard.ph} ]`);
-            } else {
-                document.getElementById('phrase-pt').innerText = currentCard.pt;
-                document.getElementById('phrase-en').innerText = currentCard.en;
-                document.querySelectorAll('.phrase-ph-view').forEach(el => el.innerText = `[ ${currentCard.ph} ]`);
-            }
-        }, 150);
-    }
-
     function startTest() {
-        const pool = [...PORTUGUESE_LIBRARY.words[currentDiff], ...PORTUGUESE_LIBRARY.phrases[currentDiff]];
+        const wPool = (typeof PORTUGUESE_LIBRARY !== 'undefined')
+            ? PORTUGUESE_LIBRARY.words[currentDiff]
+            : generateFallback('words');
+        const pPool = (typeof PORTUGUESE_LIBRARY !== 'undefined')
+            ? PORTUGUESE_LIBRARY.phrases[currentDiff]
+            : generateFallback('phrases');
+        const pool = [...wPool, ...pPool];
         currentCard = pool[Math.floor(Math.random()*pool.length)];
         document.getElementById('test-q').innerText = currentCard.pt;
-        document.getElementById('test-input').value = "";
+        document.getElementById('test-input').value = '';
+        document.getElementById('feedback').innerText = '';
     }
 
     function checkAnswer() {
-        if(document.getElementById('test-input').value.trim().toLowerCase() === currentCard.en.toLowerCase()) {
+        const ans = document.getElementById('test-input').value.trim().toLowerCase();
+        if(ans === currentCard.en.toLowerCase()) {
             document.getElementById('feedback').innerText = "✅ Correct!";
             setTimeout(startTest, 1200);
         } else {
             document.getElementById('feedback').innerText = "❌ Try again!";
         }
     }
+
+    // Allow Enter key in test
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('test-input').addEventListener('keydown', e => {
+            if(e.key === 'Enter') checkAnswer();
+        });
+    });
+
     nextCard('words');
 </script>
 </body>
