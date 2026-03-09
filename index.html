@@ -14,10 +14,9 @@
             --pt: #22c55e;
             --jp: #f472b6;
             --es: #f59e0b;
+            --nl: #38bdf8;
         }
-
         * { box-sizing: border-box; transition: transform 0.2s ease; }
-
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg);
@@ -30,12 +29,10 @@
             min-height: 100vh;
             padding: 20px;
         }
-
         .header {
             text-align: center;
             margin-bottom: 40px;
         }
-
         .header h1 {
             font-size: 2.8rem;
             font-weight: 900;
@@ -43,14 +40,12 @@
             margin: 0;
             color: var(--text);
         }
-
         .header p {
             color: #64748b;
             font-weight: 600;
             margin-top: 8px;
             font-size: 1.1rem;
         }
-
         .grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -58,7 +53,6 @@
             width: 100%;
             max-width: 400px;
         }
-
         .lang-card {
             background: var(--card);
             border: 1px solid var(--border);
@@ -71,17 +65,14 @@
             justify-content: space-between;
             position: relative;
         }
-
         .lang-card:active {
             transform: scale(0.97);
         }
-
         .lang-info h2 {
             margin: 0;
             font-size: 1.5rem;
             font-weight: 800;
         }
-
         .lang-info p {
             margin: 4px 0 0 0;
             color: #94a3b8;
@@ -90,24 +81,20 @@
             letter-spacing: 1px;
             text-transform: uppercase;
         }
-
-        /* Accent Borders */
         .card-pt { border-left: 6px solid var(--pt); }
         .card-jp { border-left: 6px solid var(--jp); }
         .card-es { border-left: 6px solid var(--es); }
-
+        .card-nl { border-left: 6px solid var(--nl); }
         .emoji {
             font-size: 2.2rem;
         }
     </style>
 </head>
 <body>
-
     <div class="header">
         <h1>Language Hub</h1>
         <p>Select your Language</p>
     </div>
-
     <div class="grid">
         <a href="portuguese.html" class="lang-card card-pt">
             <div class="lang-info">
@@ -116,7 +103,6 @@
             </div>
             <div class="emoji">🇧🇷</div>
         </a>
-
         <a href="japanese.html" class="lang-card card-jp">
             <div class="lang-info">
                 <h2>Learn Japanese</h2>
@@ -124,7 +110,6 @@
             </div>
             <div class="emoji">🇯🇵</div>
         </a>
-
         <a href="spanish.html" class="lang-card card-es">
             <div class="lang-info">
                 <h2>Learn Spanish</h2>
@@ -132,7 +117,13 @@
             </div>
             <div class="emoji">🇪🇸</div>
         </a>
+        <a href="dutch.html" class="lang-card card-nl">
+            <div class="lang-info">
+                <h2>Learn Dutch</h2>
+                <p>Project Tulp</p>
+            </div>
+            <div class="emoji">🇳🇱</div>
+        </a>
     </div>
-
 </body>
 </html>
