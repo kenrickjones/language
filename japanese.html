@@ -114,6 +114,7 @@
         <button class="nav-btn" onclick="showTab('watch',this)">Watch</button>
     </nav>
 
+    <!-- WORDS -->
     <div id="words" class="content-section active">
         <div class="cat-scroll-wrap"><div class="cat-scroll" id="words-cat-scroll"></div></div>
         <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
@@ -137,6 +138,7 @@
         </div>
     </div>
 
+    <!-- PHRASES -->
     <div id="phrases" class="content-section">
         <div class="diff-toggle">
             <button class="diff-btn active" onclick="setPhraseDiff('easy',this)">EASY</button>
@@ -164,6 +166,7 @@
         </div>
     </div>
 
+    <!-- LIST -->
     <div id="list" class="content-section">
         <div class="list-type-toggle">
             <button class="list-type-btn active" onclick="setListType('words',this)">WORDS</button>
@@ -172,4 +175,162 @@
         <div id="list-words-controls"><div class="cat-scroll-wrap"><div class="cat-scroll" id="list-cat-scroll"></div></div></div>
         <div id="list-phrases-controls" style="display:none;">
             <div class="diff-toggle">
-                <button class="diff-btn active" onclick="setListPhraseDiff('easy',this)">E
+                <button class="diff-btn active" onclick="setListPhraseDiff('easy',this)">EASY</button>
+                <button class="diff-btn" onclick="setListPhraseDiff('medium',this)">MED</button>
+                <button class="diff-btn" onclick="setListPhraseDiff('hard',this)">HARD</button>
+                <button class="diff-btn" onclick="setListPhraseDiff('vhard',this)">V.HARD</button>
+            </div>
+        </div>
+        <div class="list-count" id="list-count">0 items</div>
+        <div class="list-scroll">
+            <table class="list-table">
+                <thead><tr><th>JAPANESE</th><th>ENGLISH</th><th></th></tr></thead>
+                <tbody id="list-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- TEST -->
+    <div id="test" class="content-section">
+        <div id="test-setup" class="test-setup">
+            <div>
+                <div class="setup-label">What to test</div>
+                <div class="setup-row">
+                    <button class="setup-opt active" onclick="pickTestType('words',this)">Words</button>
+                    <button class="setup-opt" onclick="pickTestType('phrases',this)">Phrases</button>
+                    <button class="setup-opt" onclick="pickTestType('both',this)">Both</button>
+                </div>
+            </div>
+            <div id="test-cat-section">
+                <div class="setup-label">Category</div>
+                <div class="cat-scroll-wrap"><div class="cat-scroll" id="test-cat-scroll"></div></div>
+            </div>
+            <div id="test-diff-section" style="display:none;">
+                <div class="setup-label">Difficulty</div>
+                <div class="setup-row">
+                    <button class="setup-opt active" onclick="pickTestDiff('easy',this)">Easy</button>
+                    <button class="setup-opt" onclick="pickTestDiff('medium',this)">Med</button>
+                    <button class="setup-opt" onclick="pickTestDiff('hard',this)">Hard</button>
+                    <button class="setup-opt" onclick="pickTestDiff('vhard',this)">V.Hard</button>
+                </div>
+            </div>
+            <button class="btn-start-test" onclick="beginTest()">START TEST →</button>
+        </div>
+        <div id="test-quiz" class="test-quiz">
+            <div class="quiz-meta"><span id="q-counter">Question 1 / 10</span><span id="q-score-live">Score: 0</span></div>
+            <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="q-progress"></div></div>
+            <div class="quiz-question-box">
+                <div class="quiz-q-label">What does this mean?</div>
+                <div class="quiz-q-text" id="q-text">--</div>
+                <div class="quiz-q-phonetic" id="q-phonetic"></div>
+                <button class="quiz-q-hear" onclick="speakCurrentQ()">🔊 HEAR</button>
+            </div>
+            <div class="quiz-options" id="q-options"></div>
+        </div>
+        <div id="test-results" class="test-results">
+            <div class="score-ring-wrap">
+                <svg width="150" height="150" viewBox="0 0 150 150">
+                    <circle cx="75" cy="75" r="65" fill="none" stroke="#334155" stroke-width="10"/>
+                    <circle id="score-arc" cx="75" cy="75" r="65" fill="none" stroke="#f472b6" stroke-width="10" stroke-dasharray="408.4" stroke-dashoffset="408.4" stroke-linecap="round"/>
+                </svg>
+                <div class="score-ring-inner"><div class="score-big" id="results-num">0</div><div class="score-denom">/ 10</div></div>
+            </div>
+            <div class="results-grade" id="results-grade"></div>
+            <div class="results-sub" id="results-sub"></div>
+            <div class="results-breakdown" id="results-breakdown"></div>
+            <button class="btn-retry" onclick="showSetup()">↩ TRY AGAIN</button>
+        </div>
+    </div>
+
+    <!-- WATCH -->
+    <div id="watch" class="content-section">
+        <div class="video-list">
+            <a href="https://www.youtube.com/watch?v=rGrBHiuPlT0" target="_blank" class="video-item">🇯🇵 Learn Hiragana – JapanesePod101</a>
+            <a href="https://www.youtube.com/watch?v=s6DKRgtVLGA" target="_blank" class="video-item">🇯🇵 Learn Katakana – JapanesePod101</a>
+            <a href="https://www.youtube.com/watch?v=m99_pXpX26U" target="_blank" class="video-item">🇯🇵 Japanese in 3 Hours – Basics</a>
+            <a href="https://www.youtube.com/c/JapanesePod101" target="_blank" class="video-item">🇯🇵 JapanesePod101 Channel →</a>
+            <a href="https://www.youtube.com/c/OrganizeJapanese" target="_blank" class="video-item">🇯🇵 Organic Japanese with Cure Dolly →</a>
+        </div>
+    </div>
+</div>
+
+<script>
+const CATEGORIES=[{id:'colours',label:'Colours',icon:'🎨'},{id:'numbers',label:'Numbers',icon:'🔢'},{id:'body',label:'Body',icon:'🫀'},{id:'food',label:'Food',icon:'🍽️'},{id:'animals',label:'Animals',icon:'🐾'},{id:'travel',label:'Travel',icon:'✈️'},{id:'family',label:'Family',icon:'👨‍👩‍👧'},{id:'time',label:'Time',icon:'⏰'}];
+
+const WORD_LIBRARY={
+    colours:[{jp:'赤',en:'Red',rj:'Aka'},{jp:'青',en:'Blue',rj:'Ao'},{jp:'緑',en:'Green',rj:'Midori'},{jp:'黄色',en:'Yellow',rj:'Kiiro'},{jp:'黒',en:'Black',rj:'Kuro'},{jp:'白',en:'White',rj:'Shiro'},{jp:'オレンジ',en:'Orange',rj:'Orenji'},{jp:'ピンク',en:'Pink',rj:'Pinku'},{jp:'紫',en:'Purple',rj:'Murasaki'},{jp:'灰色',en:'Grey',rj:'Haiiro'},{jp:'茶色',en:'Brown',rj:'Chairo'},{jp:'金色',en:'Gold',rj:'Kiniro'}],
+    numbers:[{jp:'一',en:'One',rj:'Ichi'},{jp:'二',en:'Two',rj:'Ni'},{jp:'三',en:'Three',rj:'San'},{jp:'四',en:'Four',rj:'Shi / Yon'},{jp:'五',en:'Five',rj:'Go'},{jp:'六',en:'Six',rj:'Roku'},{jp:'七',en:'Seven',rj:'Shichi / Nana'},{jp:'八',en:'Eight',rj:'Hachi'},{jp:'九',en:'Nine',rj:'Ku / Kyuu'},{jp:'十',en:'Ten',rj:'Juu'},{jp:'二十',en:'Twenty',rj:'Nijuu'},{jp:'百',en:'Hundred',rj:'Hyaku'}],
+    body:[{jp:'頭',en:'Head',rj:'Atama'},{jp:'目',en:'Eye',rj:'Me'},{jp:'鼻',en:'Nose',rj:'Hana'},{jp:'口',en:'Mouth',rj:'Kuchi'},{jp:'耳',en:'Ear',rj:'Mimi'},{jp:'手',en:'Hand',rj:'Te'},{jp:'足',en:'Foot',rj:'Ashi'},{jp:'腕',en:'Arm',rj:'Ude'},{jp:'脚',en:'Leg',rj:'Ashi / Kyaku'},{jp:'背中',en:'Back',rj:'Senaka'},{jp:'心臓',en:'Heart',rj:'Shinzou'},{jp:'歯',en:'Tooth',rj:'Ha'}],
+    food:[{jp:'ご飯',en:'Rice',rj:'Gohan'},{jp:'パン',en:'Bread',rj:'Pan'},{jp:'鶏肉',en:'Chicken',rj:'Toriniku'},{jp:'魚',en:'Fish',rj:'Sakana'},{jp:'牛乳',en:'Milk',rj:'Gyuunyuu'},{jp:'卵',en:'Egg',rj:'Tamago'},{jp:'チーズ',en:'Cheese',rj:'Chiizu'},{jp:'果物',en:'Fruit',rj:'Kudamono'},{jp:'野菜',en:'Vegetable',rj:'Yasai'},{jp:'コーヒー',en:'Coffee',rj:'Koohii'},{jp:'ジュース',en:'Juice',rj:'Juusu'},{jp:'水',en:'Water',rj:'Mizu'}],
+    animals:[{jp:'犬',en:'Dog',rj:'Inu'},{jp:'猫',en:'Cat',rj:'Neko'},{jp:'鳥',en:'Bird',rj:'Tori'},{jp:'魚',en:'Fish',rj:'Sakana'},{jp:'馬',en:'Horse',rj:'Uma'},{jp:'牛',en:'Cow',rj:'Ushi'},{jp:'豚',en:'Pig',rj:'Buta'},{jp:'羊',en:'Sheep',rj:'Hitsuji'},{jp:'猿',en:'Monkey',rj:'Saru'},{jp:'ライオン',en:'Lion',rj:'Raion'},{jp:'象',en:'Elephant',rj:'Zou'},{jp:'蛇',en:'Snake',rj:'Hebi'}],
+    travel:[{jp:'空港',en:'Airport',rj:'Kuukou'},{jp:'ホテル',en:'Hotel',rj:'Hoteru'},{jp:'電車',en:'Train',rj:'Densha'},{jp:'バス',en:'Bus',rj:'Basu'},{jp:'タクシー',en:'Taxi',rj:'Takushii'},{jp:'パスポート',en:'Passport',rj:'Pasupooto'},{jp:'スーツケース',en:'Suitcase',rj:'Suutsukeesu'},{jp:'地図',en:'Map',rj:'Chizu'},{jp:'海',en:'Beach / Sea',rj:'Umi'},{jp:'博物館',en:'Museum',rj:'Hakubutsukan'},{jp:'レストラン',en:'Restaurant',rj:'Resutoran'},{jp:'お金',en:'Money',rj:'Okane'}],
+    family:[{jp:'お母さん',en:'Mother',rj:'Okaasan'},{jp:'お父さん',en:'Father',rj:'Otousan'},{jp:'兄',en:'Elder brother',rj:'Ani'},{jp:'姉',en:'Elder sister',rj:'Ane'},{jp:'祖母',en:'Grandmother',rj:'Sobo'},{jp:'祖父',en:'Grandfather',rj:'Sofu'},{jp:'息子',en:'Son',rj:'Musuko'},{jp:'娘',en:'Daughter',rj:'Musume'},{jp:'叔父',en:'Uncle',rj:'Oji'},{jp:'叔母',en:'Aunt',rj:'Oba'},{jp:'いとこ',en:'Cousin',rj:'Itoko'},{jp:'夫',en:'Husband',rj:'Otto'}],
+    time:[{jp:'今日',en:'Today',rj:'Kyou'},{jp:'明日',en:'Tomorrow',rj:'Ashita'},{jp:'昨日',en:'Yesterday',rj:'Kinou'},{jp:'週',en:'Week',rj:'Shuu'},{jp:'月',en:'Month',rj:'Tsuki'},{jp:'年',en:'Year',rj:'Nen / Toshi'},{jp:'時間',en:'Hour',rj:'Jikan'},{jp:'分',en:'Minute',rj:'Fun / Pun'},{jp:'朝',en:'Morning',rj:'Asa'},{jp:'午後',en:'Afternoon',rj:'Gogo'},{jp:'夜',en:'Night',rj:'Yoru'},{jp:'今',en:'Now',rj:'Ima'}],
+};
+
+function getPhraseLib(diff){
+    if(typeof JAPANESE_LIBRARY!=='undefined'&&JAPANESE_LIBRARY.phrases) return JAPANESE_LIBRARY.phrases[diff]||[];
+    const lib={
+        easy:[{jp:'おはようございます',en:'Good morning',rj:'Ohayou gozaimasu'},{jp:'こんにちは',en:'Hello',rj:'Konnichiwa'},{jp:'ありがとうございます',en:'Thank you very much',rj:'Arigatou gozaimasu'},{jp:'すみません',en:'Excuse me',rj:'Sumimasen'},{jp:'どこですか？',en:'Where is it?',rj:'Doko desu ka?'},{jp:'いくらですか？',en:'How much?',rj:'Ikura desu ka?'},{jp:'わかりません',en:"I don't understand",rj:'Wakarimasen'},{jp:'もう一度お願いします',en:'Please say again',rj:'Mou ichido onegaishimasu'},{jp:'おやすみなさい',en:'Good night',rj:'Oyasuminasai'},{jp:'さようなら',en:'Goodbye',rj:'Sayounara'},{jp:'はじめまして',en:'Nice to meet you',rj:'Hajimemashite'},{jp:'どうぞよろしく',en:'Pleased to meet you',rj:'Douzo yoroshiku'}],
+        medium:[{jp:'英語を話せますか？',en:'Do you speak English?',rj:'Eigo wo hanasemasu ka?'},{jp:'トイレはどこですか？',en:'Where is the toilet?',rj:'Toire wa doko desu ka?'},{jp:'助けてください。',en:'Please help me.',rj:'Tasukete kudasai.'},{jp:'お名前は何ですか？',en:'What is your name?',rj:'Onamae wa nan desu ka?'},{jp:'私の名前は…です。',en:'My name is...',rj:'Watashi no namae wa... desu.'},{jp:'迷子になりました。',en:'I am lost.',rj:'Maigo ni narimashita.'},{jp:'手伝ってもらえますか？',en:'Can you help me?',rj:'Tetsudatte moraemasu ka?'},{jp:'どのくらいかかりますか？',en:'How long does it take?',rj:'Dono kurai kakarimasu ka?'},{jp:'これが好きです。',en:'I like this.',rj:'Kore ga suki desu.'},{jp:'これが嫌いです。',en:"I don't like this.",rj:'Kore ga kirai desu.'},{jp:'今何時ですか？',en:'What time is it?',rj:'Ima nanji desu ka?'},{jp:'WiFiはありますか？',en:'Is there WiFi?',rj:'WiFi wa arimasu ka?'}],
+        hard:[{jp:'もっとゆっくり話していただけますか？',en:'Could you speak more slowly?',rj:'Motto yukkuri hanashite itadakemasu ka?'},{jp:'気分が悪いです。',en:"I don't feel well.",rj:'Kibun ga warui desu.'},{jp:'どこで両替できますか？',en:'Where can I exchange money?',rj:'Doko de ryougae dekimasu ka?'},{jp:'医者が必要です。',en:'I need a doctor.',rj:'Isha ga hitsuyou desu.'},{jp:'お会計をお願いします。',en:'The bill, please.',rj:'Okaikei wo onegaishimasu.'},{jp:'これは含まれていますか？',en:'Is this included?',rj:'Kore wa fukumarete imasu ka?'},{jp:'一番良い選択肢は何ですか？',en:'What is the best option?',rj:'Ichiban yoi sentakushi wa nan desu ka?'},{jp:'予約があります。',en:'I have a reservation.',rj:'Yoyaku ga arimasu.'},{jp:'割引してもらえますか？',en:'Can you give me a discount?',rj:'Waribiki shite moraemasu ka?'},{jp:'見ているだけです。',en:"I'm just looking.",rj:'Mite iru dake desu.'},{jp:'どの路線に乗ればいいですか？',en:'Which line should I take?',rj:'Dono rosen ni noreba ii desu ka?'},{jp:'タクシーを呼んでもらえますか？',en:'Can you call a taxi?',rj:'Takushii wo yonde moraemasu ka?'}],
+        vhard:[{jp:'申し訳ありませんが、おっしゃったことが理解できませんでした。',en:"Sorry, I didn't understand what you said.",rj:'Moushiwake arimasen ga...'},{jp:'近くに病院はありますか？',en:'Is there a hospital nearby?',rj:'Chikaku ni byouin wa arimasu ka?'},{jp:'それを書いていただけますか？',en:'Could you write that down?',rj:'Sore wo kaite itadakemasu ka?'},{jp:'そこまでどのくらい時間がかかりますか？',en:'How long does it take to get there?',rj:'Soko made dono kurai jikan ga kakarimasu ka?'},{jp:'グルテンフリーのものはありますか？',en:'Do you have anything gluten-free?',rj:'Guruten furii no mono wa arimasu ka?'},{jp:'良いレストランを紹介していただけますか？',en:'Could you recommend a good restaurant?',rj:'Yoi resutoran wo shoukai shite itadakemasu ka?'},{jp:'苦情を申し上げたいのですが。',en:'I want to make a complaint.',rj:'Kujou wo moushiagetai no desu ga.'},{jp:'大使館に連絡してください。',en:'Please contact the embassy.',rj:'Taishikan ni renraku shite kudasai.'},{jp:'賞味期限はいつですか？',en:'What is the expiry date?',rj:'Shoumi kigen wa itsu desu ka?'},{jp:'これは料金に含まれていますか？',en:'Is this included in the price?',rj:'Kore wa ryoukin ni fukumarete imasu ka?'},{jp:'事故報告書が必要です。',en:'I need an incident report.',rj:'Jiko houkokusho ga hitsuyou desu.'},{jp:'予約を確認していただけますか？',en:'Can you confirm my reservation?',rj:'Yoyaku wo kakunin shite itadakemasu ka?'}],
+    };
+    return lib[diff]||lib.easy;
+}
+
+let currentCat='colours',wordPool=[],wordIdx=0,wordHistory=[];
+let phraseDiff='easy',phrasePool=[],phraseIdx=0,phraseHistory=[];
+let listType='words',listCat='colours',listPhraseDiff='easy';
+let testType='words',testCat='colours',testDiff='easy';
+let quizQs=[],quizIdx=0,quizScore=0,quizLog=[],currentQuizItem=null;
+let voices=[],voicesLoaded=false;
+
+function loadVoices(){voices=window.speechSynthesis.getVoices();if(voices.length>0)voicesLoaded=true;}
+if(window.speechSynthesis){window.speechSynthesis.onvoiceschanged=loadVoices;loadVoices();setTimeout(loadVoices,500);setTimeout(loadVoices,1500);}
+function getJaVoice(){return voices.find(v=>v.lang==='ja-JP')||voices.find(v=>v.lang.startsWith('ja'))||null;}
+function _speak(text){if(!window.speechSynthesis)return;if(!voicesLoaded)loadVoices();window.speechSynthesis.cancel();const ut=new SpeechSynthesisUtterance(text);ut.lang='ja-JP';ut.rate=0.75;const jv=getJaVoice();if(jv){ut.voice=jv;window.speechSynthesis.speak(ut);}else{setTimeout(()=>{loadVoices();const v2=getJaVoice();if(v2)ut.voice=v2;window.speechSynthesis.speak(ut);},200);}}
+function speak(id){_speak(document.getElementById(id).innerText);}
+function speakText(t){_speak(t);}
+function speakCurrentQ(){if(currentQuizItem)_speak(currentQuizItem.jp);}
+
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function buildCatButtons(containerId,activeCat,onClickFn){const wrap=document.getElementById(containerId);wrap.innerHTML='';CATEGORIES.forEach(cat=>{const btn=document.createElement('button');btn.className='cat-btn'+(cat.id===activeCat?' active':'');btn.innerHTML=`<span class="cat-icon">${cat.icon}</span>${cat.label}`;btn.onclick=()=>onClickFn(cat.id,btn,containerId);wrap.appendChild(btn);});}
+function setActiveCatBtn(containerId,catId){const btns=document.querySelectorAll(`#${containerId} .cat-btn`);const idx=CATEGORIES.findIndex(c=>c.id===catId);btns.forEach(b=>b.classList.remove('active'));if(btns[idx])btns[idx].classList.add('active');}
+
+function loadWordCat(catId){currentCat=catId;wordPool=shuffle(WORD_LIBRARY[catId]||[]);wordIdx=0;wordHistory=[0];showWordCard();setActiveCatBtn('words-cat-scroll',catId);}
+function showWordCard(){document.querySelectorAll('#words .flashcard-wrapper').forEach(w=>w.classList.remove('is-flipped'));const card=wordPool[wordIdx];if(!card)return;setTimeout(()=>{document.getElementById('jp-text').innerText=card.jp;document.getElementById('en-text').innerText=card.en;document.querySelectorAll('.jp-rj-view').forEach(el=>el.innerText=`[ ${card.rj} ]`);document.getElementById('words-counter').innerText=`${wordIdx+1} / ${wordPool.length}`;},150);}
+function nextCard(){wordIdx=(wordIdx+1)%wordPool.length;wordHistory.push(wordIdx);if(wordHistory.length>200)wordHistory.shift();showWordCard();}
+function prevCard(){if(wordHistory.length>1){wordHistory.pop();wordIdx=wordHistory[wordHistory.length-1];}else wordIdx=(wordIdx-1+wordPool.length)%wordPool.length;showWordCard();}
+
+function loadPhrases(){phrasePool=shuffle(getPhraseLib(phraseDiff));phraseIdx=0;phraseHistory=[0];showPhraseCard();}
+function showPhraseCard(){document.querySelectorAll('#phrases .flashcard-wrapper').forEach(w=>w.classList.remove('is-flipped'));const card=phrasePool[phraseIdx];if(!card)return;setTimeout(()=>{document.getElementById('phrase-jp').innerText=card.jp;document.getElementById('phrase-en').innerText=card.en;document.querySelectorAll('.phrase-rj-view').forEach(el=>el.innerText=`[ ${card.rj} ]`);},150);}
+function nextPhrase(){phraseIdx=(phraseIdx+1)%phrasePool.length;phraseHistory.push(phraseIdx);if(phraseHistory.length>200)phraseHistory.shift();showPhraseCard();}
+function prevPhrase(){if(phraseHistory.length>1){phraseHistory.pop();phraseIdx=phraseHistory[phraseHistory.length-1];}else phraseIdx=(phraseIdx-1+phrasePool.length)%phrasePool.length;showPhraseCard();}
+function setPhraseDiff(diff,btn){phraseDiff=diff;document.querySelectorAll('#phrases .diff-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');loadPhrases();}
+
+function setListType(type,btn){listType=type;document.querySelectorAll('.list-type-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('list-words-controls').style.display=type==='words'?'block':'none';document.getElementById('list-phrases-controls').style.display=type==='phrases'?'block':'none';renderList();}
+function setListCat(catId,btn,containerId){listCat=catId;setActiveCatBtn(containerId,catId);renderList();}
+function setListPhraseDiff(diff,btn){listPhraseDiff=diff;document.querySelectorAll('#list-phrases-controls .diff-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderList();}
+function renderList(){const data=listType==='words'?(WORD_LIBRARY[listCat]||[]):getPhraseLib(listPhraseDiff);document.getElementById('list-count').innerText=`${data.length} items`;const tb=document.getElementById('list-body');tb.innerHTML='';data.forEach(item=>{const native=item.jp,tr=document.createElement('tr');tr.innerHTML=`<td><div class="list-native">${native}</div><div class="list-ph">[ ${item.rj} ]</div></td><td><span class="list-en">${item.en}</span></td><td><button class="list-hear" onclick="event.stopPropagation();speakText('${native.replace(/'/g,"\\'")}')">🔊</button></td>`;tr.onclick=()=>speakText(native);tb.appendChild(tr);});}
+
+function pickTestType(type,btn){testType=type;btn.parentElement.querySelectorAll('.setup-opt').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('test-cat-section').style.display=type==='phrases'?'none':'block';document.getElementById('test-diff-section').style.display=type==='words'?'none':'block';}
+function pickTestCat(catId,btn,containerId){testCat=catId;setActiveCatBtn(containerId,catId);}
+function pickTestDiff(diff,btn){testDiff=diff;btn.parentElement.querySelectorAll('.setup-opt').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+function buildTestPool(){let p=[];if(testType==='words')p=[...WORD_LIBRARY[testCat]||[]];else if(testType==='phrases')p=[...getPhraseLib(testDiff)];else p=[...(WORD_LIBRARY[testCat]||[]),...getPhraseLib(testDiff)];return shuffle(p);}
+function showSetup(){document.getElementById('test-setup').style.display='flex';document.getElementById('test-quiz').style.display='none';document.getElementById('test-results').style.display='none';}
+function beginTest(){const pool=buildTestPool();if(pool.length<4){alert('Not enough items (need 4+).');return;}quizQs=pool.slice(0,10);quizIdx=0;quizScore=0;quizLog=[];document.getElementById('test-setup').style.display='none';document.getElementById('test-quiz').style.display='flex';document.getElementById('test-results').style.display='none';showQuestion();}
+function showQuestion(){const total=quizQs.length,q=quizQs[quizIdx];currentQuizItem=q;document.getElementById('q-counter').innerText=`Question ${quizIdx+1} / ${total}`;document.getElementById('q-score-live').innerText=`Score: ${quizScore}`;document.getElementById('q-progress').style.width=`${(quizIdx/total)*100}%`;document.getElementById('q-text').innerText=q.jp;document.getElementById('q-phonetic').innerText=q.rj?`[ ${q.rj} ]`:'';const allPool=buildTestPool();const others=shuffle(allPool.filter(x=>x.en!==q.en));const opts=shuffle([q,...others.slice(0,3)]);const wrap=document.getElementById('q-options');wrap.innerHTML='';opts.forEach(opt=>{const b=document.createElement('button');b.className='quiz-opt';b.textContent=opt.en;b.onclick=()=>answerChosen(b,opt.en===q.en,q,wrap);wrap.appendChild(b);});}
+function answerChosen(btn,correct,q,wrap){wrap.querySelectorAll('.quiz-opt').forEach(b=>{b.disabled=true;b.onclick=null;});if(correct){btn.classList.add('correct');quizScore++;}else{btn.classList.add('wrong');wrap.querySelectorAll('.quiz-opt').forEach(b=>{if(b.textContent===q.en)b.classList.add('reveal');});}quizLog.push({jp:q.jp,en:q.en,ok:correct});setTimeout(()=>{quizIdx++;if(quizIdx<quizQs.length)showQuestion();else showResults();},950);}
+function showResults(){document.getElementById('test-quiz').style.display='none';document.getElementById('test-results').style.display='flex';const s=quizScore,t=quizQs.length;document.getElementById('results-num').innerText=s;const circ=2*Math.PI*65;document.getElementById('score-arc').style.strokeDashoffset=circ-(circ*(s/t));const pct=s/t;let grade,sub;if(pct===1){grade='🏆 Perfect Score!';sub='Absolutely flawless!';}else if(pct>=0.8){grade='🌟 Excellent!';sub='Almost perfect!';}else if(pct>=0.6){grade='👍 Good Job!';sub='Keep practising!';}else if(pct>=0.4){grade='📚 Keep Going!';sub='Check the List tab.';}else{grade='💪 Keep Practising!';sub='Every attempt counts!';}document.getElementById('results-grade').innerText=grade;document.getElementById('results-sub').innerText=sub;const bd=document.getElementById('results-breakdown');bd.innerHTML='';quizLog.forEach(r=>{const row=document.createElement('div');row.className=`result-row ${r.ok?'r-correct':'r-wrong'}`;row.innerHTML=`<div class="result-icon">${r.ok?'✅':'❌'}</div><div><div class="result-q">${r.jp}</div><div class="result-a">${r.en}</div></div>`;bd.appendChild(row);});}
+
+function showTab(id,btn){document.querySelectorAll('.content-section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));document.getElementById(id).classList.add('active');btn.classList.add('active');if(id==='list')renderList();if(id==='test')showSetup();}
+
+buildCatButtons('words-cat-scroll',currentCat,(catId,btn,cid)=>{loadWordCat(catId);setActiveCatBtn(cid,catId);});
+buildCatButtons('list-cat-scroll',listCat,setListCat);
+buildCatButtons('test-cat-scroll',testCat,pickTestCat);
+loadWordCat(currentCat);loadPhrases();showSetup();
+</script>
+</body>
+</html>

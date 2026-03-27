@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
+            /* Colors derived from original theme */
             --bg: #0f172a;
             --card: #1e293b;
             --border: #334155;
@@ -15,11 +16,20 @@
             --jp: #f472b6;
             --es: #f59e0b;
             --nl: #38bdf8;
+            --accent: #6366f1;
         }
-        * { box-sizing: border-box; transition: transform 0.2s ease; }
+
+        * { 
+            box-sizing: border-box; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(244, 114, 182, 0.1) 0px, transparent 50%);
             color: var(--text);
             margin: 0;
             display: flex;
@@ -28,102 +38,185 @@
             justify-content: center;
             min-height: 100vh;
             padding: 20px;
+            overflow-x: hidden;
         }
+
         .header {
             text-align: center;
             margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease-out;
         }
+
         .header h1 {
-            font-size: 2.8rem;
+            font-size: 3.5rem;
             font-weight: 900;
-            letter-spacing: -1px;
+            letter-spacing: -2px;
             margin: 0;
-            color: var(--text);
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
+
         .header p {
-            color: #64748b;
+            color: #94a3b8;
             font-weight: 600;
             margin-top: 8px;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
+
         .grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 20px;
+            gap: 16px;
             width: 100%;
-            max-width: 400px;
+            max-width: 440px;
+            perspective: 1000px;
         }
+
         .lang-card {
             background: var(--card);
             border: 1px solid var(--border);
-            padding: 25px;
-            border-radius: 24px;
+            padding: 24px;
+            border-radius: 28px;
             text-decoration: none;
             color: white;
             display: flex;
             align-items: center;
             justify-content: space-between;
             position: relative;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
         }
+
+        /* Hover & Interaction Effects */
+        .lang-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            background: #243147;
+            border-color: var(--accent);
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.7);
+        }
+
         .lang-card:active {
-            transform: scale(0.97);
+            transform: scale(0.95);
         }
+
         .lang-info h2 {
             margin: 0;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: 800;
         }
+
         .lang-info p {
             margin: 4px 0 0 0;
             color: #94a3b8;
-            font-size: 0.75rem;
-            font-weight: 800;
+            font-size: 0.8rem;
+            font-weight: 700;
             letter-spacing: 1px;
             text-transform: uppercase;
         }
-        .card-pt { border-left: 6px solid var(--pt); }
-        .card-jp { border-left: 6px solid var(--jp); }
-        .card-es { border-left: 6px solid var(--es); }
-        .card-nl { border-left: 6px solid var(--nl); }
+
+        /* Border accents */
+        .card-pt { border-left: 8px solid var(--pt); }
+        .card-jp { border-left: 8px solid var(--jp); }
+        .card-es { border-left: 8px solid var(--es); }
+        .card-nl { border-left: 8px solid var(--nl); }
+
         .emoji {
-            font-size: 2.2rem;
+            font-size: 2.8rem;
+            filter: drop-shadow(0 0 10px rgba(0,0,0,0.3));
+        }
+
+        /* Creator Section */
+        .creator-footer {
+            margin-top: 60px;
+            text-align: center;
+            padding: 20px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .creator-tag {
+            font-size: 0.8rem;
+            color: #64748b;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .creator-name {
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: var(--text);
+            padding: 8px 20px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 50px;
+            display: inline-block;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Grid */
+        @media (min-width: 900px) {
+            .grid {
+                grid-template-columns: 1fr 1fr;
+                max-width: 900px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>Language Hub</h1>
-        <p>Select your Language</p>
+        <p>Your Journey Starts Here</p>
     </div>
+
     <div class="grid">
         <a href="portuguese.html" class="lang-card card-pt">
             <div class="lang-info">
-                <h2>Learn Portuguese</h2>
+                <h2>Portuguese</h2>
                 <p>Projeto Samba</p>
             </div>
             <div class="emoji">🇧🇷</div>
         </a>
+
         <a href="japanese.html" class="lang-card card-jp">
             <div class="lang-info">
-                <h2>Learn Japanese</h2>
+                <h2>Japanese</h2>
                 <p>Project Sakura</p>
             </div>
             <div class="emoji">🇯🇵</div>
         </a>
+
         <a href="spanish.html" class="lang-card card-es">
             <div class="lang-info">
-                <h2>Learn Spanish</h2>
+                <h2>Spanish</h2>
                 <p>Proyecto Sol</p>
             </div>
             <div class="emoji">🇪🇸</div>
         </a>
+
         <a href="dutch.html" class="lang-card card-nl">
             <div class="lang-info">
-                <h2>Learn Dutch</h2>
+                <h2>Dutch</h2>
                 <p>Project Tulp</p>
             </div>
             <div class="emoji">🇳🇱</div>
         </a>
+    </div>
+
+    <div class="creator-footer">
+        <div class="creator-tag">Crafted with ❤️ by</div>
+        <div class="creator-name">Kenrick Jones</div>
     </div>
 </body>
 </html>

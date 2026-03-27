@@ -7,12 +7,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="spanish_vault.js"></script>
     <style>
-        /* Theme updated to Spanish Orange (#f59e0b) */
-        :root{--bg:#0f172a;--card:#1e293b;--primary:#f59e0b;--shadow:#b45309;--text:#f8fafc;--text-dim:#94a3b8;--border:#334155;}
+        :root{--bg:#0f172a;--card:#1e293b;--primary:#f59e0b;--shadow:#92400e;--text:#f8fafc;--text-dim:#94a3b8;--border:#334155;}
         *{box-sizing:border-box;transition:all 0.2s ease;-webkit-tap-highlight-color:transparent;}
         body{font-family:'Inter',sans-serif;background-color:var(--bg);color:var(--text);margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding-top:env(safe-area-inset-top);}
-        
-        /* Navigation & Containers */
         .top-nav{width:100%;display:flex;padding:12px 15px;background:rgba(15,23,42,0.95);backdrop-filter:blur(10px);position:sticky;top:0;z-index:100;border-bottom:1px solid var(--border);}
         .home-link{text-decoration:none;color:var(--text-dim);font-size:0.75rem;font-weight:800;border:1px solid var(--border);padding:6px 14px;border-radius:20px;background:var(--card);}
         .app-container{max-width:600px;width:92%;display:flex;flex-direction:column;align-items:center;padding-bottom:50px;}
@@ -20,20 +17,18 @@
         nav{display:flex;background:var(--card);padding:4px;border-radius:12px;gap:4px;margin-bottom:20px;width:100%;border:1px solid var(--border);}
         .nav-btn{flex:1;padding:10px 2px;border:none;background:transparent;color:var(--text-dim);cursor:pointer;border-radius:8px;font-weight:700;font-size:0.65rem;}
         .nav-btn.active{background:var(--primary);color:white;}
-        
-        /* Content Sections */
         .content-section{display:none;width:100%;flex-direction:column;align-items:center;}
         .content-section.active{display:flex;animation:fadeIn 0.3s ease;}
-        
-        /* Category Scroller */
         .cat-scroll-wrap{width:100%;overflow-x:auto;overflow-y:visible;margin-bottom:15px;-webkit-overflow-scrolling:touch;scrollbar-width:none;min-width:0;}
         .cat-scroll-wrap::-webkit-scrollbar{display:none;}
         .cat-scroll{display:flex;gap:8px;padding:4px 2px;width:max-content;}
+        #list-words-controls{width:100%;overflow:hidden;min-width:0;} #test-cat-section{width:100%;overflow:hidden;min-width:0;}
         .cat-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 14px;background:var(--card);border:2px solid var(--border);border-radius:14px;cursor:pointer;color:var(--text-dim);font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;white-space:nowrap;}
         .cat-btn .cat-icon{font-size:1.4rem;line-height:1;}
         .cat-btn.active{border-color:var(--primary);color:var(--primary);background:rgba(245,158,11,0.08);}
-
-        /* Flashcards */
+        .diff-toggle{display:flex;background:var(--bg);padding:4px;border-radius:10px;margin-bottom:15px;width:100%;gap:4px;border:1px solid var(--border);}
+        .diff-btn{flex:1;padding:10px 2px;font-size:0.6rem;border:none;background:transparent;color:var(--text-dim);cursor:pointer;border-radius:6px;font-weight:800;}
+        .diff-btn.active{background:var(--card);color:var(--primary);}
         .flashcard-wrapper{perspective:1000px;width:100%;height:340px;cursor:pointer;margin:10px 0 15px 0;}
         .flashcard-inner{position:relative;width:100%;height:100%;transition:transform 0.5s;transform-style:preserve-3d;}
         .flashcard-wrapper.is-flipped .flashcard-inner{transform:rotateY(180deg);}
@@ -43,88 +38,325 @@
         .card-back .btn-hear{border-color:white;color:white;}
         .pronunciation{font-size:0.9rem;font-style:italic;color:#fef3c7;margin-top:8px;}
         .card-counter{font-size:0.7rem;font-weight:800;color:var(--text-dim);margin-top:10px;}
-
-        /* Buttons & Navigation */
         .card-nav{display:flex;gap:10px;width:100%;margin-top:8px;}
         .btn-prev{flex:1;padding:14px;background:var(--card);color:var(--text-dim);border:1px solid var(--border);border-radius:14px;font-weight:800;cursor:pointer;font-size:0.85rem;}
         .btn-next{flex:2;padding:14px;background:var(--primary);color:white;border:none;border-radius:14px;font-weight:800;cursor:pointer;box-shadow:0 4px 0 var(--shadow);font-size:0.85rem;}
-        
-        /* List & Results Styles */
-        .list-native{font-size:1.25rem;font-weight:700;color:var(--text);}
-        .result-row.r-correct{border-left:4px solid #22c55e;}
-        .result-row.r-wrong{border-left:4px solid #ef4444;}
-        
-        @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+        .btn-prev:active{opacity:0.7;}.btn-next:active{opacity:0.85;}
+        .list-type-toggle{display:flex;background:var(--bg);padding:4px;border-radius:10px;margin-bottom:15px;width:100%;gap:4px;border:1px solid var(--border);}
+        .list-type-btn{flex:1;padding:10px 2px;font-size:0.7rem;border:none;background:transparent;color:var(--text-dim);cursor:pointer;border-radius:6px;font-weight:800;}
+        .list-type-btn.active{background:var(--card);color:var(--primary);}
+        .list-count{font-size:0.72rem;color:var(--text-dim);font-weight:700;margin-bottom:10px;width:100%;text-align:right;}
+        .list-scroll{width:100%;background:var(--card);border-radius:16px;border:1px solid var(--border);overflow:hidden;}
+        .list-table{width:100%;border-collapse:collapse;}
+        .list-table thead th{font-size:0.65rem;font-weight:800;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em;padding:8px 10px;border-bottom:1px solid var(--border);text-align:left;}
+        .list-table tbody tr{border-bottom:1px solid var(--border);cursor:pointer;}
+        .list-table tbody tr:last-child{border-bottom:none;}
+        .list-table tbody tr:hover{background:rgba(255,255,255,0.04);}
+        .list-table tbody td{padding:13px 10px;vertical-align:middle;}
+        .list-native{font-size:1.1rem;font-weight:700;color:var(--text);}
+        .list-ph{font-size:0.7rem;font-style:italic;color:var(--text-dim);margin-top:3px;}
+        .list-en{font-size:0.88rem;color:var(--text-dim);font-weight:600;}
+        .list-hear{background:none;border:1px solid var(--border);color:var(--text-dim);border-radius:20px;padding:5px 10px;font-size:0.65rem;font-weight:800;cursor:pointer;white-space:nowrap;}
+        .list-hear:hover{border-color:var(--primary);color:var(--primary);}
+        .test-setup{width:100%;display:flex;flex-direction:column;gap:20px;}
+        .setup-label{font-size:0.68rem;font-weight:800;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;}
+        .setup-row{display:flex;gap:8px;width:100%;flex-wrap:wrap;}
+        .setup-opt{flex:1;min-width:70px;padding:14px 6px;background:var(--card);border:2px solid var(--border);border-radius:12px;color:var(--text-dim);font-weight:800;font-size:0.78rem;cursor:pointer;text-align:center;}
+        .setup-opt.active{border-color:var(--primary);color:var(--primary);background:rgba(245,158,11,0.08);}
+        .btn-start-test{width:100%;padding:18px;background:var(--primary);color:white;border:none;border-radius:14px;font-weight:800;font-size:1rem;cursor:pointer;box-shadow:0 4px 0 var(--shadow);margin-top:4px;}
+        .test-quiz{width:100%;display:none;flex-direction:column;align-items:center;}
+        .quiz-meta{display:flex;justify-content:space-between;width:100%;margin-bottom:10px;font-size:0.72rem;font-weight:800;color:var(--text-dim);}
+        .quiz-progress-bar{width:100%;height:6px;background:var(--border);border-radius:3px;margin-bottom:20px;overflow:hidden;}
+        .quiz-progress-fill{height:100%;background:var(--primary);border-radius:3px;transition:width 0.4s ease;}
+        .quiz-question-box{width:100%;background:var(--card);border:2px solid var(--primary);border-radius:20px;padding:28px 22px;text-align:center;margin-bottom:18px;}
+        .quiz-q-label{font-size:0.65rem;font-weight:800;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;}
+        .quiz-q-text{font-size:1.85rem;font-weight:800;color:var(--text);line-height:1.25;}
+        .quiz-q-phonetic{font-size:0.85rem;font-style:italic;color:var(--text-dim);margin-top:8px;min-height:1.2em;}
+        .quiz-q-hear{background:transparent;border:1px solid var(--border);color:var(--text-dim);padding:6px 14px;border-radius:20px;font-size:0.68rem;font-weight:800;margin-top:10px;cursor:pointer;}
+        .quiz-q-hear:hover{border-color:var(--primary);color:var(--primary);}
+        .quiz-options{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+        .quiz-opt{padding:16px 10px;background:var(--card);border:2px solid var(--border);border-radius:14px;color:var(--text);font-weight:700;font-size:0.85rem;cursor:pointer;text-align:center;line-height:1.3;}
+        .quiz-opt:hover:not(:disabled){border-color:var(--primary);}
+        .quiz-opt.correct{border-color:#22c55e;background:rgba(34,197,94,0.15);color:#22c55e;}
+        .quiz-opt.wrong{border-color:#ef4444;background:rgba(239,68,68,0.12);color:#ef4444;}
+        .quiz-opt.reveal{border-color:#22c55e;background:rgba(34,197,94,0.1);color:#22c55e;}
+        .quiz-opt:disabled{cursor:default;}
+        .test-results{width:100%;display:none;flex-direction:column;align-items:center;}
+        .score-ring-wrap{position:relative;width:150px;height:150px;margin:8px auto 18px;}
+        .score-ring-wrap svg{position:absolute;top:0;left:0;transform:rotate(-90deg);}
+        .score-ring-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+        .score-big{font-size:3rem;font-weight:800;line-height:1;}
+        .score-denom{font-size:0.82rem;color:var(--text-dim);font-weight:700;}
+        .results-grade{font-size:1.3rem;font-weight:800;margin-bottom:5px;}
+        .results-sub{font-size:0.85rem;color:var(--text-dim);margin-bottom:22px;text-align:center;}
+        .results-breakdown{width:100%;display:flex;flex-direction:column;gap:8px;margin-bottom:22px;}
+        .result-row{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:12px;padding:12px 14px;border:1px solid var(--border);}
+        .result-row.r-correct{border-color:rgba(34,197,94,0.25);}
+        .result-row.r-wrong{border-color:rgba(239,68,68,0.3);}
+        .result-icon{font-size:1.1rem;flex-shrink:0;}
+        .result-q{font-size:0.98rem;font-weight:700;color:var(--text);}
+        .result-a{font-size:0.78rem;color:var(--text-dim);}
+        .btn-retry{width:100%;padding:16px;background:var(--primary);color:white;border:none;border-radius:14px;font-weight:800;cursor:pointer;box-shadow:0 4px 0 var(--shadow);font-size:0.95rem;}
+        .video-list{width:100%;display:grid;gap:10px;}
+        .video-item{display:flex;align-items:center;background:var(--card);padding:15px;border-radius:12px;text-decoration:none;color:white;border:1px solid var(--border);font-weight:600;font-size:0.9rem;}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
     </style>
 </head>
 <body>
-    <div class="top-nav">
-        <a href="index.html" class="home-link">← HUB</a>
-    </div>
+<div class="top-nav"><a href="index.html" class="home-link">← HOME</a></div>
+<div class="app-container">
+    <header><h1>PROYECTO <span style="color:var(--primary)">SOL</span> 🇪🇸</h1></header>
+    <nav>
+        <button class="nav-btn active" onclick="showTab('words',this)">Words</button>
+        <button class="nav-btn" onclick="showTab('phrases',this)">Phrases</button>
+        <button class="nav-btn" onclick="showTab('list',this)">List</button>
+        <button class="nav-btn" onclick="showTab('test',this)">Test</button>
+        <button class="nav-btn" onclick="showTab('watch',this)">Watch</button>
+    </nav>
 
-    <div class="app-container">
-        <header>
-            <h1 style="margin:0;font-weight:800;letter-spacing:-0.02em;">Proyecto Sol</h1>
-            <p style="margin:5px 0 0;color:var(--text-dim);font-weight:600;font-size:0.9rem;">Spanish Learning Vault</p>
-        </header>
-
-        <nav>
-            <button class="nav-btn active" onclick="showTab('words',this)">WORDS</button>
-            <button class="nav-btn" onclick="showTab('list',this)">LIST</button>
-            <button class="nav-btn" onclick="showTab('test',this)">TEST</button>
-        </nav>
-
-        <section id="words" class="content-section active">
-            <div class="cat-scroll-wrap">
-                <div id="words-cat-scroll" class="cat-scroll"></div>
-            </div>
-            <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
-                <div class="flashcard-inner">
-                    <div class="card-front">
-                        <div id="card-q" style="font-size:2.8rem;font-weight:800;">Hola</div>
-                        <div id="card-ph" class="pronunciation">O-la</div>
-                        <button class="btn-hear" onclick="event.stopPropagation();speakText('card-q','es-ES')">HEAR</button>
-                    </div>
-                    <div class="card-back">
-                        <div id="card-a" style="font-size:1.8rem;font-weight:700;">Hello</div>
-                        <button class="btn-hear" onclick="event.stopPropagation();speakText('card-a','en-US')">HEAR</button>
-                    </div>
+    <!-- WORDS -->
+    <div id="words" class="content-section active">
+        <div class="cat-scroll-wrap"><div class="cat-scroll" id="words-cat-scroll"></div></div>
+        <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
+            <div class="flashcard-inner">
+                <div class="card-front">
+                    <h2 id="sp-text" style="font-size:2.2rem;margin:0">--</h2>
+                    <div class="sp-ph-view pronunciation">--</div>
+                    <button class="btn-hear" onclick="event.stopPropagation();speak('sp-text')">🔊 HEAR</button>
+                    <div class="card-counter" id="words-counter"></div>
+                </div>
+                <div class="card-back">
+                    <h2 id="en-text" style="font-size:1.8rem;margin:0">--</h2>
+                    <div class="sp-ph-view pronunciation">--</div>
+                    <button class="btn-hear" onclick="event.stopPropagation();speak('sp-text')">🔊 HEAR</button>
                 </div>
             </div>
-            <div class="card-counter"><span id="card-current">1</span> / <span id="card-total">0</span></div>
-            <div class="card-nav">
-                <button class="btn-prev" onclick="prevCard()">PREV</button>
-                <button class="btn-next" onclick="nextCard()">NEXT</button>
-            </div>
-        </section>
-
         </div>
+        <div class="card-nav">
+            <button class="btn-prev" onclick="prevCard()">← PREV</button>
+            <button class="btn-next" onclick="nextCard()">NEXT →</button>
+        </div>
+    </div>
 
-    <script>
-        // Use the library from spanish_vault.js
-        const library = SPANISH_LIBRARY;
-        let currentCat = Object.keys(library.words.easy)[0] || 'all';
-        let currentIndex = 0;
+    <!-- PHRASES -->
+    <div id="phrases" class="content-section">
+        <div class="diff-toggle">
+            <button class="diff-btn active" onclick="setPhraseDiff('easy',this)">EASY</button>
+            <button class="diff-btn" onclick="setPhraseDiff('medium',this)">MED</button>
+            <button class="diff-btn" onclick="setPhraseDiff('hard',this)">HARD</button>
+            <button class="diff-btn" onclick="setPhraseDiff('vhard',this)">V.HARD</button>
+        </div>
+        <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
+            <div class="flashcard-inner">
+                <div class="card-front">
+                    <h2 id="phrase-sp" style="font-size:1.6rem;margin:0">--</h2>
+                    <div class="phrase-ph-view pronunciation">--</div>
+                    <button class="btn-hear" onclick="event.stopPropagation();speak('phrase-sp')">🔊 HEAR</button>
+                </div>
+                <div class="card-back">
+                    <h2 id="phrase-en" style="font-size:1.4rem;margin:0">--</h2>
+                    <div class="phrase-ph-view pronunciation">--</div>
+                    <button class="btn-hear" onclick="event.stopPropagation();speak('phrase-sp')">🔊 HEAR</button>
+                </div>
+            </div>
+        </div>
+        <div class="card-nav">
+            <button class="btn-prev" onclick="prevPhrase()">← PREV</button>
+            <button class="btn-next" onclick="nextPhrase()">NEXT →</button>
+        </div>
+    </div>
 
-        function speakText(id, lang) {
-            const text = document.getElementById(id).innerText;
-            const ut = new SpeechSynthesisUtterance(text);
-            ut.lang = lang;
-            speechSynthesis.speak(ut);
-        }
+    <!-- LIST -->
+    <div id="list" class="content-section">
+        <div class="list-type-toggle">
+            <button class="list-type-btn active" onclick="setListType('words',this)">WORDS</button>
+            <button class="list-type-btn" onclick="setListType('phrases',this)">PHRASES</button>
+        </div>
+        <div id="list-words-controls"><div class="cat-scroll-wrap"><div class="cat-scroll" id="list-cat-scroll"></div></div></div>
+        <div id="list-phrases-controls" style="display:none;">
+            <div class="diff-toggle">
+                <button class="diff-btn active" onclick="setListPhraseDiff('easy',this)">EASY</button>
+                <button class="diff-btn" onclick="setListPhraseDiff('medium',this)">MED</button>
+                <button class="diff-btn" onclick="setListPhraseDiff('hard',this)">HARD</button>
+                <button class="diff-btn" onclick="setListPhraseDiff('vhard',this)">V.HARD</button>
+            </div>
+        </div>
+        <div class="list-count" id="list-count">0 items</div>
+        <div class="list-scroll">
+            <table class="list-table">
+                <thead><tr><th>SPANISH</th><th>ENGLISH</th><th></th></tr></thead>
+                <tbody id="list-body"></tbody>
+            </table>
+        </div>
+    </div>
 
-        function showTab(id, btn) {
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            btn.classList.add('active');
-        }
+    <!-- TEST -->
+    <div id="test" class="content-section">
+        <div id="test-setup" class="test-setup">
+            <div>
+                <div class="setup-label">What to test</div>
+                <div class="setup-row">
+                    <button class="setup-opt active" onclick="pickTestType('words',this)">Words</button>
+                    <button class="setup-opt" onclick="pickTestType('phrases',this)">Phrases</button>
+                    <button class="setup-opt" onclick="pickTestType('both',this)">Both</button>
+                </div>
+            </div>
+            <div id="test-cat-section">
+                <div class="setup-label">Category</div>
+                <div class="cat-scroll-wrap"><div class="cat-scroll" id="test-cat-scroll"></div></div>
+            </div>
+            <div id="test-diff-section" style="display:none;">
+                <div class="setup-label">Difficulty</div>
+                <div class="setup-row">
+                    <button class="setup-opt active" onclick="pickTestDiff('easy',this)">Easy</button>
+                    <button class="setup-opt" onclick="pickTestDiff('medium',this)">Med</button>
+                    <button class="setup-opt" onclick="pickTestDiff('hard',this)">Hard</button>
+                    <button class="setup-opt" onclick="pickTestDiff('vhard',this)">V.Hard</button>
+                </div>
+            </div>
+            <button class="btn-start-test" onclick="beginTest()">START TEST →</button>
+        </div>
+        <div id="test-quiz" class="test-quiz">
+            <div class="quiz-meta"><span id="q-counter">Question 1 / 10</span><span id="q-score-live">Score: 0</span></div>
+            <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="q-progress"></div></div>
+            <div class="quiz-question-box">
+                <div class="quiz-q-label">What does this mean?</div>
+                <div class="quiz-q-text" id="q-text">--</div>
+                <div class="quiz-q-phonetic" id="q-phonetic"></div>
+                <button class="quiz-q-hear" onclick="speakCurrentQ()">🔊 HEAR</button>
+            </div>
+            <div class="quiz-options" id="q-options"></div>
+        </div>
+        <div id="test-results" class="test-results">
+            <div class="score-ring-wrap">
+                <svg width="150" height="150" viewBox="0 0 150 150">
+                    <circle cx="75" cy="75" r="65" fill="none" stroke="#334155" stroke-width="10"/>
+                    <circle id="score-arc" cx="75" cy="75" r="65" fill="none" stroke="#f59e0b" stroke-width="10" stroke-dasharray="408.4" stroke-dashoffset="408.4" stroke-linecap="round"/>
+                </svg>
+                <div class="score-ring-inner"><div class="score-big" id="results-num">0</div><div class="score-denom">/ 10</div></div>
+            </div>
+            <div class="results-grade" id="results-grade"></div>
+            <div class="results-sub" id="results-sub"></div>
+            <div class="results-breakdown" id="results-breakdown"></div>
+            <button class="btn-retry" onclick="showSetup()">↩ TRY AGAIN</button>
+        </div>
+    </div>
 
-        // Initialize with Spanish logic
-        window.onload = () => {
-            console.log("Spanish module initialized.");
-            // Further logic to load categories from library...
-        };
-    </script>
+    <!-- WATCH -->
+    <div id="watch" class="content-section">
+        <div class="video-list">
+            <a href="https://www.youtube.com/watch?v=m99_pXpX26U" target="_blank" class="video-item">🇪🇸 Learn Spanish in 30 Min (Basics)</a>
+            <a href="https://www.youtube.com/watch?v=sFmOAVCROpo" target="_blank" class="video-item">🇪🇸 100 Common Spanish Phrases</a>
+            <a href="https://www.youtube.com/watch?v=LpWvPDaC0DQ" target="_blank" class="video-item">🇪🇸 Spanish Pronunciation Guide</a>
+            <a href="https://www.youtube.com/c/SpanishPod101" target="_blank" class="video-item">🇪🇸 SpanishPod101 Channel →</a>
+            <a href="https://www.youtube.com/c/Dreaming-Spanish" target="_blank" class="video-item">🇪🇸 Dreaming Spanish (Immersion) →</a>
+        </div>
+    </div>
+</div>
+
+<script>
+const CATEGORIES=[{id:'colours',label:'Colours',icon:'🎨'},{id:'numbers',label:'Numbers',icon:'🔢'},{id:'body',label:'Body',icon:'🫀'},{id:'food',label:'Food',icon:'🍽️'},{id:'animals',label:'Animals',icon:'🐾'},{id:'travel',label:'Travel',icon:'✈️'},{id:'family',label:'Family',icon:'👨‍👩‍👧'},{id:'time',label:'Time',icon:'⏰'}];
+
+const WORD_LIBRARY={
+    colours:[{sp:'Rojo',en:'Red',ph:'ROH-ho'},{sp:'Azul',en:'Blue',ph:'ah-SOOL'},{sp:'Verde',en:'Green',ph:'BAIR-deh'},{sp:'Amarillo',en:'Yellow',ph:'ah-mah-REE-yoh'},{sp:'Negro',en:'Black',ph:'NEH-groh'},{sp:'Blanco',en:'White',ph:'BLAN-koh'},{sp:'Naranja',en:'Orange',ph:'nah-RAN-hah'},{sp:'Rosa',en:'Pink',ph:'ROH-sah'},{sp:'Morado',en:'Purple',ph:'moh-RAH-doh'},{sp:'Gris',en:'Grey',ph:'grees'},{sp:'Marrón',en:'Brown',ph:'mah-ROHN'},{sp:'Dorado',en:'Gold',ph:'doh-RAH-doh'}],
+    numbers:[{sp:'Uno',en:'One',ph:'OO-noh'},{sp:'Dos',en:'Two',ph:'dohs'},{sp:'Tres',en:'Three',ph:'trays'},{sp:'Cuatro',en:'Four',ph:'KWAH-troh'},{sp:'Cinco',en:'Five',ph:'SINK-oh'},{sp:'Seis',en:'Six',ph:'sayss'},{sp:'Siete',en:'Seven',ph:'SYEH-teh'},{sp:'Ocho',en:'Eight',ph:'OH-choh'},{sp:'Nueve',en:'Nine',ph:'NWEH-beh'},{sp:'Diez',en:'Ten',ph:'dyeth'},{sp:'Veinte',en:'Twenty',ph:'BAYN-teh'},{sp:'Cien',en:'Hundred',ph:'syen'}],
+    body:[{sp:'Cabeza',en:'Head',ph:'kah-BEH-sah'},{sp:'Ojo',en:'Eye',ph:'OH-hoh'},{sp:'Nariz',en:'Nose',ph:'nah-REETH'},{sp:'Boca',en:'Mouth',ph:'BOH-kah'},{sp:'Oreja',en:'Ear',ph:'oh-REH-hah'},{sp:'Mano',en:'Hand',ph:'MAH-noh'},{sp:'Pie',en:'Foot',ph:'pyeh'},{sp:'Brazo',en:'Arm',ph:'BRAH-thoh'},{sp:'Pierna',en:'Leg',ph:'PYAIR-nah'},{sp:'Espalda',en:'Back',ph:'es-PAHL-dah'},{sp:'Corazón',en:'Heart',ph:'koh-rah-THOHN'},{sp:'Diente',en:'Tooth',ph:'DYEN-teh'}],
+    food:[{sp:'Arroz',en:'Rice',ph:'ah-ROTH'},{sp:'Pan',en:'Bread',ph:'pahn'},{sp:'Pollo',en:'Chicken',ph:'POH-yoh'},{sp:'Pescado',en:'Fish',ph:'pes-KAH-doh'},{sp:'Leche',en:'Milk',ph:'LEH-cheh'},{sp:'Huevo',en:'Egg',ph:'WEH-boh'},{sp:'Queso',en:'Cheese',ph:'KEH-soh'},{sp:'Fruta',en:'Fruit',ph:'FROO-tah'},{sp:'Verdura',en:'Vegetable',ph:'bair-DOO-rah'},{sp:'Café',en:'Coffee',ph:'kah-FEH'},{sp:'Zumo',en:'Juice',ph:'THOO-moh'},{sp:'Agua',en:'Water',ph:'AH-gwah'}],
+    animals:[{sp:'Perro',en:'Dog',ph:'PEH-rroh'},{sp:'Gato',en:'Cat',ph:'GAH-toh'},{sp:'Pájaro',en:'Bird',ph:'PAH-hah-roh'},{sp:'Pez',en:'Fish',ph:'peth'},{sp:'Caballo',en:'Horse',ph:'kah-BAH-yoh'},{sp:'Vaca',en:'Cow',ph:'BAH-kah'},{sp:'Cerdo',en:'Pig',ph:'THAIR-doh'},{sp:'Oveja',en:'Sheep',ph:'oh-BEH-hah'},{sp:'Mono',en:'Monkey',ph:'MOH-noh'},{sp:'León',en:'Lion',ph:'leh-OHN'},{sp:'Elefante',en:'Elephant',ph:'eh-leh-FAN-teh'},{sp:'Serpiente',en:'Snake',ph:'sair-PYEN-teh'}],
+    travel:[{sp:'Aeropuerto',en:'Airport',ph:'ah-eh-roh-PWAIR-toh'},{sp:'Hotel',en:'Hotel',ph:'oh-TEL'},{sp:'Tren',en:'Train',ph:'tren'},{sp:'Autobús',en:'Bus',ph:'ow-toh-BOOS'},{sp:'Taxi',en:'Taxi',ph:'TAK-see'},{sp:'Pasaporte',en:'Passport',ph:'pah-sah-POR-teh'},{sp:'Maleta',en:'Suitcase',ph:'mah-LEH-tah'},{sp:'Mapa',en:'Map',ph:'MAH-pah'},{sp:'Playa',en:'Beach',ph:'PLAH-yah'},{sp:'Museo',en:'Museum',ph:'moo-SEH-oh'},{sp:'Restaurante',en:'Restaurant',ph:'res-tow-RAN-teh'},{sp:'Dinero',en:'Money',ph:'dee-NEH-roh'}],
+    family:[{sp:'Madre',en:'Mother',ph:'MAH-dreh'},{sp:'Padre',en:'Father',ph:'PAH-dreh'},{sp:'Hermano',en:'Brother',ph:'air-MAH-noh'},{sp:'Hermana',en:'Sister',ph:'air-MAH-nah'},{sp:'Abuela',en:'Grandmother',ph:'ah-BWEH-lah'},{sp:'Abuelo',en:'Grandfather',ph:'ah-BWEH-loh'},{sp:'Hijo',en:'Son',ph:'EE-hoh'},{sp:'Hija',en:'Daughter',ph:'EE-hah'},{sp:'Tío',en:'Uncle',ph:'TEE-oh'},{sp:'Tía',en:'Aunt',ph:'TEE-ah'},{sp:'Primo',en:'Cousin (m)',ph:'PREE-moh'},{sp:'Marido',en:'Husband',ph:'mah-REE-doh'}],
+    time:[{sp:'Hoy',en:'Today',ph:'oy'},{sp:'Mañana',en:'Tomorrow',ph:'mah-NYAH-nah'},{sp:'Ayer',en:'Yesterday',ph:'ah-YAIR'},{sp:'Semana',en:'Week',ph:'seh-MAH-nah'},{sp:'Mes',en:'Month',ph:'mess'},{sp:'Año',en:'Year',ph:'AH-nyoh'},{sp:'Hora',en:'Hour',ph:'OH-rah'},{sp:'Minuto',en:'Minute',ph:'mee-NOO-toh'},{sp:'Mañana',en:'Morning',ph:'mah-NYAH-nah'},{sp:'Tarde',en:'Afternoon',ph:'TAR-deh'},{sp:'Noche',en:'Night',ph:'NOH-cheh'},{sp:'Ahora',en:'Now',ph:'ah-OH-rah'}],
+};
+
+function getPhraseLib(diff){
+    if(typeof SPANISH_LIBRARY!=='undefined'&&SPANISH_LIBRARY.phrases) return SPANISH_LIBRARY.phrases[diff]||[];
+    const lib={
+        easy:[{sp:'Buenos días',en:'Good morning',ph:'BWEH-nos DEE-ahs'},{sp:'¿Cómo estás?',en:'How are you?',ph:'KOH-moh ehs-TAHS'},{sp:'Mucho gusto',en:'Nice to meet you',ph:'MOO-choh GOOS-toh'},{sp:'Con permiso',en:'Excuse me',ph:'kon pehr-MEE-soh'},{sp:'¿Dónde está?',en:'Where is it?',ph:'DON-deh ehs-TAH'},{sp:'¿Cuánto cuesta?',en:'How much?',ph:'KWAN-toh KWEHS-tah'},{sp:'No entiendo',en:"I don't understand",ph:'noh ehn-TYEHN-doh'},{sp:'¿Puede repetir?',en:'Can you repeat?',ph:'PWEH-deh reh-peh-TEER'},{sp:'Muchas gracias',en:'Thank you very much',ph:'MOO-chas GRAH-see-ahs'},{sp:'De nada',en:"You're welcome",ph:'deh NAH-dah'},{sp:'Hasta luego',en:'See you later',ph:'AHS-tah LWEH-goh'},{sp:'Buenas noches',en:'Good night',ph:'BWEH-nas NOH-ches'}],
+        medium:[{sp:'¿Hablas inglés?',en:'Do you speak English?',ph:'AH-blahs in-GLAYS'},{sp:'¿Dónde está el baño?',en:'Where is the bathroom?',ph:'DON-deh ehs-TAH el BAH-nyoh'},{sp:'Necesito ayuda.',en:'I need help.',ph:'neh-seh-SEE-toh ah-YOO-dah'},{sp:'¿Cómo te llamas?',en:'What is your name?',ph:'KOH-moh teh YAH-mahs'},{sp:'Me llamo...',en:'My name is...',ph:'meh YAH-moh'},{sp:'Estoy perdido.',en:'I am lost.',ph:'ehs-TOY pair-DEE-doh'},{sp:'¿Puede ayudarme?',en:'Can you help me?',ph:'PWEH-deh ah-yoo-DAR-meh'},{sp:'¿Cuánto tiempo?',en:'How long?',ph:'KWAN-toh TYEM-poh'},{sp:'Me gusta esto.',en:'I like this.',ph:'meh GOOS-tah ES-toh'},{sp:'No me gusta.',en:"I don't like this.",ph:'noh meh GOOS-tah'},{sp:'¿Qué hora es?',en:'What time is it?',ph:'keh OH-rah ess'},{sp:'¿Hay WiFi aquí?',en:'Is there WiFi here?',ph:'eye wee-FEE ah-KEE'}],
+        hard:[{sp:'¿Podría hablar más despacio?',en:'Could you speak more slowly?',ph:'poh-DREE-ah ah-BLAR mahs des-PAH-syoh'},{sp:'No me siento bien.',en:"I don't feel well.",ph:'noh meh SYEN-toh BYEN'},{sp:'¿Dónde puedo cambiar dinero?',en:'Where can I exchange money?',ph:'DON-deh PWEH-doh kam-BYAR'},{sp:'Necesito un médico.',en:'I need a doctor.',ph:'neh-seh-SEE-toh oon MEH-dee-koh'},{sp:'La cuenta, por favor.',en:'The bill, please.',ph:'lah KWEN-tah por fah-VOR'},{sp:'¿Está incluido?',en:'Is this included?',ph:'ehs-TAH in-kloo-EE-doh'},{sp:'¿Cuál es la mejor opción?',en:'What is the best option?',ph:'kwahl ess lah meh-HOR op-SYON'},{sp:'Tengo una reserva.',en:'I have a reservation.',ph:'TEN-goh OO-nah reh-SAIR-bah'},{sp:'¿Me puede dar un descuento?',en:'Can you give me a discount?',ph:'meh PWEH-deh dar oon des-KWEN-toh'},{sp:'Solo estoy mirando.',en:"I'm just looking.",ph:'SOH-loh ehs-TOY mee-RAN-doh'},{sp:'¿Qué línea debo tomar?',en:'Which line should I take?',ph:'keh LEE-neh-ah DEH-boh toh-MAR'},{sp:'¿Puede llamar un taxi?',en:'Can you call a taxi?',ph:'PWEH-deh yah-MAR oon TAK-see'}],
+        vhard:[{sp:'Lo siento, no entendí lo que dijo.',en:"Sorry, I didn't understand.",ph:'loh SYEN-toh noh en-ten-DEE'},{sp:'¿Hay algún hospital cerca?',en:'Is there a hospital nearby?',ph:'eye al-GOON os-pee-TAL THAIR-kah'},{sp:'¿Podría escribirlo?',en:'Could you write that down?',ph:'poh-DREE-ah es-kree-BEER-loh'},{sp:'¿Cuánto tiempo se tarda en llegar?',en:'How long to get there?',ph:'KWAN-toh TYEM-poh seh TAR-dah'},{sp:'¿Tiene algo sin gluten?',en:'Do you have anything gluten-free?',ph:'TYEH-neh AL-goh seen GLOO-ten'},{sp:'¿Me recomienda un buen restaurante?',en:'Can you recommend a restaurant?',ph:'meh reh-koh-MYEN-dah'},{sp:'Quiero presentar una queja.',en:'I want to make a complaint.',ph:'KYEH-roh preh-sen-TAR'},{sp:'Por favor llame a la embajada.',en:'Please call the embassy.',ph:'por fah-VOR YAH-meh'},{sp:'¿Cuál es la fecha de caducidad?',en:'What is the expiry date?',ph:'kwahl ess lah FEH-chah'},{sp:'¿Está incluido en el precio?',en:'Is this included in the price?',ph:'ehs-TAH in-kloo-EE-doh'},{sp:'Necesito un informe del siniestro.',en:'I need an incident report.',ph:'neh-seh-SEE-toh oon in-FOR-meh'},{sp:'¿Puede confirmar mi cita?',en:'Can you confirm my appointment?',ph:'PWEH-deh kon-feer-MAR'}],
+    };
+    return lib[diff]||lib.easy;
+}
+
+let currentCat='colours',wordPool=[],wordIdx=0,wordHistory=[];
+let phraseDiff='easy',phrasePool=[],phraseIdx=0,phraseHistory=[];
+let listType='words',listCat='colours',listPhraseDiff='easy';
+let testType='words',testCat='colours',testDiff='easy';
+let quizQs=[],quizIdx=0,quizScore=0,quizLog=[],currentQuizItem=null;
+let voices=[];
+
+function loadVoices(){voices=window.speechSynthesis.getVoices();}
+window.speechSynthesis.onvoiceschanged=loadVoices;loadVoices();
+function _speak(text){window.speechSynthesis.cancel();const ut=new SpeechSynthesisUtterance(text);const v=voices.find(v=>v.lang.startsWith('es'));if(v)ut.voice=v;ut.lang='es-ES';ut.rate=0.85;window.speechSynthesis.speak(ut);}
+function speak(id){_speak(document.getElementById(id).innerText);}
+function speakText(t){_speak(t);}
+function speakCurrentQ(){if(currentQuizItem)_speak(currentQuizItem.sp);}
+
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function buildCatButtons(containerId,activeCat,onClickFn){
+    const wrap=document.getElementById(containerId);wrap.innerHTML='';
+    CATEGORIES.forEach(cat=>{
+        const btn=document.createElement('button');
+        btn.className='cat-btn'+(cat.id===activeCat?' active':'');
+        btn.innerHTML=`<span class="cat-icon">${cat.icon}</span>${cat.label}`;
+        btn.onclick=()=>onClickFn(cat.id,btn,containerId);
+        wrap.appendChild(btn);
+    });
+}
+function setActiveCatBtn(containerId,catId){
+    const btns=document.querySelectorAll(`#${containerId} .cat-btn`);
+    const idx=CATEGORIES.findIndex(c=>c.id===catId);
+    btns.forEach(b=>b.classList.remove('active'));
+    if(btns[idx])btns[idx].classList.add('active');
+}
+
+function loadWordCat(catId){currentCat=catId;wordPool=shuffle(WORD_LIBRARY[catId]||[]);wordIdx=0;wordHistory=[0];showWordCard();setActiveCatBtn('words-cat-scroll',catId);}
+function showWordCard(){
+    document.querySelectorAll('#words .flashcard-wrapper').forEach(w=>w.classList.remove('is-flipped'));
+    const card=wordPool[wordIdx];if(!card)return;
+    setTimeout(()=>{document.getElementById('sp-text').innerText=card.sp;document.getElementById('en-text').innerText=card.en;document.querySelectorAll('.sp-ph-view').forEach(el=>el.innerText=`[ ${card.ph} ]`);document.getElementById('words-counter').innerText=`${wordIdx+1} / ${wordPool.length}`;},150);
+}
+function nextCard(){wordIdx=(wordIdx+1)%wordPool.length;wordHistory.push(wordIdx);if(wordHistory.length>200)wordHistory.shift();showWordCard();}
+function prevCard(){if(wordHistory.length>1){wordHistory.pop();wordIdx=wordHistory[wordHistory.length-1];}else wordIdx=(wordIdx-1+wordPool.length)%wordPool.length;showWordCard();}
+
+function loadPhrases(){phrasePool=shuffle(getPhraseLib(phraseDiff));phraseIdx=0;phraseHistory=[0];showPhraseCard();}
+function showPhraseCard(){
+    document.querySelectorAll('#phrases .flashcard-wrapper').forEach(w=>w.classList.remove('is-flipped'));
+    const card=phrasePool[phraseIdx];if(!card)return;
+    setTimeout(()=>{document.getElementById('phrase-sp').innerText=card.sp;document.getElementById('phrase-en').innerText=card.en;document.querySelectorAll('.phrase-ph-view').forEach(el=>el.innerText=`[ ${card.ph} ]`);},150);
+}
+function nextPhrase(){phraseIdx=(phraseIdx+1)%phrasePool.length;phraseHistory.push(phraseIdx);if(phraseHistory.length>200)phraseHistory.shift();showPhraseCard();}
+function prevPhrase(){if(phraseHistory.length>1){phraseHistory.pop();phraseIdx=phraseHistory[phraseHistory.length-1];}else phraseIdx=(phraseIdx-1+phrasePool.length)%phrasePool.length;showPhraseCard();}
+function setPhraseDiff(diff,btn){phraseDiff=diff;document.querySelectorAll('#phrases .diff-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');loadPhrases();}
+
+function setListType(type,btn){listType=type;document.querySelectorAll('.list-type-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('list-words-controls').style.display=type==='words'?'block':'none';document.getElementById('list-phrases-controls').style.display=type==='phrases'?'block':'none';renderList();}
+function setListCat(catId,btn,containerId){listCat=catId;setActiveCatBtn(containerId,catId);renderList();}
+function setListPhraseDiff(diff,btn){listPhraseDiff=diff;document.querySelectorAll('#list-phrases-controls .diff-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderList();}
+function renderList(){
+    const data=listType==='words'?(WORD_LIBRARY[listCat]||[]):getPhraseLib(listPhraseDiff);
+    document.getElementById('list-count').innerText=`${data.length} items`;
+    const tb=document.getElementById('list-body');tb.innerHTML='';
+    data.forEach(item=>{const native=item.sp,tr=document.createElement('tr');tr.innerHTML=`<td><div class="list-native">${native}</div><div class="list-ph">[ ${item.ph} ]</div></td><td><span class="list-en">${item.en}</span></td><td><button class="list-hear" onclick="event.stopPropagation();speakText('${native.replace(/'/g,"\\'")}')">🔊</button></td>`;tr.onclick=()=>speakText(native);tb.appendChild(tr);});
+}
+
+function pickTestType(type,btn){testType=type;btn.parentElement.querySelectorAll('.setup-opt').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('test-cat-section').style.display=type==='phrases'?'none':'block';document.getElementById('test-diff-section').style.display=type==='words'?'none':'block';}
+function pickTestCat(catId,btn,containerId){testCat=catId;setActiveCatBtn(containerId,catId);}
+function pickTestDiff(diff,btn){testDiff=diff;btn.parentElement.querySelectorAll('.setup-opt').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+function buildTestPool(){let p=[];if(testType==='words')p=[...WORD_LIBRARY[testCat]||[]];else if(testType==='phrases')p=[...getPhraseLib(testDiff)];else p=[...(WORD_LIBRARY[testCat]||[]),...getPhraseLib(testDiff)];return shuffle(p);}
+function showSetup(){document.getElementById('test-setup').style.display='flex';document.getElementById('test-quiz').style.display='none';document.getElementById('test-results').style.display='none';}
+function beginTest(){const pool=buildTestPool();if(pool.length<4){alert('Not enough items (need 4+).');return;}quizQs=pool.slice(0,10);quizIdx=0;quizScore=0;quizLog=[];document.getElementById('test-setup').style.display='none';document.getElementById('test-quiz').style.display='flex';document.getElementById('test-results').style.display='none';showQuestion();}
+function showQuestion(){const total=quizQs.length,q=quizQs[quizIdx];currentQuizItem=q;document.getElementById('q-counter').innerText=`Question ${quizIdx+1} / ${total}`;document.getElementById('q-score-live').innerText=`Score: ${quizScore}`;document.getElementById('q-progress').style.width=`${(quizIdx/total)*100}%`;document.getElementById('q-text').innerText=q.sp;document.getElementById('q-phonetic').innerText=q.ph?`[ ${q.ph} ]`:'';const allPool=buildTestPool();const others=shuffle(allPool.filter(x=>x.en!==q.en));const opts=shuffle([q,...others.slice(0,3)]);const wrap=document.getElementById('q-options');wrap.innerHTML='';opts.forEach(opt=>{const b=document.createElement('button');b.className='quiz-opt';b.textContent=opt.en;b.onclick=()=>answerChosen(b,opt.en===q.en,q,wrap);wrap.appendChild(b);});}
+function answerChosen(btn,correct,q,wrap){wrap.querySelectorAll('.quiz-opt').forEach(b=>{b.disabled=true;b.onclick=null;});if(correct){btn.classList.add('correct');quizScore++;}else{btn.classList.add('wrong');wrap.querySelectorAll('.quiz-opt').forEach(b=>{if(b.textContent===q.en)b.classList.add('reveal');});}quizLog.push({sp:q.sp,en:q.en,ok:correct});setTimeout(()=>{quizIdx++;if(quizIdx<quizQs.length)showQuestion();else showResults();},950);}
+function showResults(){document.getElementById('test-quiz').style.display='none';document.getElementById('test-results').style.display='flex';const s=quizScore,t=quizQs.length;document.getElementById('results-num').innerText=s;const circ=2*Math.PI*65;document.getElementById('score-arc').style.strokeDashoffset=circ-(circ*(s/t));const pct=s/t;let grade,sub;if(pct===1){grade='🏆 Perfect Score!';sub='Absolutely flawless!';}else if(pct>=0.8){grade='🌟 Excellent!';sub='Almost perfect!';}else if(pct>=0.6){grade='👍 Good Job!';sub='Keep practising!';}else if(pct>=0.4){grade='📚 Keep Going!';sub='Check the List tab.';}else{grade='💪 Keep Practising!';sub='Every attempt counts!';}document.getElementById('results-grade').innerText=grade;document.getElementById('results-sub').innerText=sub;const bd=document.getElementById('results-breakdown');bd.innerHTML='';quizLog.forEach(r=>{const row=document.createElement('div');row.className=`result-row ${r.ok?'r-correct':'r-wrong'}`;row.innerHTML=`<div class="result-icon">${r.ok?'✅':'❌'}</div><div><div class="result-q">${r.sp}</div><div class="result-a">${r.en}</div></div>`;bd.appendChild(row);});}
+
+function showTab(id,btn){document.querySelectorAll('.content-section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));document.getElementById(id).classList.add('active');btn.classList.add('active');if(id==='list')renderList();if(id==='test')showSetup();}
+
+buildCatButtons('words-cat-scroll',currentCat,(catId,btn,cid)=>{loadWordCat(catId);setActiveCatBtn(cid,catId);});
+buildCatButtons('list-cat-scroll',listCat,setListCat);
+buildCatButtons('test-cat-scroll',testCat,pickTestCat);
+loadWordCat(currentCat);loadPhrases();showSetup();
+</script>
 </body>
 </html>
