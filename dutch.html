@@ -114,7 +114,6 @@
         <button class="nav-btn" onclick="showTab('watch',this)">Watch</button>
     </nav>
 
-    <!-- WORDS -->
     <div id="words" class="content-section active">
         <div class="cat-scroll-wrap"><div class="cat-scroll" id="words-cat-scroll"></div></div>
         <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
@@ -138,7 +137,6 @@
         </div>
     </div>
 
-    <!-- PHRASES -->
     <div id="phrases" class="content-section">
         <div class="diff-toggle">
             <button class="diff-btn active" onclick="setPhraseDiff('easy',this)">EASY</button>
@@ -166,7 +164,6 @@
         </div>
     </div>
 
-    <!-- LIST -->
     <div id="list" class="content-section">
         <div class="list-type-toggle">
             <button class="list-type-btn active" onclick="setListType('words',this)">WORDS</button>
@@ -190,7 +187,6 @@
         </div>
     </div>
 
-    <!-- TEST -->
     <div id="test" class="content-section">
         <div id="test-setup" class="test-setup">
             <div>
@@ -242,7 +238,6 @@
         </div>
     </div>
 
-    <!-- WATCH -->
     <div id="watch" class="content-section">
         <div class="video-list">
             <a href="https://www.youtube.com/watch?v=2Rd2DXcQGtY" target="_blank" class="video-item">🇳🇱 Dutch in 30 Min (Basics)</a>
@@ -255,40 +250,21 @@
 </div>
 
 <script>
-const CATEGORIES=[{id:'colours',label:'Colours',icon:'🎨'},{id:'numbers',label:'Numbers',icon:'🔢'},{id:'body',label:'Body',icon:'🫀'},{id:'food',label:'Food',icon:'🍽️'},{id:'animals',label:'Animals',icon:'🐾'},{id:'travel',label:'Travel',icon:'✈️'},{id:'family',label:'Family',icon:'👨‍👩‍👧'},{id:'time',label:'Time',icon:'⏰'}];
+const CATEGORIES=[{id:'easy',label:'Easy',icon:'🟢'},{id:'medium',label:'Med',icon:'🟡'},{id:'hard',label:'Hard',icon:'🟠'},{id:'vhard',label:'V.Hard',icon:'🔴'}];
+const WORD_LIBRARY=typeof DUTCH_LIBRARY!=='undefined'?DUTCH_LIBRARY.words:{easy:[],medium:[],hard:[],vhard:[]};
+function getPhraseLib(diff){return typeof DUTCH_LIBRARY!=='undefined'&&DUTCH_LIBRARY.phrases?DUTCH_LIBRARY.phrases[diff]||[]:[];}
 
-const WORD_LIBRARY={
-    colours:[{nl:'Rood',en:'Red',ph:'roht'},{nl:'Blauw',en:'Blue',ph:'blow'},{nl:'Groen',en:'Green',ph:'khroohn'},{nl:'Geel',en:'Yellow',ph:'khayl'},{nl:'Zwart',en:'Black',ph:'zvart'},{nl:'Wit',en:'White',ph:'vit'},{nl:'Oranje',en:'Orange',ph:'oh-RAHN-yuh'},{nl:'Roze',en:'Pink',ph:'ROH-zuh'},{nl:'Paars',en:'Purple',ph:'pahrs'},{nl:'Grijs',en:'Grey',ph:'khrayss'},{nl:'Bruin',en:'Brown',ph:'brownn'},{nl:'Goud',en:'Gold',ph:'khowt'}],
-    numbers:[{nl:'Één',en:'One',ph:'ayn'},{nl:'Twee',en:'Two',ph:'tvay'},{nl:'Drie',en:'Three',ph:'dree'},{nl:'Vier',en:'Four',ph:'veer'},{nl:'Vijf',en:'Five',ph:'vayf'},{nl:'Zes',en:'Six',ph:'zes'},{nl:'Zeven',en:'Seven',ph:'ZAY-vun'},{nl:'Acht',en:'Eight',ph:'akht'},{nl:'Negen',en:'Nine',ph:'NAY-khun'},{nl:'Tien',en:'Ten',ph:'teen'},{nl:'Twintig',en:'Twenty',ph:'TWIN-tukh'},{nl:'Honderd',en:'Hundred',ph:'HON-durt'}],
-    body:[{nl:'Hoofd',en:'Head',ph:'hohft'},{nl:'Oog',en:'Eye',ph:'ohkh'},{nl:'Neus',en:'Nose',ph:'nuhss'},{nl:'Mond',en:'Mouth',ph:'mont'},{nl:'Oor',en:'Ear',ph:'ohr'},{nl:'Hand',en:'Hand',ph:'hant'},{nl:'Voet',en:'Foot',ph:'voot'},{nl:'Arm',en:'Arm',ph:'arm'},{nl:'Been',en:'Leg',ph:'bayn'},{nl:'Rug',en:'Back',ph:'rukh'},{nl:'Hart',en:'Heart',ph:'hart'},{nl:'Tand',en:'Tooth',ph:'tant'}],
-    food:[{nl:'Rijst',en:'Rice',ph:'rayst'},{nl:'Brood',en:'Bread',ph:'broht'},{nl:'Kip',en:'Chicken',ph:'kip'},{nl:'Vis',en:'Fish',ph:'viss'},{nl:'Melk',en:'Milk',ph:'melk'},{nl:'Ei',en:'Egg',ph:'ay'},{nl:'Kaas',en:'Cheese',ph:'kahs'},{nl:'Fruit',en:'Fruit',ph:'froyt'},{nl:'Groente',en:'Vegetable',ph:'KHROON-tuh'},{nl:'Koffie',en:'Coffee',ph:'KOF-ee'},{nl:'Sap',en:'Juice',ph:'sap'},{nl:'Water',en:'Water',ph:'VAH-ter'}],
-    animals:[{nl:'Hond',en:'Dog',ph:'hont'},{nl:'Kat',en:'Cat',ph:'kat'},{nl:'Vogel',en:'Bird',ph:'VOH-khul'},{nl:'Vis',en:'Fish',ph:'viss'},{nl:'Paard',en:'Horse',ph:'pahrt'},{nl:'Koe',en:'Cow',ph:'koo'},{nl:'Varken',en:'Pig',ph:'VAR-kun'},{nl:'Schaap',en:'Sheep',ph:'skhahp'},{nl:'Aap',en:'Monkey',ph:'ahp'},{nl:'Leeuw',en:'Lion',ph:'lay-oo'},{nl:'Olifant',en:'Elephant',ph:'OH-lee-fant'},{nl:'Slang',en:'Snake',ph:'slang'}],
-    travel:[{nl:'Luchthaven',en:'Airport',ph:'LUKHT-hah-vun'},{nl:'Hotel',en:'Hotel',ph:'hoh-TEL'},{nl:'Trein',en:'Train',ph:'trayn'},{nl:'Bus',en:'Bus',ph:'bus'},{nl:'Taxi',en:'Taxi',ph:'TAK-see'},{nl:'Paspoort',en:'Passport',ph:'PAS-pohrt'},{nl:'Koffer',en:'Suitcase',ph:'KOF-ur'},{nl:'Kaart',en:'Map',ph:'kahrt'},{nl:'Strand',en:'Beach',ph:'strant'},{nl:'Museum',en:'Museum',ph:'moo-ZAY-um'},{nl:'Restaurant',en:'Restaurant',ph:'RES-toh-rant'},{nl:'Geld',en:'Money',ph:'khelt'}],
-    family:[{nl:'Moeder',en:'Mother',ph:'MOO-dur'},{nl:'Vader',en:'Father',ph:'FAH-dur'},{nl:'Broer',en:'Brother',ph:'broor'},{nl:'Zus',en:'Sister',ph:'zus'},{nl:'Oma',en:'Grandmother',ph:'OH-mah'},{nl:'Opa',en:'Grandfather',ph:'OH-pah'},{nl:'Zoon',en:'Son',ph:'zohn'},{nl:'Dochter',en:'Daughter',ph:'DOKH-tur'},{nl:'Oom',en:'Uncle',ph:'ohm'},{nl:'Tante',en:'Aunt',ph:'TAN-tuh'},{nl:'Neef',en:'Cousin (m)',ph:'nayf'},{nl:'Man',en:'Husband',ph:'man'}],
-    time:[{nl:'Vandaag',en:'Today',ph:'van-DAHKH'},{nl:'Morgen',en:'Tomorrow',ph:'MOR-khun'},{nl:'Gisteren',en:'Yesterday',ph:'KHIS-tur-un'},{nl:'Week',en:'Week',ph:'vayk'},{nl:'Maand',en:'Month',ph:'mahnt'},{nl:'Jaar',en:'Year',ph:'yahr'},{nl:'Uur',en:'Hour',ph:'oor'},{nl:'Minuut',en:'Minute',ph:'mee-NEWT'},{nl:'Ochtend',en:'Morning',ph:'OKH-tunt'},{nl:'Middag',en:'Afternoon',ph:'MID-dakh'},{nl:'Nacht',en:'Night',ph:'nakht'},{nl:'Nu',en:'Now',ph:'new'}],
-};
-
-function getPhraseLib(diff){
-    if(typeof DUTCH_LIBRARY!=='undefined'&&DUTCH_LIBRARY.phrases) return DUTCH_LIBRARY.phrases[diff]||[];
-    const lib={
-        easy:[{nl:'Goedemorgen',en:'Good morning',ph:'khoo-duh-MOR-khun'},{nl:'Hoe gaat het?',en:'How are you?',ph:'hoo khaht het'},{nl:'Aangenaam',en:'Nice to meet you',ph:'AHN-khuh-nahm'},{nl:'Pardon',en:'Excuse me',ph:'par-DON'},{nl:'Waar is het?',en:'Where is it?',ph:'vahr iss het'},{nl:'Hoeveel kost het?',en:'How much is it?',ph:'HOO-vayl kost het'},{nl:'Ik begrijp het niet',en:"I don't understand",ph:'ik buh-KHRIPE het neet'},{nl:'Kunt u dat herhalen?',en:'Can you repeat that?',ph:'kunt ew dat her-HAH-lun'},{nl:'Hartelijk dank',en:'Thank you very much',ph:'HAR-tuh-luk dank'},{nl:'Graag gedaan',en:"You're welcome",ph:'khrahkh khuh-DAHN'},{nl:'Tot ziens',en:'See you later',ph:'tot zeens'},{nl:'Goedenacht',en:'Good night',ph:'khoo-duh-NAKHT'}],
-        medium:[{nl:'Spreekt u Engels?',en:'Do you speak English?',ph:'spraykt ew ENG-uls'},{nl:'Waar is het toilet?',en:'Where is the toilet?',ph:'vahr iss het twah-LET'},{nl:'Ik heb hulp nodig.',en:'I need help.',ph:'ik hep hulp NOH-dikh'},{nl:'Hoe heet u?',en:'What is your name?',ph:'hoo hayt ew'},{nl:'Ik heet...',en:'My name is...',ph:'ik hayt'},{nl:'Ik ben verdwaald.',en:'I am lost.',ph:'ik ben ver-DVAHLT'},{nl:'Kunt u mij helpen?',en:'Can you help me?',ph:'kunt ew may HEL-pun'},{nl:'Hoe lang duurt het?',en:'How long does it take?',ph:'hoo lang doorrt het'},{nl:'Ik vind dit leuk.',en:'I like this.',ph:'ik vint dit luhk'},{nl:'Ik vind dit niet leuk.',en:"I don't like this.",ph:'ik vint dit neet luhk'},{nl:'Hoe laat is het?',en:'What time is it?',ph:'hoo laht iss het'},{nl:'Is er WiFi?',en:'Is there WiFi?',ph:'iss er wee-FEE'}],
-        hard:[{nl:'Kunt u wat langzamer spreken?',en:'Could you speak more slowly?',ph:'kunt ew vat LANG-zah-mur SPRAY-kun'},{nl:'Ik voel me niet lekker.',en:"I don't feel well.",ph:'ik vool muh neet LEK-ur'},{nl:'Waar kan ik geld wisselen?',en:'Where can I exchange money?',ph:'vahr kan ik khelt VIS-uh-lun'},{nl:'Ik heb een dokter nodig.',en:'I need a doctor.',ph:'ik hep un DOK-tur NOH-dikh'},{nl:'De rekening, alstublieft.',en:'The bill, please.',ph:'duh RAY-kuh-ning als-too-BLEEFT'},{nl:'Is dit inbegrepen?',en:'Is this included?',ph:'iss dit IN-buh-khray-pun'},{nl:'Wat is de beste optie?',en:'What is the best option?',ph:'vat iss duh BES-tuh OP-see'},{nl:'Ik heb een reservering.',en:'I have a reservation.',ph:'ik hep un reh-sur-VAY-ring'},{nl:'Kunt u korting geven?',en:'Can you give me a discount?',ph:'kunt ew KOR-ting KHAY-vun'},{nl:'Ik kijk alleen.',en:"I'm just looking.",ph:'ik kayk ah-LAYN'},{nl:'Welke lijn moet ik nemen?',en:'Which line should I take?',ph:'VEL-kuh layn moot ik NAY-mun'},{nl:'Kunt u een taxi bellen?',en:'Can you call a taxi?',ph:'kunt ew un TAK-see BEL-un'}],
-        vhard:[{nl:'Sorry, ik begreep niet wat u zei.',en:"Sorry, I didn't understand what you said.",ph:'SOR-ee ik buh-KHRAYP neet vat ew zay'},{nl:'Is er een ziekenhuis in de buurt?',en:'Is there a hospital nearby?',ph:'iss er un ZEE-kun-hows in duh boort'},{nl:'Kunt u dat voor mij opschrijven?',en:'Could you write that down for me?',ph:'kunt ew dat vohr may OP-skhray-vun'},{nl:'Hoe lang duurt het om er te komen?',en:'How long to get there?',ph:'hoo lang doorrt het om er tuh KOH-mun'},{nl:'Heeft u iets glutenvrij?',en:'Do you have anything gluten-free?',ph:'hayft ew eets KHLOO-tun-vray'},{nl:'Kunt u een goed restaurant aanbevelen?',en:'Can you recommend a good restaurant?',ph:'kunt ew un khoot RES-toh-rant AHN-buh-vay-lun'},{nl:'Ik wil een klacht indienen.',en:'I want to make a complaint.',ph:'ik vil un klakht IN-dee-nun'},{nl:'Bel alstublieft de ambassade.',en:'Please call the embassy.',ph:'bel als-too-BLEEFT duh am-bah-SAH-duh'},{nl:'Wat is de houdbaarheidsdatum?',en:'What is the expiry date?',ph:'vat iss duh HOWT-bahr-hayts-dah-tum'},{nl:'Is dit inbegrepen in de prijs?',en:'Is this included in the price?',ph:'iss dit IN-buh-khray-pun in duh prays'},{nl:'Ik heb een schadeformulier nodig.',en:'I need an incident report.',ph:'ik hep un SKHAH-duh-for-mew-leer NOH-dikh'},{nl:'Kunt u mijn afspraak bevestigen?',en:'Can you confirm my appointment?',ph:'kunt ew mayn AF-sprahk buh-VES-tikh-un'}],
-    };
-    return lib[diff]||lib.easy;
-}
-
-let currentCat='colours',wordPool=[],wordIdx=0,wordHistory=[];
+let currentCat='easy',wordPool=[],wordIdx=0,wordHistory=[];
 let phraseDiff='easy',phrasePool=[],phraseIdx=0,phraseHistory=[];
-let listType='words',listCat='colours',listPhraseDiff='easy';
-let testType='words',testCat='colours',testDiff='easy';
+let listType='words',listCat='easy',listPhraseDiff='easy';
+let testType='words',testCat='easy',testDiff='easy';
 let quizQs=[],quizIdx=0,quizScore=0,quizLog=[],currentQuizItem=null;
-let voices=[];
 
-function loadVoices(){voices=window.speechSynthesis.getVoices();}
-window.speechSynthesis.onvoiceschanged=loadVoices;loadVoices();setTimeout(loadVoices,500);setTimeout(loadVoices,1500);
-function _speak(text){window.speechSynthesis.cancel();const ut=new SpeechSynthesisUtterance(text);const v=voices.find(v=>v.lang==='nl-NL')||voices.find(v=>v.lang.startsWith('nl'));if(v)ut.voice=v;ut.lang='nl-NL';ut.rate=0.85;window.speechSynthesis.speak(ut);}
+let voices=[],voicesLoaded=false;
+function loadVoices(){voices=window.speechSynthesis.getVoices();if(voices.length>0)voicesLoaded=true;}
+if(window.speechSynthesis){window.speechSynthesis.onvoiceschanged=loadVoices;loadVoices();setTimeout(loadVoices,500);setTimeout(loadVoices,1500);}
+function getVoice(){return voices.find(v=>v.lang==='nl-NL')||voices.find(v=>v.lang.startsWith('nl'))||null;}
+function _speak(text){if(!window.speechSynthesis)return;if(!voicesLoaded)loadVoices();window.speechSynthesis.cancel();const ut=new SpeechSynthesisUtterance(text);ut.lang='nl-NL';ut.rate=0.85;const vc=getVoice();if(vc){ut.voice=vc;window.speechSynthesis.speak(ut);}else{setTimeout(()=>{loadVoices();const v2=getVoice();if(v2)ut.voice=v2;window.speechSynthesis.speak(ut);},200);}}
 function speak(id){_speak(document.getElementById(id).innerText);}
 function speakText(t){_speak(t);}
 function speakCurrentQ(){if(currentQuizItem)_speak(currentQuizItem.nl);}
