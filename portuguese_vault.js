@@ -22,11 +22,25 @@ const PORTUGUESE_LIBRARY = {
             {pt:"Amarelo", en:"Yellow", ph:"A-ma-re-lo"}, {pt:"Branco", en:"White", ph:"Bran-co"}, {pt:"Preto", en:"Black", ph:"Pre-to"},
             {pt:"Rosa", en:"Pink", ph:"Ho-za"}, {pt:"Laranja", en:"Orange", ph:"La-ran-zha"}, {pt:"Roxo", en:"Purple", ph:"Ho-sho"},
             {pt:"Cinza", en:"Grey", ph:"Seen-za"},
-            // Numbers
+            // More Colors
+            {pt:"Marrom", en:"Brown", ph:"Ma-hom"}, {pt:"Bege", en:"Beige", ph:"Be-zhee"}, {pt:"Turquesa", en:"Turquoise", ph:"Tur-ke-za"},
+            {pt:"Dourado", en:"Gold", ph:"Do-ra-do"}, {pt:"Prateado", en:"Silver", ph:"Pra-chee-a-do"}, {pt:"Bordô", en:"Burgundy", ph:"Bor-doh"},
+            {pt:"Lilás", en:"Lilac", ph:"Lee-las"}, {pt:"Creme", en:"Cream", ph:"Creh-mee"}, {pt:"Magenta", en:"Magenta", ph:"Ma-zhen-ta"},
+            {pt:"Coral", en:"Coral", ph:"Co-ral"},
+            // Numbers 1–10
             {pt:"Um", en:"One", ph:"Oong"}, {pt:"Dois", en:"Two", ph:"Doys"}, {pt:"Três", en:"Three", ph:"Tresh"},
             {pt:"Quatro", en:"Four", ph:"Kwa-tro"}, {pt:"Cinco", en:"Five", ph:"Seen-co"}, {pt:"Seis", en:"Six", ph:"Seys"},
             {pt:"Sete", en:"Seven", ph:"Se-chee"}, {pt:"Oito", en:"Eight", ph:"Oy-to"}, {pt:"Nove", en:"Nine", ph:"No-vee"},
             {pt:"Dez", en:"Ten", ph:"Desh"},
+            // Numbers 11–20
+            {pt:"Onze", en:"Eleven", ph:"On-zee"}, {pt:"Doze", en:"Twelve", ph:"Do-zee"}, {pt:"Treze", en:"Thirteen", ph:"Tre-zee"},
+            {pt:"Catorze", en:"Fourteen", ph:"Ca-tor-zee"}, {pt:"Quinze", en:"Fifteen", ph:"Keen-zee"}, {pt:"Dezesseis", en:"Sixteen", ph:"De-ze-seys"},
+            {pt:"Dezessete", en:"Seventeen", ph:"De-ze-se-chee"}, {pt:"Dezoito", en:"Eighteen", ph:"De-zoy-to"}, {pt:"Dezenove", en:"Nineteen", ph:"De-ze-no-vee"},
+            {pt:"Vinte", en:"Twenty", ph:"Veen-chee"},
+            // Numbers — Tens
+            {pt:"Trinta", en:"Thirty", ph:"Treen-ta"}, {pt:"Quarenta", en:"Forty", ph:"Kwa-ren-ta"}, {pt:"Cinquenta", en:"Fifty", ph:"Seen-kwen-ta"},
+            {pt:"Sessenta", en:"Sixty", ph:"Se-sen-ta"}, {pt:"Setenta", en:"Seventy", ph:"Se-ten-ta"}, {pt:"Oitenta", en:"Eighty", ph:"Oy-ten-ta"},
+            {pt:"Noventa", en:"Ninety", ph:"No-ven-ta"}, {pt:"Cem", en:"One hundred", ph:"Sem"}, {pt:"Mil", en:"One thousand", ph:"Meel"},
             // Family
             {pt:"Mãe", en:"Mother", ph:"Mah-ee"}, {pt:"Pai", en:"Father", ph:"Pie"}, {pt:"Irmão", en:"Brother", ph:"Eer-mowm"},
             {pt:"Irmã", en:"Sister", ph:"Eer-mah"}, {pt:"Filho", en:"Son", ph:"Fee-lyo"}, {pt:"Filha", en:"Daughter", ph:"Fee-lya"},
@@ -250,6 +264,14 @@ const PORTUGUESE_LIBRARY = {
             {pt:"Que saudade!", en:"I missed you/How I miss it!", ph:"Ke sow-da-jee"}, {pt:"Tô com fome.", en:"I'm hungry.", ph:"Toh com fo-mee"},
             {pt:"Tô com sede.", en:"I'm thirsty.", ph:"Toh com se-jee"}, {pt:"Tô com sono.", en:"I'm sleepy.", ph:"Toh com so-no"},
             {pt:"Me ajuda?", en:"Can you help me?", ph:"Mee a-zhoo-da"}, {pt:"Qual é o seu e-mail?", en:"What is your email?", ph:"Kwal eh o seu ee-mayl"},
+            // More easy phrases — Daily life
+            {pt:"Que horas são?", en:"What time is it?", ph:"Ke o-ras sowm"}, {pt:"Que dia é hoje?", en:"What day is it today?", ph:"Ke jee-a eh o-zhee"},
+            {pt:"Tudo bem com você?", en:"Are you okay?", ph:"Too-do bem com vo-say"}, {pt:"Faz favor!", en:"Excuse me! (getting attention)", ph:"Faz fa-vor"},
+            {pt:"Que pena!", en:"What a shame!", ph:"Ke pe-na"}, {pt:"Que legal!", en:"How cool!", ph:"Ke le-gal"},
+            {pt:"Que saudade de você!", en:"I really miss you!", ph:"Ke sow-da-jee jee vo-say"}, {pt:"Fique à vontade!", en:"Make yourself at home!", ph:"Fee-kee ah von-ta-jee"},
+            {pt:"Vamos lá!", en:"Let's go!", ph:"Va-mos la"}, {pt:"Pode deixar!", en:"No worries!/Leave it to me!", ph:"Po-jee dey-shar"},
+            {pt:"Que bonito/a!", en:"How beautiful!", ph:"Ke bo-nee-to/ta"}, {pt:"Que delícia!", en:"How delicious!", ph:"Ke de-lee-sya"},
+            {pt:"Tô bem, obrigado/a.", en:"I'm well, thanks.", ph:"Toh bem o-bree-ga-do/da"}, {pt:"Boa viagem!", en:"Have a good trip!", ph:"Bo-a vya-zhem"},
         ],
         medium: [
             {pt:"Eu moro no Brasil há dois anos.", en:"I have lived in Brazil for two years.", ph:"Ew mo-ro no bra-zeel ah doys an-os"},
@@ -282,6 +304,17 @@ const PORTUGUESE_LIBRARY = {
             {pt:"O ônibus passa às nove.", en:"The bus comes at nine.", ph:"O oh-nee-boos pa-sa ash no-vee"},
             {pt:"Você já comeu hoje?", en:"Have you eaten today?", ph:"Vo-say zha co-mew o-zhee"},
             {pt:"Eu não me lembro disso.", en:"I don't remember that.", ph:"Ew nowm mee lem-bro jee-so"},
+            // More medium phrases
+            {pt:"Onde você trabalha?", en:"Where do you work?", ph:"On-jee vo-say tra-ba-lya"},
+            {pt:"Há quanto tempo você estuda português?", en:"How long have you been studying Portuguese?", ph:"Ah kwan-to tem-po vo-say es-too-da por-too-gesh"},
+            {pt:"Eu gosto muito de música brasileira.", en:"I really like Brazilian music.", ph:"Ew gos-to mwee-to jee moo-zee-ca bra-zee-ley-ra"},
+            {pt:"Você pode me mostrar no mapa?", en:"Can you show me on the map?", ph:"Vo-say po-jee mee mos-trar no ma-pa"},
+            {pt:"Tem alguma coisa vegetariana?", en:"Is there anything vegetarian?", ph:"Tem al-goo-ma coy-za ve-zhe-ta-rya-na"},
+            {pt:"Eu preciso trocar dinheiro.", en:"I need to exchange money.", ph:"Ew pre-see-zo tro-car jee-nyey-ro"},
+            {pt:"Posso usar o seu carregador?", en:"Can I use your charger?", ph:"Po-so oo-zar o seu ca-he-ga-dor"},
+            {pt:"Você tem recomendações de passeios?", en:"Do you have any sightseeing recommendations?", ph:"Vo-say tem he-co-men-da-soyns jee pa-sey-os"},
+            {pt:"Que saudades do Brasil!", en:"I really miss Brazil!", ph:"Ke sow-da-jees do bra-zeel"},
+            {pt:"Você consegue me dar um desconto?", en:"Can you give me a discount?", ph:"Vo-say con-se-gee mee dar oom des-con-to"},
         ],
         hard: [
             {pt:"Espero que tudo se resolva da melhor forma possível.", en:"I hope everything works out in the best way possible.", ph:"Es-pe-ro ke too-do se he-sol-va da me-lyor for-ma po-see-vel"},
@@ -296,6 +329,13 @@ const PORTUGUESE_LIBRARY = {
             {pt:"Você consegue imaginar como seria sem tecnologia?", en:"Can you imagine what it would be like without technology?", ph:"Vo-say con-se-gee ee-ma-zhee-nar co-mo se-ree-a sem tec-no-lo-zhya"},
             {pt:"É preciso ter paciência para aprender um idioma.", en:"You need to have patience to learn a language.", ph:"Eh pre-see-zo tehr pa-syen-sya pa-ra a-pren-dehr oom ee-dyo-ma"},
             {pt:"Sem comunicação não há relacionamento.", en:"Without communication there is no relationship.", ph:"Sem co-moo-nee-ca-sowm nowm ah he-la-syo-na-men-to"},
+            // More hard phrases
+            {pt:"Não consigo acreditar como o tempo passa rápido.", en:"I can't believe how fast time flies.", ph:"Nowm con-see-go a-cre-jee-tar co-mo o tem-po pa-sa ha-pee-do"},
+            {pt:"Gostaria de saber mais sobre a cultura brasileira.", en:"I would like to know more about Brazilian culture.", ph:"Gos-ta-ree-a jee sa-behr mice so-bree a cool-too-ra bra-zee-ley-ra"},
+            {pt:"Não é bem o que eu queria dizer.", en:"That's not quite what I meant.", ph:"Nowm eh bem o ke ew ke-ree-a jee-zehr"},
+            {pt:"É mais fácil falar do que fazer.", en:"It's easier said than done.", ph:"Eh mice fa-seel fa-lar do ke fa-zehr"},
+            {pt:"Você tem alguma sugestão de onde eu possa aprender mais?", en:"Do you have any suggestion of where I can learn more?", ph:"Vo-say tem al-goo-ma soo-zhes-towm jee on-jee ew po-sa a-pren-dehr mice"},
+            {pt:"Às vezes o silêncio diz mais do que as palavras.", en:"Sometimes silence says more than words.", ph:"Ash ve-zes o see-len-syo jiz mice do ke as pa-la-vras"},
         ],
         vhard: [
             // Original entries

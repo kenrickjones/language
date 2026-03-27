@@ -25,13 +25,29 @@ const SPANISH_LIBRARY = {
             {sp:"Rosa", en:"Pink", ph:"Ro-sa"}, {sp:"Naranja", en:"Orange", ph:"Na-ran-ha"},
             {sp:"Morado", en:"Purple", ph:"Mo-ra-do"}, {sp:"Gris", en:"Grey", ph:"Grees"},
             {sp:"Marrón", en:"Brown", ph:"Ma-rron"},
-            // Numbers
+            // More Colors
+            {sp:"Beige", en:"Beige", ph:"Bey-he"}, {sp:"Turquesa", en:"Turquoise", ph:"Tur-ke-sa"},
+            {sp:"Dorado", en:"Gold", ph:"Do-ra-do"}, {sp:"Plateado", en:"Silver", ph:"Pla-te-a-do"},
+            {sp:"Burdeos", en:"Burgundy", ph:"Bur-de-os"}, {sp:"Lila", en:"Lilac", ph:"Lee-la"},
+            {sp:"Crema", en:"Cream", ph:"Kre-ma"}, {sp:"Magenta", en:"Magenta", ph:"Ma-hen-ta"},
+            {sp:"Coral", en:"Coral", ph:"Ko-ral"}, {sp:"Índigo", en:"Indigo", ph:"Een-dee-go"},
+            // Numbers 1–10
             {sp:"Uno", en:"One", ph:"Oo-no"}, {sp:"Dos", en:"Two", ph:"Dos"},
             {sp:"Tres", en:"Three", ph:"Tres"}, {sp:"Cuatro", en:"Four", ph:"Kwa-tro"},
             {sp:"Cinco", en:"Five", ph:"Seen-co"}, {sp:"Seis", en:"Six", ph:"Seys"},
             {sp:"Siete", en:"Seven", ph:"Sye-te"}, {sp:"Ocho", en:"Eight", ph:"O-cho"},
             {sp:"Nueve", en:"Nine", ph:"Nwe-be"}, {sp:"Diez", en:"Ten", ph:"Dyes"},
-            {sp:"Cien", en:"Hundred", ph:"Syen"}, {sp:"Mil", en:"Thousand", ph:"Meel"},
+            // Numbers 11–20
+            {sp:"Once", en:"Eleven", ph:"On-se"}, {sp:"Doce", en:"Twelve", ph:"Do-se"},
+            {sp:"Trece", en:"Thirteen", ph:"Tre-se"}, {sp:"Catorce", en:"Fourteen", ph:"Ka-tor-se"},
+            {sp:"Quince", en:"Fifteen", ph:"Keen-se"}, {sp:"Dieciséis", en:"Sixteen", ph:"Dye-see-seys"},
+            {sp:"Diecisiete", en:"Seventeen", ph:"Dye-see-sye-te"}, {sp:"Dieciocho", en:"Eighteen", ph:"Dye-see-o-cho"},
+            {sp:"Diecinueve", en:"Nineteen", ph:"Dye-see-nwe-be"}, {sp:"Veinte", en:"Twenty", ph:"Beyn-te"},
+            // Numbers — Tens
+            {sp:"Treinta", en:"Thirty", ph:"Treyn-ta"}, {sp:"Cuarenta", en:"Forty", ph:"Kwa-ren-ta"},
+            {sp:"Cincuenta", en:"Fifty", ph:"Seen-kwen-ta"}, {sp:"Sesenta", en:"Sixty", ph:"Se-sen-ta"},
+            {sp:"Setenta", en:"Seventy", ph:"Se-ten-ta"}, {sp:"Ochenta", en:"Eighty", ph:"O-chen-ta"},
+            {sp:"Noventa", en:"Ninety", ph:"No-ben-ta"}, {sp:"Cien", en:"Hundred", ph:"Syen"}, {sp:"Mil", en:"Thousand", ph:"Meel"},
             // Family
             {sp:"Madre", en:"Mother", ph:"Ma-dre"}, {sp:"Padre", en:"Father", ph:"Pa-dre"},
             {sp:"Hermana", en:"Sister", ph:"Er-ma-na"}, {sp:"Hijo", en:"Son", ph:"Ee-ho"},
@@ -271,6 +287,14 @@ const SPANISH_LIBRARY = {
             {sp:"¡Claro!", en:"Of course!", ph:"Cla-ro"}, {sp:"¡Por supuesto!", en:"Of course!/Certainly!", ph:"Por soo-pwes-to"},
             {sp:"Tengo hambre", en:"I'm hungry", ph:"Ten-go am-bre"}, {sp:"Tengo sed", en:"I'm thirsty", ph:"Ten-go sed"},
             {sp:"Tengo sueño", en:"I'm sleepy", ph:"Ten-go swe-nyo"}, {sp:"¿Me puede ayudar?", en:"Can you help me?", ph:"Me pwe-de a-yoo-dar"},
+            // More easy phrases
+            {sp:"¡Qué guay!", en:"How cool!", ph:"Ke gwai"}, {sp:"¡Qué pena!", en:"What a shame!", ph:"Ke pe-na"},
+            {sp:"¡Qué bonito/a!", en:"How beautiful!", ph:"Ke bo-nee-to/ta"}, {sp:"¡Qué rico!", en:"How delicious!", ph:"Ke ree-co"},
+            {sp:"¡Vamos!", en:"Let's go!", ph:"Ba-mos"}, {sp:"¡Venga!", en:"Come on!/Let's go! (Spain)", ph:"Ben-ga"},
+            {sp:"¡Que te vaya bien!", en:"Hope it goes well for you!", ph:"Ke te ba-ya byen"}, {sp:"¡Buen provecho!", en:"Enjoy your meal!", ph:"Bwen pro-be-cho"},
+            {sp:"¡Buen viaje!", en:"Have a good trip!", ph:"Bwen bya-he"}, {sp:"Estoy bien, gracias.", en:"I'm fine, thank you.", ph:"Es-toy byen gra-syas"},
+            {sp:"¿De dónde eres?", en:"Where are you from?", ph:"De don-de e-res"}, {sp:"Soy de...", en:"I'm from...", ph:"Soy de"},
+            {sp:"No te preocupes", en:"Don't worry", ph:"No te pre-o-koo-pes"}, {sp:"¡Salud!", en:"Cheers!/Bless you!", ph:"Sa-lood"},
         ],
         medium: [
             {sp:"Llevo dos años viviendo en España", en:"I have been living in Spain for two years", ph:"Ye-bo dos a-nyos bee-byen-do en Es-pa-nya"},
@@ -303,6 +327,15 @@ const SPANISH_LIBRARY = {
             {sp:"El autobús viene a las nueve", en:"The bus comes at nine", ph:"El ow-to-boos bye-ne a las nwe-be"},
             {sp:"¿Ya has comido hoy?", en:"Have you eaten today?", ph:"Ya as co-mee-do oy"},
             {sp:"No me acuerdo de eso", en:"I don't remember that", ph:"No me a-kwer-do de e-so"},
+            // More medium phrases
+            {sp:"¿Dónde trabajas?", en:"Where do you work?", ph:"Don-de tra-ba-has"},
+            {sp:"¿Cuánto tiempo llevas estudiando español?", en:"How long have you been studying Spanish?", ph:"Kwan-to tyen-po ye-bas es-too-dyan-do es-pa-nyol"},
+            {sp:"Me gusta mucho la música española", en:"I really like Spanish music", ph:"Me goos-ta moo-cho la moo-see-ca es-pa-nyo-la"},
+            {sp:"¿Me lo puedes señalar en el mapa?", en:"Can you point it out on the map?", ph:"Me lo pwe-des se-nya-lar en el ma-pa"},
+            {sp:"¿Hay algo vegetariano en el menú?", en:"Is there anything vegetarian on the menu?", ph:"Ay al-go be-he-ta-rya-no en el me-noo"},
+            {sp:"Necesito cambiar dinero", en:"I need to exchange money", ph:"Ne-se-see-to kam-byar dee-ne-ro"},
+            {sp:"¿Me puedes dar un descuento?", en:"Can you give me a discount?", ph:"Me pwe-des dar oon des-kwen-to"},
+            {sp:"¡Qué extraño!", en:"How strange!", ph:"Ke eks-tra-nyo"},
         ],
         hard: [
             {sp:"Espero que todo se resuelva de la mejor manera posible", en:"I hope everything works out in the best way possible", ph:"Es-pe-ro ke to-do se re-swel-ba de la me-hor ma-ne-ra po-see-ble"},
@@ -317,6 +350,12 @@ const SPANISH_LIBRARY = {
             {sp:"¿Puedes imaginar cómo sería sin tecnología?", en:"Can you imagine what it would be like without technology?", ph:"Pwe-des ee-ma-hee-nar co-mo se-ree-a seen tek-no-lo-hee-a"},
             {sp:"Hay que tener paciencia para aprender un idioma", en:"You need to have patience to learn a language", ph:"Ay ke te-ner pa-syen-sya pa-ra a-pren-der oon ee-dyo-ma"},
             {sp:"Sin comunicación no hay relación", en:"Without communication there is no relationship", ph:"Seen co-moo-nee-ca-syon no ay re-la-syon"},
+            // More hard phrases
+            {sp:"No puedo creer lo rápido que pasa el tiempo", en:"I can't believe how fast time flies", ph:"No pwe-do kre-er lo ra-pee-do ke pa-sa el tyen-po"},
+            {sp:"Me gustaría saber más sobre la cultura española", en:"I would like to know more about Spanish culture", ph:"Me goos-ta-ree-a sa-ber mas so-bre la kool-too-ra es-pa-nyo-la"},
+            {sp:"No es exactamente lo que quería decir", en:"That's not exactly what I meant to say", ph:"No es ek-sak-ta-men-te lo ke ke-ree-a de-seer"},
+            {sp:"Es más fácil decirlo que hacerlo", en:"It's easier said than done", ph:"Es mas fa-seel de-seer-lo ke a-ser-lo"},
+            {sp:"A veces el silencio dice más que las palabras", en:"Sometimes silence says more than words", ph:"A be-ses el see-len-syo dee-se mas ke las pa-la-bras"},
         ],
         vhard: [
             {sp:"No hay mal que por bien no venga", en:"Every cloud has a silver lining", ph:"Proverb"},

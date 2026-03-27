@@ -22,11 +22,26 @@ const JAPANESE_LIBRARY = {
             {jp:"黒", en:"Black", rj:"Kuro"}, {jp:"緑", en:"Green", rj:"Midori"}, {jp:"黄色", en:"Yellow", rj:"Kiiro"},
             {jp:"茶色", en:"Brown", rj:"Chairo"}, {jp:"紫", en:"Purple", rj:"Murasaki"}, {jp:"橙", en:"Orange", rj:"Orenji"},
             {jp:"灰色", en:"Grey", rj:"Haiiro"}, {jp:"ピンク", en:"Pink", rj:"Pinku"},
-            // Numbers
+            // More Colors
+            {jp:"金色", en:"Gold", rj:"Kiiro/Kin-iro"}, {jp:"銀色", en:"Silver", rj:"Gin-iro"},
+            {jp:"水色", en:"Sky blue/Light blue", rj:"Mizu-iro"}, {jp:"紺", en:"Navy blue", rj:"Kon"},
+            {jp:"ベージュ", en:"Beige", rj:"Beiju"}, {jp:"ターコイズ", en:"Turquoise", rj:"Taakoizu"},
+            {jp:"ライム", en:"Lime green", rj:"Raimu"}, {jp:"クリーム色", en:"Cream", rj:"Kuriimu-iro"},
+            {jp:"マゼンタ", en:"Magenta", rj:"Mazenta"}, {jp:"コーラル", en:"Coral", rj:"Kooraru"},
+            // Numbers 1–10
             {jp:"一", en:"One", rj:"Ichi"}, {jp:"二", en:"Two", rj:"Ni"}, {jp:"三", en:"Three", rj:"San"},
             {jp:"四", en:"Four", rj:"Shi/Yon"}, {jp:"五", en:"Five", rj:"Go"}, {jp:"六", en:"Six", rj:"Roku"},
             {jp:"七", en:"Seven", rj:"Nana/Shichi"}, {jp:"八", en:"Eight", rj:"Hachi"}, {jp:"九", en:"Nine", rj:"Ku/Kyuu"},
-            {jp:"十", en:"Ten", rj:"Juu"}, {jp:"百", en:"Hundred", rj:"Hyaku"}, {jp:"千", en:"Thousand", rj:"Sen"},
+            {jp:"十", en:"Ten", rj:"Juu"},
+            // Numbers 11–20
+            {jp:"十一", en:"Eleven", rj:"Juuichi"}, {jp:"十二", en:"Twelve", rj:"Juuni"}, {jp:"十三", en:"Thirteen", rj:"Juusan"},
+            {jp:"十四", en:"Fourteen", rj:"Juushi"}, {jp:"十五", en:"Fifteen", rj:"Juugo"}, {jp:"十六", en:"Sixteen", rj:"Juuroku"},
+            {jp:"十七", en:"Seventeen", rj:"Juunana"}, {jp:"十八", en:"Eighteen", rj:"Juuhachi"}, {jp:"十九", en:"Nineteen", rj:"Juuku"},
+            {jp:"二十", en:"Twenty", rj:"Nijuu"},
+            // Numbers — Tens & Large
+            {jp:"三十", en:"Thirty", rj:"Sanjuu"}, {jp:"四十", en:"Forty", rj:"Yonjuu"}, {jp:"五十", en:"Fifty", rj:"Gojuu"},
+            {jp:"六十", en:"Sixty", rj:"Rokujuu"}, {jp:"七十", en:"Seventy", rj:"Nanajuu"}, {jp:"八十", en:"Eighty", rj:"Hachijuu"},
+            {jp:"九十", en:"Ninety", rj:"Kyuujuu"}, {jp:"百", en:"Hundred", rj:"Hyaku"}, {jp:"千", en:"Thousand", rj:"Sen"},
             {jp:"万", en:"Ten thousand", rj:"Man"},
             // Family
             {jp:"母", en:"Mother", rj:"Haha"}, {jp:"父", en:"Father", rj:"Chichi"}, {jp:"兄", en:"Older brother", rj:"Ani"},
@@ -258,6 +273,21 @@ const JAPANESE_LIBRARY = {
             {jp:"もう一度言ってください", en:"Please say it again", rj:"Mou ichido itte kudasai"},
             {jp:"トイレはどこですか？", en:"Where is the toilet?", rj:"Toire wa doko desu ka?"},
             {jp:"助けてください", en:"Please help me", rj:"Tasukete kudasai"},
+            // More easy phrases
+            {jp:"何時ですか？", en:"What time is it?", rj:"Nanji desu ka?"},
+            {jp:"今日は何曜日ですか？", en:"What day is it today?", rj:"Kyou wa nan-youbi desu ka?"},
+            {jp:"いいですね！", en:"That's nice!/Sounds good!", rj:"Ii desu ne!"},
+            {jp:"残念ですね", en:"That's a shame", rj:"Zannen desu ne"},
+            {jp:"きれいですね！", en:"How beautiful!", rj:"Kirei desu ne!"},
+            {jp:"おいしい！", en:"Delicious!", rj:"Oishii!"},
+            {jp:"行きましょう！", en:"Let's go!", rj:"Ikimashou!"},
+            {jp:"どこから来ましたか？", en:"Where are you from?", rj:"Doko kara kimashita ka?"},
+            {jp:"〜から来ました", en:"I am from ~", rj:"~ kara kimashita"},
+            {jp:"よい旅を！", en:"Have a good trip!", rj:"Yoi tabi wo!"},
+            {jp:"気をつけて！", en:"Take care!", rj:"Ki wo tsukete!"},
+            {jp:"乾杯！", en:"Cheers!", rj:"Kanpai!"},
+            {jp:"お大事に", en:"Get well soon/Take care (when ill)", rj:"Odaiji ni"},
+            {jp:"またね！", en:"See you later!", rj:"Mata ne!"},
         ],
         medium: [
             {jp:"日本語を勉強しています", en:"I am studying Japanese", rj:"Nihongo wo benkyou shite imasu"},
@@ -303,6 +333,17 @@ const JAPANESE_LIBRARY = {
             {jp:"ご苦労様でした", en:"Thank you for your hard work", rj:"Gokurousama deshita"},
             {jp:"お疲れ様でした", en:"Good work/You've worked hard", rj:"Otsukaresama deshita"},
             {jp:"失礼します", en:"Excuse me (entering/leaving)", rj:"Shitsurei shimasu"},
+            // More medium phrases
+            {jp:"どこで働いていますか？", en:"Where do you work?", rj:"Doko de hataraite imasu ka?"},
+            {jp:"日本語をどのくらい勉強しましたか？", en:"How long have you been studying Japanese?", rj:"Nihongo wo dono kurai benkyou shimashita ka?"},
+            {jp:"日本の食べ物はどれも好きです", en:"I like all kinds of Japanese food", rj:"Nihon no tabemono wa dore mo suki desu"},
+            {jp:"地図で見せてもらえますか？", en:"Could you show me on the map?", rj:"Chizu de misete moraemasu ka?"},
+            {jp:"ベジタリアン向けのメニューはありますか？", en:"Is there a vegetarian menu?", rj:"Bejitarian muke no menyuu wa arimasu ka?"},
+            {jp:"両替はどこでできますか？", en:"Where can I exchange money?", rj:"Ryougae wa doko de dekimasu ka?"},
+            {jp:"割引してもらえますか？", en:"Could you give me a discount?", rj:"Waribiki shite moraemasu ka?"},
+            {jp:"充電器を使ってもいいですか？", en:"May I use your charger?", rj:"Juudenki wo tsukatte mo ii desu ka?"},
+            {jp:"これはどこで買えますか？", en:"Where can I buy this?", rj:"Kore wa doko de kaemasu ka?"},
+            {jp:"もう少し安くなりますか？", en:"Could it be a little cheaper?", rj:"Mou sukoshi yasuku narimasu ka?"},
         ],
         hard: [
             {jp:"もし〜なら、〜でしょう", en:"If ~ then it would be ~", rj:"Moshi ~ nara, ~ deshou"},
@@ -315,6 +356,13 @@ const JAPANESE_LIBRARY = {
             {jp:"賛否両論あることは承知しています", en:"I'm aware there are arguments for and against", rj:"Sanpi ryouron aru koto wa shouchi shite imasu"},
             {jp:"一概には言えませんが", en:"It's hard to generalise, but...", rj:"Ichigai ni wa iemasen ga"},
             {jp:"それはケースバイケースです", en:"That is case by case", rj:"Sore wa keesu bai keesu desu"},
+            // More hard phrases
+            {jp:"時間が経つのは本当に早いですね", en:"Time really does fly, doesn't it?", rj:"Jikan ga tatsu no wa hontou ni hayai desu ne"},
+            {jp:"日本の文化についてもっと知りたいです", en:"I would like to know more about Japanese culture", rj:"Nihon no bunka ni tsuite motto shiritai desu"},
+            {jp:"私が言いたかったことはそういう意味ではありません", en:"That's not what I was trying to say", rj:"Watashi ga iitakatta koto wa sou iu imi de wa arimasen"},
+            {jp:"言うは易く行うは難し", en:"It's easier said than done", rj:"Iu wa yasuku okonau wa katashi"},
+            {jp:"沈黙は時に言葉より多くを語ります", en:"Silence sometimes speaks louder than words", rj:"Chinmoku wa toki ni kotoba yori ooku wo katari masu"},
+            {jp:"失敗は成功のもとです", en:"Failure is the foundation of success", rj:"Shippai wa seikou no moto desu"},
         ],
         vhard: [
             // Original entry

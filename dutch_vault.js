@@ -17,13 +17,29 @@ const DUTCH_LIBRARY = {
             {nl:"Roze", en:"Pink", ph:"Roh-ze"}, {nl:"Oranje", en:"Orange", ph:"Oh-ran-ye"},
             {nl:"Paars", en:"Purple", ph:"Pars"}, {nl:"Grijs", en:"Grey", ph:"Ghrays"},
             {nl:"Bruin", en:"Brown", ph:"Brown"},
-            // Numbers
+            // More Colors
+            {nl:"Beige", en:"Beige", ph:"Bezh"}, {nl:"Turquoise", en:"Turquoise", ph:"Tur-kwaz"},
+            {nl:"Goud", en:"Gold", ph:"Ghowt"}, {nl:"Zilver", en:"Silver", ph:"Zil-ver"},
+            {nl:"Bordeaux", en:"Burgundy", ph:"Bor-doh"}, {nl:"Lila", en:"Lilac", ph:"Lee-la"},
+            {nl:"Crème", en:"Cream", ph:"Krehm"}, {nl:"Magenta", en:"Magenta", ph:"Ma-ghen-ta"},
+            {nl:"Koraal", en:"Coral", ph:"Ko-rahl"}, {nl:"Indigo", en:"Indigo", ph:"In-dee-go"},
+            // Numbers 1–10
             {nl:"Één", en:"One", ph:"Ayn"}, {nl:"Twee", en:"Two", ph:"Tway"},
             {nl:"Drie", en:"Three", ph:"Dree"}, {nl:"Vier", en:"Four", ph:"Veer"},
             {nl:"Vijf", en:"Five", ph:"Vayf"}, {nl:"Zes", en:"Six", ph:"Zes"},
             {nl:"Zeven", en:"Seven", ph:"Zay-ven"}, {nl:"Acht", en:"Eight", ph:"Akht"},
             {nl:"Negen", en:"Nine", ph:"Nay-ghen"}, {nl:"Tien", en:"Ten", ph:"Teen"},
-            {nl:"Honderd", en:"Hundred", ph:"Hon-dert"}, {nl:"Duizend", en:"Thousand", ph:"Dow-zent"},
+            // Numbers 11–20
+            {nl:"Elf", en:"Eleven", ph:"Elf"}, {nl:"Twaalf", en:"Twelve", ph:"Twalf"},
+            {nl:"Dertien", en:"Thirteen", ph:"Der-teen"}, {nl:"Veertien", en:"Fourteen", ph:"Vayr-teen"},
+            {nl:"Vijftien", en:"Fifteen", ph:"Vayf-teen"}, {nl:"Zestien", en:"Sixteen", ph:"Zes-teen"},
+            {nl:"Zeventien", en:"Seventeen", ph:"Zay-ven-teen"}, {nl:"Achttien", en:"Eighteen", ph:"Akh-teen"},
+            {nl:"Negentien", en:"Nineteen", ph:"Nay-ghen-teen"}, {nl:"Twintig", en:"Twenty", ph:"Twin-tikh"},
+            // Numbers — Tens
+            {nl:"Dertig", en:"Thirty", ph:"Der-tikh"}, {nl:"Veertig", en:"Forty", ph:"Vayr-tikh"},
+            {nl:"Vijftig", en:"Fifty", ph:"Vayf-tikh"}, {nl:"Zestig", en:"Sixty", ph:"Zes-tikh"},
+            {nl:"Zeventig", en:"Seventy", ph:"Zay-ven-tikh"}, {nl:"Tachtig", en:"Eighty", ph:"Takh-tikh"},
+            {nl:"Negentig", en:"Ninety", ph:"Nay-ghen-tikh"}, {nl:"Honderd", en:"Hundred", ph:"Hon-dert"}, {nl:"Duizend", en:"Thousand", ph:"Dow-zent"},
             // Family
             {nl:"Moeder", en:"Mother", ph:"Moo-der"}, {nl:"Vader", en:"Father", ph:"Fah-der"},
             {nl:"Broer", en:"Brother", ph:"Broor"}, {nl:"Zus", en:"Sister", ph:"Zuhs"},
@@ -264,6 +280,14 @@ const DUTCH_LIBRARY = {
             {nl:"Fijne verjaardag!", en:"Happy birthday!", ph:"Fay-ne ver-yar-dakh"}, {nl:"Prettig Kerstfeest!", en:"Merry Christmas!", ph:"Pret-ikh kerst-fayst"},
             {nl:"Veel succes!", en:"Good luck!", ph:"Fayl su-ses"}, {nl:"Ik heb honger", en:"I'm hungry", ph:"Ik hep hong-er"},
             {nl:"Ik heb dorst", en:"I'm thirsty", ph:"Ik hep dorst"}, {nl:"Ik ben moe", en:"I'm tired", ph:"Ik ben moo"},
+            // More easy phrases
+            {nl:"Hoe laat is het?", en:"What time is it?", ph:"Hoo laht is het"}, {nl:"Welke dag is het?", en:"What day is it?", ph:"Wel-ke dakh is het"},
+            {nl:"Wat leuk!", en:"How nice!/How fun!", ph:"Wat lurk"}, {nl:"Wat jammer!", en:"What a shame!", ph:"Wat yam-er"},
+            {nl:"Wat mooi!", en:"How beautiful!", ph:"Wat moy"}, {nl:"Wat lekker!", en:"How delicious!", ph:"Wat lek-er"},
+            {nl:"Kom mee!", en:"Come along!/Let's go!", ph:"Kom may"}, {nl:"Geen probleem!", en:"No problem!", ph:"Ghayn pro-blaym"},
+            {nl:"Doe je best!", en:"Do your best!", ph:"Doo ye best"}, {nl:"Eet smakelijk!", en:"Enjoy your meal!", ph:"Ayt smah-ke-lik"},
+            {nl:"Goede reis!", en:"Have a good trip!", ph:"Ghoo-de rays"}, {nl:"Pas goed op jezelf!", en:"Take care of yourself!", ph:"Pas ghoot op ye-zelf"},
+            {nl:"Waar kom jij vandaan?", en:"Where are you from?", ph:"War kom yay fan-dahn"}, {nl:"Ik kom uit...", en:"I come from...", ph:"Ik kom owt"},
         ],
         medium: [
             {nl:"Ik woon al twee jaar in Nederland", en:"I have been living in the Netherlands for two years", ph:"Ik wohn al tway yar in Nay-der-lant"},
@@ -296,6 +320,16 @@ const DUTCH_LIBRARY = {
             {nl:"De bus komt om negen uur", en:"The bus comes at nine", ph:"De bus komt om nay-ghen yoor"},
             {nl:"Heb je al gegeten vandaag?", en:"Have you eaten today?", ph:"Hep ye al ghe-ghay-ten fan-dakh"},
             {nl:"Ik herinner me dat niet", en:"I don't remember that", ph:"Ik her-in-er me dat neet"},
+            // More medium phrases
+            {nl:"Waar werk jij?", en:"Where do you work?", ph:"War werk yay"},
+            {nl:"Hoe lang leer je al Nederlands?", en:"How long have you been learning Dutch?", ph:"Hoo lang layr ye al Nay-der-lants"},
+            {nl:"Ik hou heel veel van Nederlandse muziek", en:"I really love Dutch music", ph:"Ik how hayl fayl fan Nay-der-lan-se myoo-zeek"},
+            {nl:"Kun je het op de kaart aanwijzen?", en:"Can you point it out on the map?", ph:"Kun ye het op de kart ahn-way-zen"},
+            {nl:"Is er iets vegetarisch op het menu?", en:"Is there anything vegetarian on the menu?", ph:"Is er eets ve-ghe-tah-rees op het me-nyoo"},
+            {nl:"Ik moet geld wisselen", en:"I need to exchange money", ph:"Ik moot ghelt wis-se-len"},
+            {nl:"Kun je me korting geven?", en:"Can you give me a discount?", ph:"Kun ye me kor-ting ghay-ven"},
+            {nl:"Wat vreemd!", en:"How strange!", ph:"Wat vraym"},
+            {nl:"Ik ben het niet helemaal met je eens", en:"I don't entirely agree with you", ph:"Ik ben het neet hay-le-mahl met ye ayns"},
         ],
         hard: [
             {nl:"Ik hoop dat alles zich op de best mogelijke manier oplost", en:"I hope everything works out in the best way possible", ph:"Ik hohp dat al-les zikh op de best moh-ghe-like mah-neer op-lost"},
@@ -310,6 +344,12 @@ const DUTCH_LIBRARY = {
             {nl:"Kun jij je voorstellen hoe het zou zijn zonder technologie?", en:"Can you imagine what it would be like without technology?", ph:"Kun yay ye for-stel-len hoo het zow zayn zon-der tek-no-loh-zhee"},
             {nl:"Je hebt geduld nodig om een taal te leren", en:"You need patience to learn a language", ph:"Ye hept ghe-duld noh-dikh om en tahl te lay-ren"},
             {nl:"Zonder communicatie is er geen relatie", en:"Without communication there is no relationship", ph:"Zon-der ko-myoo-nee-kah-see is er ghayn re-lah-see"},
+            // More hard phrases
+            {nl:"Ik kan niet geloven hoe snel de tijd voorbij gaat", en:"I can't believe how fast time flies", ph:"Ik kan neet ghe-loh-ven hoo snel de tayt for-bay ghaht"},
+            {nl:"Ik zou graag meer willen weten over de Nederlandse cultuur", en:"I would like to know more about Dutch culture", ph:"Ik zow ghrahkh mayr wil-len way-ten oh-ver de Nay-der-lan-se kul-tyoor"},
+            {nl:"Dat is niet precies wat ik bedoelde", en:"That's not exactly what I meant", ph:"Dat is neet pre-sees wat ik be-dool-de"},
+            {nl:"Makkelijker gezegd dan gedaan", en:"Easier said than done", ph:"Mak-ke-li-ker ghe-zekht dan ghe-dahn"},
+            {nl:"Soms zegt stilte meer dan woorden", en:"Sometimes silence says more than words", ph:"Soms zekht stil-te mayr dan wor-den"},
         ],
         vhard: [
             // Proverbs & Idioms
