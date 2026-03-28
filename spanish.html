@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
-    <title>Proyecto Sol | Spanish</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <script src="spanish_vault.js"></script>
+    <title>Project Sakura | Japanese</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <script src="japanese_vault.js"></script>
     <style>
-        :root{--bg:#0f172a;--card:#1e293b;--primary:#f59e0b;--shadow:#92400e;--text:#f8fafc;--text-dim:#94a3b8;--border:#334155;}
+        :root{--bg:#0f172a;--card:#1e293b;--primary:#f472b6;--shadow:#be185d;--text:#f8fafc;--text-dim:#94a3b8;--border:#334155;}
         *{box-sizing:border-box;transition:all 0.2s ease;-webkit-tap-highlight-color:transparent;}
-        body{font-family:'Inter',sans-serif;background-color:var(--bg);color:var(--text);margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding-top:env(safe-area-inset-top);}
+        body{font-family:'Inter','Noto Sans JP',sans-serif;background-color:var(--bg);color:var(--text);margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding-top:env(safe-area-inset-top);}
         .top-nav{width:100%;display:flex;padding:12px 15px;background:rgba(15,23,42,0.95);backdrop-filter:blur(10px);position:sticky;top:0;z-index:100;border-bottom:1px solid var(--border);}
         .home-link{text-decoration:none;color:var(--text-dim);font-size:0.75rem;font-weight:800;border:1px solid var(--border);padding:6px 14px;border-radius:20px;background:var(--card);}
         .app-container{max-width:600px;width:92%;display:flex;flex-direction:column;align-items:center;padding-bottom:50px;}
@@ -25,7 +25,7 @@
         #list-words-controls{width:100%;overflow:hidden;min-width:0;} #test-cat-section{width:100%;overflow:hidden;min-width:0;}
         .cat-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 14px;background:var(--card);border:2px solid var(--border);border-radius:14px;cursor:pointer;color:var(--text-dim);font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;white-space:nowrap;}
         .cat-btn .cat-icon{font-size:1.4rem;line-height:1;}
-        .cat-btn.active{border-color:var(--primary);color:var(--primary);background:rgba(245,158,11,0.08);}
+        .cat-btn.active{border-color:var(--primary);color:var(--primary);background:rgba(244,114,182,0.08);}
         .diff-toggle{display:flex;background:var(--bg);padding:4px;border-radius:10px;margin-bottom:15px;width:100%;gap:4px;border:1px solid var(--border);}
         .diff-btn{flex:1;padding:10px 2px;font-size:0.6rem;border:none;background:transparent;color:var(--text-dim);cursor:pointer;border-radius:6px;font-weight:800;}
         .diff-btn.active{background:var(--card);color:var(--primary);}
@@ -36,7 +36,7 @@
         .card-back{background:var(--primary);transform:rotateY(180deg);color:white;}
         .btn-hear{background:rgba(255,255,255,0.1);border:1px solid var(--primary);color:var(--primary);padding:8px 15px;border-radius:20px;font-size:0.7rem;font-weight:800;margin-top:15px;cursor:pointer;}
         .card-back .btn-hear{border-color:white;color:white;}
-        .pronunciation{font-size:0.9rem;font-style:italic;color:#fef3c7;margin-top:8px;}
+        .romaji{font-size:1rem;font-style:italic;color:#ffe4e6;margin-top:10px;}
         .card-counter{font-size:0.7rem;font-weight:800;color:var(--text-dim);margin-top:10px;}
         .card-nav{display:flex;gap:10px;width:100%;margin-top:8px;}
         .btn-prev{flex:1;padding:14px;background:var(--card);color:var(--text-dim);border:1px solid var(--border);border-radius:14px;font-weight:800;cursor:pointer;font-size:0.85rem;}
@@ -53,7 +53,7 @@
         .list-table tbody tr:last-child{border-bottom:none;}
         .list-table tbody tr:hover{background:rgba(255,255,255,0.04);}
         .list-table tbody td{padding:13px 10px;vertical-align:middle;}
-        .list-native{font-size:1.1rem;font-weight:700;color:var(--text);}
+        .list-native{font-size:1.25rem;font-weight:700;color:var(--text);}
         .list-ph{font-size:0.7rem;font-style:italic;color:var(--text-dim);margin-top:3px;}
         .list-en{font-size:0.88rem;color:var(--text-dim);font-weight:600;}
         .list-hear{background:none;border:1px solid var(--border);color:var(--text-dim);border-radius:20px;padding:5px 10px;font-size:0.65rem;font-weight:800;cursor:pointer;white-space:nowrap;}
@@ -62,7 +62,7 @@
         .setup-label{font-size:0.68rem;font-weight:800;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;}
         .setup-row{display:flex;gap:8px;width:100%;flex-wrap:wrap;}
         .setup-opt{flex:1;min-width:70px;padding:14px 6px;background:var(--card);border:2px solid var(--border);border-radius:12px;color:var(--text-dim);font-weight:800;font-size:0.78rem;cursor:pointer;text-align:center;}
-        .setup-opt.active{border-color:var(--primary);color:var(--primary);background:rgba(245,158,11,0.08);}
+        .setup-opt.active{border-color:var(--primary);color:var(--primary);background:rgba(244,114,182,0.08);}
         .btn-start-test{width:100%;padding:18px;background:var(--primary);color:white;border:none;border-radius:14px;font-weight:800;font-size:1rem;cursor:pointer;box-shadow:0 4px 0 var(--shadow);margin-top:4px;}
         .test-quiz{width:100%;display:none;flex-direction:column;align-items:center;}
         .quiz-meta{display:flex;justify-content:space-between;width:100%;margin-bottom:10px;font-size:0.72rem;font-weight:800;color:var(--text-dim);}
@@ -70,7 +70,7 @@
         .quiz-progress-fill{height:100%;background:var(--primary);border-radius:3px;transition:width 0.4s ease;}
         .quiz-question-box{width:100%;background:var(--card);border:2px solid var(--primary);border-radius:20px;padding:28px 22px;text-align:center;margin-bottom:18px;}
         .quiz-q-label{font-size:0.65rem;font-weight:800;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;}
-        .quiz-q-text{font-size:1.85rem;font-weight:800;color:var(--text);line-height:1.25;}
+        .quiz-q-text{font-size:2.2rem;font-weight:800;color:var(--text);line-height:1.25;}
         .quiz-q-phonetic{font-size:0.85rem;font-style:italic;color:var(--text-dim);margin-top:8px;min-height:1.2em;}
         .quiz-q-hear{background:transparent;border:1px solid var(--border);color:var(--text-dim);padding:6px 14px;border-radius:20px;font-size:0.68rem;font-weight:800;margin-top:10px;cursor:pointer;}
         .quiz-q-hear:hover{border-color:var(--primary);color:var(--primary);}
@@ -94,7 +94,7 @@
         .result-row.r-correct{border-color:rgba(34,197,94,0.25);}
         .result-row.r-wrong{border-color:rgba(239,68,68,0.3);}
         .result-icon{font-size:1.1rem;flex-shrink:0;}
-        .result-q{font-size:0.98rem;font-weight:700;color:var(--text);}
+        .result-q{font-size:1rem;font-weight:700;color:var(--text);}
         .result-a{font-size:0.78rem;color:var(--text-dim);}
         .btn-retry{width:100%;padding:16px;background:var(--primary);color:white;border:none;border-radius:14px;font-weight:800;cursor:pointer;box-shadow:0 4px 0 var(--shadow);font-size:0.95rem;}
         .video-list{width:100%;display:grid;gap:10px;}
@@ -105,7 +105,7 @@
 <body>
 <div class="top-nav"><a href="index.html" class="home-link">← HOME</a></div>
 <div class="app-container">
-    <header><h1>PROYECTO <span style="color:var(--primary)">SOL</span> 🇪🇸</h1></header>
+    <header><h1>PROJECT <span style="color:var(--primary)">SAKURA</span> 🌸</h1></header>
     <nav>
         <button class="nav-btn active" onclick="showTab('words',this)">Words</button>
         <button class="nav-btn" onclick="showTab('phrases',this)">Phrases</button>
@@ -120,15 +120,15 @@
         <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
             <div class="flashcard-inner">
                 <div class="card-front">
-                    <h2 id="sp-text" style="font-size:2.2rem;margin:0">--</h2>
-                    <div class="sp-ph-view pronunciation">--</div>
-                    <button class="btn-hear" onclick="event.stopPropagation();speak('sp-text')">🔊 HEAR</button>
+                    <h2 id="jp-text" style="font-size:2.6rem;margin:0">--</h2>
+                    <div class="jp-rj-view romaji">--</div>
+                    <button class="btn-hear" onclick="event.stopPropagation();speak('jp-text')">🔊 HEAR</button>
                     <div class="card-counter" id="words-counter"></div>
                 </div>
                 <div class="card-back">
-                    <h2 id="en-text" style="font-size:1.8rem;margin:0">--</h2>
-                    <div class="sp-ph-view pronunciation">--</div>
-                    <button class="btn-hear" onclick="event.stopPropagation();speak('sp-text')">🔊 HEAR</button>
+                    <h2 id="en-text" style="font-size:2rem;margin:0">--</h2>
+                    <div class="jp-rj-view romaji">--</div>
+                    <button class="btn-hear" onclick="event.stopPropagation();speak('jp-text')">🔊 HEAR</button>
                 </div>
             </div>
         </div>
@@ -149,14 +149,14 @@
         <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
             <div class="flashcard-inner">
                 <div class="card-front">
-                    <h2 id="phrase-sp" style="font-size:1.6rem;margin:0">--</h2>
-                    <div class="phrase-ph-view pronunciation">--</div>
-                    <button class="btn-hear" onclick="event.stopPropagation();speak('phrase-sp')">🔊 HEAR</button>
+                    <h2 id="phrase-jp" style="font-size:1.8rem;margin:0">--</h2>
+                    <div class="phrase-rj-view romaji">--</div>
+                    <button class="btn-hear" onclick="event.stopPropagation();speak('phrase-jp')">🔊 HEAR</button>
                 </div>
                 <div class="card-back">
-                    <h2 id="phrase-en" style="font-size:1.4rem;margin:0">--</h2>
-                    <div class="phrase-ph-view pronunciation">--</div>
-                    <button class="btn-hear" onclick="event.stopPropagation();speak('phrase-sp')">🔊 HEAR</button>
+                    <h2 id="phrase-en" style="font-size:1.6rem;margin:0">--</h2>
+                    <div class="phrase-rj-view romaji">--</div>
+                    <button class="btn-hear" onclick="event.stopPropagation();speak('phrase-jp')">🔊 HEAR</button>
                 </div>
             </div>
         </div>
@@ -184,7 +184,7 @@
         <div class="list-count" id="list-count">0 items</div>
         <div class="list-scroll">
             <table class="list-table">
-                <thead><tr><th>SPANISH</th><th>ENGLISH</th><th></th></tr></thead>
+                <thead><tr><th>JAPANESE</th><th>ENGLISH</th><th></th></tr></thead>
                 <tbody id="list-body"></tbody>
             </table>
         </div>
@@ -231,7 +231,7 @@
             <div class="score-ring-wrap">
                 <svg width="150" height="150" viewBox="0 0 150 150">
                     <circle cx="75" cy="75" r="65" fill="none" stroke="#334155" stroke-width="10"/>
-                    <circle id="score-arc" cx="75" cy="75" r="65" fill="none" stroke="#f59e0b" stroke-width="10" stroke-dasharray="408.4" stroke-dashoffset="408.4" stroke-linecap="round"/>
+                    <circle id="score-arc" cx="75" cy="75" r="65" fill="none" stroke="#f472b6" stroke-width="10" stroke-dasharray="408.4" stroke-dashoffset="408.4" stroke-linecap="round"/>
                 </svg>
                 <div class="score-ring-inner"><div class="score-big" id="results-num">0</div><div class="score-denom">/ 10</div></div>
             </div>
@@ -245,11 +245,11 @@
     <!-- WATCH -->
     <div id="watch" class="content-section">
         <div class="video-list">
-            <a href="https://www.youtube.com/watch?v=m99_pXpX26U" target="_blank" class="video-item">🇪🇸 Learn Spanish in 30 Min (Basics)</a>
-            <a href="https://www.youtube.com/watch?v=sFmOAVCROpo" target="_blank" class="video-item">🇪🇸 100 Common Spanish Phrases</a>
-            <a href="https://www.youtube.com/watch?v=LpWvPDaC0DQ" target="_blank" class="video-item">🇪🇸 Spanish Pronunciation Guide</a>
-            <a href="https://www.youtube.com/c/SpanishPod101" target="_blank" class="video-item">🇪🇸 SpanishPod101 Channel →</a>
-            <a href="https://www.youtube.com/c/Dreaming-Spanish" target="_blank" class="video-item">🇪🇸 Dreaming Spanish (Immersion) →</a>
+            <a href="https://www.youtube.com/watch?v=rGrBHiuPlT0" target="_blank" class="video-item">🇯🇵 Learn Hiragana – JapanesePod101</a>
+            <a href="https://www.youtube.com/watch?v=s6DKRgtVLGA" target="_blank" class="video-item">🇯🇵 Learn Katakana – JapanesePod101</a>
+            <a href="https://www.youtube.com/watch?v=m99_pXpX26U" target="_blank" class="video-item">🇯🇵 Japanese in 3 Hours – Basics</a>
+            <a href="https://www.youtube.com/c/JapanesePod101" target="_blank" class="video-item">🇯🇵 JapanesePod101 Channel →</a>
+            <a href="https://www.youtube.com/c/OrganizeJapanese" target="_blank" class="video-item">🇯🇵 Organic Japanese with Cure Dolly →</a>
         </div>
     </div>
 </div>
@@ -258,25 +258,113 @@
 const CATEGORIES=[{id:'colours',label:'Colours',icon:'🎨'},{id:'numbers',label:'Numbers',icon:'🔢'},{id:'body',label:'Body',icon:'🫀'},{id:'food',label:'Food',icon:'🍽️'},{id:'animals',label:'Animals',icon:'🐾'},{id:'travel',label:'Travel',icon:'✈️'},{id:'family',label:'Family',icon:'👨‍👩‍👧'},{id:'time',label:'Time',icon:'⏰'}];
 
 const WORD_LIBRARY={
-    colours:[{sp:'Rojo',en:'Red',ph:'ROH-ho'},{sp:'Azul',en:'Blue',ph:'ah-SOOL'},{sp:'Verde',en:'Green',ph:'BAIR-deh'},{sp:'Amarillo',en:'Yellow',ph:'ah-mah-REE-yoh'},{sp:'Negro',en:'Black',ph:'NEH-groh'},{sp:'Blanco',en:'White',ph:'BLAN-koh'},{sp:'Naranja',en:'Orange',ph:'nah-RAN-hah'},{sp:'Rosa',en:'Pink',ph:'ROH-sah'},{sp:'Morado',en:'Purple',ph:'moh-RAH-doh'},{sp:'Gris',en:'Grey',ph:'grees'},{sp:'Marrón',en:'Brown',ph:'mah-ROHN'},{sp:'Dorado',en:'Gold',ph:'doh-RAH-doh'}],
-    numbers:[{sp:'Uno',en:'One',ph:'OO-noh'},{sp:'Dos',en:'Two',ph:'dohs'},{sp:'Tres',en:'Three',ph:'trays'},{sp:'Cuatro',en:'Four',ph:'KWAH-troh'},{sp:'Cinco',en:'Five',ph:'SINK-oh'},{sp:'Seis',en:'Six',ph:'sayss'},{sp:'Siete',en:'Seven',ph:'SYEH-teh'},{sp:'Ocho',en:'Eight',ph:'OH-choh'},{sp:'Nueve',en:'Nine',ph:'NWEH-beh'},{sp:'Diez',en:'Ten',ph:'dyeth'},{sp:'Veinte',en:'Twenty',ph:'BAYN-teh'},{sp:'Cien',en:'Hundred',ph:'syen'}],
-    body:[{sp:'Cabeza',en:'Head',ph:'kah-BEH-sah'},{sp:'Ojo',en:'Eye',ph:'OH-hoh'},{sp:'Nariz',en:'Nose',ph:'nah-REETH'},{sp:'Boca',en:'Mouth',ph:'BOH-kah'},{sp:'Oreja',en:'Ear',ph:'oh-REH-hah'},{sp:'Mano',en:'Hand',ph:'MAH-noh'},{sp:'Pie',en:'Foot',ph:'pyeh'},{sp:'Brazo',en:'Arm',ph:'BRAH-thoh'},{sp:'Pierna',en:'Leg',ph:'PYAIR-nah'},{sp:'Espalda',en:'Back',ph:'es-PAHL-dah'},{sp:'Corazón',en:'Heart',ph:'koh-rah-THOHN'},{sp:'Diente',en:'Tooth',ph:'DYEN-teh'}],
-    food:[{sp:'Arroz',en:'Rice',ph:'ah-ROTH'},{sp:'Pan',en:'Bread',ph:'pahn'},{sp:'Pollo',en:'Chicken',ph:'POH-yoh'},{sp:'Pescado',en:'Fish',ph:'pes-KAH-doh'},{sp:'Leche',en:'Milk',ph:'LEH-cheh'},{sp:'Huevo',en:'Egg',ph:'WEH-boh'},{sp:'Queso',en:'Cheese',ph:'KEH-soh'},{sp:'Fruta',en:'Fruit',ph:'FROO-tah'},{sp:'Verdura',en:'Vegetable',ph:'bair-DOO-rah'},{sp:'Café',en:'Coffee',ph:'kah-FEH'},{sp:'Zumo',en:'Juice',ph:'THOO-moh'},{sp:'Agua',en:'Water',ph:'AH-gwah'}],
-    animals:[{sp:'Perro',en:'Dog',ph:'PEH-rroh'},{sp:'Gato',en:'Cat',ph:'GAH-toh'},{sp:'Pájaro',en:'Bird',ph:'PAH-hah-roh'},{sp:'Pez',en:'Fish',ph:'peth'},{sp:'Caballo',en:'Horse',ph:'kah-BAH-yoh'},{sp:'Vaca',en:'Cow',ph:'BAH-kah'},{sp:'Cerdo',en:'Pig',ph:'THAIR-doh'},{sp:'Oveja',en:'Sheep',ph:'oh-BEH-hah'},{sp:'Mono',en:'Monkey',ph:'MOH-noh'},{sp:'León',en:'Lion',ph:'leh-OHN'},{sp:'Elefante',en:'Elephant',ph:'eh-leh-FAN-teh'},{sp:'Serpiente',en:'Snake',ph:'sair-PYEN-teh'}],
-    travel:[{sp:'Aeropuerto',en:'Airport',ph:'ah-eh-roh-PWAIR-toh'},{sp:'Hotel',en:'Hotel',ph:'oh-TEL'},{sp:'Tren',en:'Train',ph:'tren'},{sp:'Autobús',en:'Bus',ph:'ow-toh-BOOS'},{sp:'Taxi',en:'Taxi',ph:'TAK-see'},{sp:'Pasaporte',en:'Passport',ph:'pah-sah-POR-teh'},{sp:'Maleta',en:'Suitcase',ph:'mah-LEH-tah'},{sp:'Mapa',en:'Map',ph:'MAH-pah'},{sp:'Playa',en:'Beach',ph:'PLAH-yah'},{sp:'Museo',en:'Museum',ph:'moo-SEH-oh'},{sp:'Restaurante',en:'Restaurant',ph:'res-tow-RAN-teh'},{sp:'Dinero',en:'Money',ph:'dee-NEH-roh'}],
-    family:[{sp:'Madre',en:'Mother',ph:'MAH-dreh'},{sp:'Padre',en:'Father',ph:'PAH-dreh'},{sp:'Hermano',en:'Brother',ph:'air-MAH-noh'},{sp:'Hermana',en:'Sister',ph:'air-MAH-nah'},{sp:'Abuela',en:'Grandmother',ph:'ah-BWEH-lah'},{sp:'Abuelo',en:'Grandfather',ph:'ah-BWEH-loh'},{sp:'Hijo',en:'Son',ph:'EE-hoh'},{sp:'Hija',en:'Daughter',ph:'EE-hah'},{sp:'Tío',en:'Uncle',ph:'TEE-oh'},{sp:'Tía',en:'Aunt',ph:'TEE-ah'},{sp:'Primo',en:'Cousin (m)',ph:'PREE-moh'},{sp:'Marido',en:'Husband',ph:'mah-REE-doh'}],
-    time:[{sp:'Hoy',en:'Today',ph:'oy'},{sp:'Mañana',en:'Tomorrow',ph:'mah-NYAH-nah'},{sp:'Ayer',en:'Yesterday',ph:'ah-YAIR'},{sp:'Semana',en:'Week',ph:'seh-MAH-nah'},{sp:'Mes',en:'Month',ph:'mess'},{sp:'Año',en:'Year',ph:'AH-nyoh'},{sp:'Hora',en:'Hour',ph:'OH-rah'},{sp:'Minuto',en:'Minute',ph:'mee-NOO-toh'},{sp:'Mañana',en:'Morning',ph:'mah-NYAH-nah'},{sp:'Tarde',en:'Afternoon',ph:'TAR-deh'},{sp:'Noche',en:'Night',ph:'NOH-cheh'},{sp:'Ahora',en:'Now',ph:'ah-OH-rah'}],
+    colours:[
+        {sp:'Rojo',en:'Red',ph:'ROH-ho'},{sp:'Azul',en:'Blue',ph:'ah-SOOL'},
+        {sp:'Verde',en:'Green',ph:'BAIR-deh'},{sp:'Amarillo',en:'Yellow',ph:'ah-mah-REE-yo'},
+        {sp:'Negro',en:'Black',ph:'NEH-groh'},{sp:'Blanco',en:'White',ph:'BLAN-koh'},
+        {sp:'Naranja',en:'Orange',ph:'nah-RAN-hah'},{sp:'Rosa',en:'Pink',ph:'ROH-sah'},
+        {sp:'Morado',en:'Purple',ph:'moh-RAH-doh'},{sp:'Gris',en:'Grey',ph:'grees'},
+        {sp:'Marrón',en:'Brown',ph:'mah-ROHN'},{sp:'Dorado',en:'Gold',ph:'doh-RAH-doh'},
+        {sp:'Plateado',en:'Silver',ph:'plah-teh-AH-doh'},{sp:'Beige',en:'Beige',ph:'BEH-heh'},
+        {sp:'Turquesa',en:'Turquoise',ph:'toor-KEH-sah'},{sp:'Lila',en:'Lilac',ph:'LEE-lah'},
+        {sp:'Burdeos',en:'Burgundy',ph:'boor-DEH-os'},{sp:'Crema',en:'Cream',ph:'KREH-mah'},
+        {sp:'Magenta',en:'Magenta',ph:'mah-HEN-tah'},{sp:'Coral',en:'Coral',ph:'koh-RAHL'},
+    ],
+    numbers:[
+        {sp:'Uno',en:'One',ph:'OO-noh'},{sp:'Dos',en:'Two',ph:'dohs'},
+        {sp:'Tres',en:'Three',ph:'trehs'},{sp:'Cuatro',en:'Four',ph:'KWAH-troh'},
+        {sp:'Cinco',en:'Five',ph:'SEEN-koh'},{sp:'Seis',en:'Six',ph:'sayss'},
+        {sp:'Siete',en:'Seven',ph:'SYEH-teh'},{sp:'Ocho',en:'Eight',ph:'OH-choh'},
+        {sp:'Nueve',en:'Nine',ph:'NWEH-beh'},{sp:'Diez',en:'Ten',ph:'dyehs'},
+        {sp:'Once',en:'Eleven',ph:'ON-seh'},{sp:'Doce',en:'Twelve',ph:'DOH-seh'},
+        {sp:'Trece',en:'Thirteen',ph:'TREH-seh'},{sp:'Catorce',en:'Fourteen',ph:'kah-TOR-seh'},
+        {sp:'Quince',en:'Fifteen',ph:'KEEN-seh'},{sp:'Dieciséis',en:'Sixteen',ph:'dyeh-see-SAYSS'},
+        {sp:'Diecisiete',en:'Seventeen',ph:'dyeh-see-SYEH-teh'},{sp:'Dieciocho',en:'Eighteen',ph:'dyeh-see-OH-choh'},
+        {sp:'Diecinueve',en:'Nineteen',ph:'dyeh-see-NWEH-beh'},{sp:'Veinte',en:'Twenty',ph:'BAYN-teh'},
+        {sp:'Treinta',en:'Thirty',ph:'TRAYN-tah'},{sp:'Cuarenta',en:'Forty',ph:'kwah-REN-tah'},
+        {sp:'Cincuenta',en:'Fifty',ph:'seen-KWEN-tah'},{sp:'Cien',en:'Hundred',ph:'syehn'},
+        {sp:'Mil',en:'Thousand',ph:'meel'},
+    ],
+    body:[
+        {sp:'Cabeza',en:'Head',ph:'kah-BEH-sah'},{sp:'Ojo',en:'Eye',ph:'OH-hoh'},
+        {sp:'Nariz',en:'Nose',ph:'nah-REETH'},{sp:'Boca',en:'Mouth',ph:'BOH-kah'},
+        {sp:'Oreja',en:'Ear',ph:'oh-REH-hah'},{sp:'Mano',en:'Hand',ph:'MAH-noh'},
+        {sp:'Pie',en:'Foot',ph:'pyeh'},{sp:'Brazo',en:'Arm',ph:'BRAH-soh'},
+        {sp:'Pierna',en:'Leg',ph:'PYAIR-nah'},{sp:'Espalda',en:'Back',ph:'es-PAL-dah'},
+        {sp:'Corazón',en:'Heart',ph:'kor-ah-SOHN'},{sp:'Diente',en:'Tooth',ph:'DYEHN-teh'},
+        {sp:'Cuello',en:'Neck',ph:'KWEH-yoh'},{sp:'Hombro',en:'Shoulder',ph:'OM-broh'},
+        {sp:'Rodilla',en:'Knee',ph:'roh-DEE-yah'},{sp:'Dedo',en:'Finger',ph:'DEH-doh'},
+        {sp:'Barriga',en:'Belly',ph:'bah-REE-gah'},{sp:'Lengua',en:'Tongue',ph:'LEN-gwah'},
+        {sp:'Pelo',en:'Hair',ph:'PEH-loh'},{sp:'Cara',en:'Face',ph:'KAH-rah'},
+    ],
+    food:[
+        {sp:'Arroz',en:'Rice',ph:'ah-RROS'},{sp:'Frijoles',en:'Beans',ph:'free-HOH-lehs'},
+        {sp:'Pollo',en:'Chicken',ph:'POH-yoh'},{sp:'Pescado',en:'Fish',ph:'pes-KAH-doh'},
+        {sp:'Pan',en:'Bread',ph:'pahn'},{sp:'Leche',en:'Milk',ph:'LEH-cheh'},
+        {sp:'Huevo',en:'Egg',ph:'WEH-boh'},{sp:'Queso',en:'Cheese',ph:'KEH-soh'},
+        {sp:'Fruta',en:'Fruit',ph:'FROO-tah'},{sp:'Verduras',en:'Vegetables',ph:'bair-DOO-rahs'},
+        {sp:'Café',en:'Coffee',ph:'kah-FEH'},{sp:'Jugo',en:'Juice',ph:'HOO-goh'},
+        {sp:'Carne',en:'Meat',ph:'KAR-neh'},{sp:'Pasta',en:'Pasta',ph:'PAS-tah'},
+        {sp:'Ensalada',en:'Salad',ph:'en-sah-LAH-dah'},{sp:'Sopa',en:'Soup',ph:'SOH-pah'},
+        {sp:'Pastel',en:'Cake',ph:'pas-TEL'},{sp:'Helado',en:'Ice cream',ph:'eh-LAH-doh'},
+        {sp:'Mantequilla',en:'Butter',ph:'man-teh-KEE-yah'},{sp:'Ajo',en:'Garlic',ph:'AH-hoh'},
+        {sp:'Cebolla',en:'Onion',ph:'seh-BOH-yah'},{sp:'Tomate',en:'Tomato',ph:'toh-MAH-teh'},
+        {sp:'Patata',en:'Potato',ph:'pah-TAH-tah'},{sp:'Azúcar',en:'Sugar',ph:'ah-SOO-kar'},
+    ],
+    animals:[
+        {sp:'Perro',en:'Dog',ph:'PEH-rroh'},{sp:'Gato',en:'Cat',ph:'GAH-toh'},
+        {sp:'Pájaro',en:'Bird',ph:'PAH-hah-roh'},{sp:'Pez',en:'Fish',ph:'pehth'},
+        {sp:'Caballo',en:'Horse',ph:'kah-BAH-yoh'},{sp:'Vaca',en:'Cow',ph:'BAH-kah'},
+        {sp:'Cerdo',en:'Pig',ph:'SAIR-doh'},{sp:'Oveja',en:'Sheep',ph:'oh-BEH-hah'},
+        {sp:'Mono',en:'Monkey',ph:'MOH-noh'},{sp:'León',en:'Lion',ph:'leh-OHN'},
+        {sp:'Elefante',en:'Elephant',ph:'eh-leh-FAN-teh'},{sp:'Serpiente',en:'Snake',ph:'sair-PYEHN-teh'},
+        {sp:'Conejo',en:'Rabbit',ph:'koh-NEH-hoh'},{sp:'Tigre',en:'Tiger',ph:'TEE-greh'},
+        {sp:'Oso',en:'Bear',ph:'OH-soh'},{sp:'Rana',en:'Frog',ph:'RAH-nah'},
+        {sp:'Ratón',en:'Mouse',ph:'rah-TOHN'},{sp:'Gallina',en:'Chicken (hen)',ph:'gah-YEE-nah'},
+        {sp:'Loro',en:'Parrot',ph:'LOH-roh'},{sp:'Tortuga',en:'Turtle',ph:'tor-TOO-gah'},
+    ],
+    travel:[
+        {sp:'Aeropuerto',en:'Airport',ph:'ah-eh-roh-PWAIR-toh'},{sp:'Hotel',en:'Hotel',ph:'oh-TEL'},
+        {sp:'Tren',en:'Train',ph:'trehn'},{sp:'Autobús',en:'Bus',ph:'ow-toh-BOOS'},
+        {sp:'Taxi',en:'Taxi',ph:'TAK-see'},{sp:'Pasaporte',en:'Passport',ph:'pah-sah-POR-teh'},
+        {sp:'Maleta',en:'Suitcase',ph:'mah-LEH-tah'},{sp:'Mapa',en:'Map',ph:'MAH-pah'},
+        {sp:'Playa',en:'Beach',ph:'PLAH-yah'},{sp:'Museo',en:'Museum',ph:'moo-SEH-oh'},
+        {sp:'Restaurante',en:'Restaurant',ph:'res-tow-RAN-teh'},{sp:'Dinero',en:'Money',ph:'dee-NEH-roh'},
+        {sp:'Metro',en:'Metro/Subway',ph:'MEH-troh'},{sp:'Avión',en:'Aeroplane',ph:'ah-BYOHN'},
+        {sp:'Billete',en:'Ticket',ph:'bee-YEH-teh'},{sp:'Reserva',en:'Reservation',ph:'reh-SAIR-bah'},
+        {sp:'Moto',en:'Motorcycle',ph:'MOH-toh'},{sp:'Barco',en:'Boat',ph:'BAR-koh'},
+        {sp:'Cambio',en:'Exchange office',ph:'KAM-byoh'},{sp:'Equipaje',en:'Luggage',ph:'eh-kee-PAH-heh'},
+    ],
+    family:[
+        {sp:'Madre',en:'Mother',ph:'MAH-dreh'},{sp:'Padre',en:'Father',ph:'PAH-dreh'},
+        {sp:'Hermano',en:'Brother',ph:'air-MAH-noh'},{sp:'Hermana',en:'Sister',ph:'air-MAH-nah'},
+        {sp:'Abuela',en:'Grandmother',ph:'ah-BWEH-lah'},{sp:'Abuelo',en:'Grandfather',ph:'ah-BWEH-loh'},
+        {sp:'Hijo',en:'Son',ph:'EE-hoh'},{sp:'Hija',en:'Daughter',ph:'EE-hah'},
+        {sp:'Tío',en:'Uncle',ph:'TEE-oh'},{sp:'Tía',en:'Aunt',ph:'TEE-ah'},
+        {sp:'Primo',en:'Cousin (m)',ph:'PREE-moh'},{sp:'Marido',en:'Husband',ph:'mah-REE-doh'},
+        {sp:'Esposa',en:'Wife',ph:'es-POH-sah'},{sp:'Bebé',en:'Baby',ph:'beh-BEH'},
+        {sp:'Sobrino',en:'Nephew',ph:'soh-BREE-noh'},{sp:'Sobrina',en:'Niece',ph:'soh-BREE-nah'},
+        {sp:'Cuñado',en:'Brother-in-law',ph:'koon-YAH-doh'},{sp:'Suegra',en:'Mother-in-law',ph:'SWEH-grah'},
+        {sp:'Suegro',en:'Father-in-law',ph:'SWEH-groh'},{sp:'Padrino',en:'Godfather',ph:'pah-DREE-noh'},
+    ],
+    time:[
+        {sp:'Hoy',en:'Today',ph:'oy'},{sp:'Mañana',en:'Tomorrow',ph:'mah-NYAH-nah'},
+        {sp:'Ayer',en:'Yesterday',ph:'ah-YAIR'},{sp:'Semana',en:'Week',ph:'seh-MAH-nah'},
+        {sp:'Mes',en:'Month',ph:'mehs'},{sp:'Año',en:'Year',ph:'AH-nyoh'},
+        {sp:'Hora',en:'Hour',ph:'OH-rah'},{sp:'Minuto',en:'Minute',ph:'mee-NOO-toh'},
+        {sp:'Mañana',en:'Morning',ph:'mah-NYAH-nah'},{sp:'Tarde',en:'Afternoon',ph:'TAR-deh'},
+        {sp:'Noche',en:'Night',ph:'NOH-cheh'},{sp:'Ahora',en:'Now',ph:'ah-OH-rah'},
+        {sp:'Lunes',en:'Monday',ph:'LOO-nehs'},{sp:'Martes',en:'Tuesday',ph:'MAR-tehs'},
+        {sp:'Miércoles',en:'Wednesday',ph:'MYAIR-koh-lehs'},{sp:'Jueves',en:'Thursday',ph:'HWEH-behs'},
+        {sp:'Viernes',en:'Friday',ph:'BYAIR-nehs'},{sp:'Sábado',en:'Saturday',ph:'SAH-bah-doh'},
+        {sp:'Domingo',en:'Sunday',ph:'doh-MEEN-goh'},{sp:'Segundo',en:'Second',ph:'seh-GOON-doh'},
+    ],
 };
 
 function getPhraseLib(diff){
-    if(typeof SPANISH_LIBRARY!=='undefined'&&SPANISH_LIBRARY.phrases) return SPANISH_LIBRARY.phrases[diff]||[];
-    const lib={
-        easy:[{sp:'Buenos días',en:'Good morning',ph:'BWEH-nos DEE-ahs'},{sp:'¿Cómo estás?',en:'How are you?',ph:'KOH-moh ehs-TAHS'},{sp:'Mucho gusto',en:'Nice to meet you',ph:'MOO-choh GOOS-toh'},{sp:'Con permiso',en:'Excuse me',ph:'kon pehr-MEE-soh'},{sp:'¿Dónde está?',en:'Where is it?',ph:'DON-deh ehs-TAH'},{sp:'¿Cuánto cuesta?',en:'How much?',ph:'KWAN-toh KWEHS-tah'},{sp:'No entiendo',en:"I don't understand",ph:'noh ehn-TYEHN-doh'},{sp:'¿Puede repetir?',en:'Can you repeat?',ph:'PWEH-deh reh-peh-TEER'},{sp:'Muchas gracias',en:'Thank you very much',ph:'MOO-chas GRAH-see-ahs'},{sp:'De nada',en:"You're welcome",ph:'deh NAH-dah'},{sp:'Hasta luego',en:'See you later',ph:'AHS-tah LWEH-goh'},{sp:'Buenas noches',en:'Good night',ph:'BWEH-nas NOH-ches'}],
-        medium:[{sp:'¿Hablas inglés?',en:'Do you speak English?',ph:'AH-blahs in-GLAYS'},{sp:'¿Dónde está el baño?',en:'Where is the bathroom?',ph:'DON-deh ehs-TAH el BAH-nyoh'},{sp:'Necesito ayuda.',en:'I need help.',ph:'neh-seh-SEE-toh ah-YOO-dah'},{sp:'¿Cómo te llamas?',en:'What is your name?',ph:'KOH-moh teh YAH-mahs'},{sp:'Me llamo...',en:'My name is...',ph:'meh YAH-moh'},{sp:'Estoy perdido.',en:'I am lost.',ph:'ehs-TOY pair-DEE-doh'},{sp:'¿Puede ayudarme?',en:'Can you help me?',ph:'PWEH-deh ah-yoo-DAR-meh'},{sp:'¿Cuánto tiempo?',en:'How long?',ph:'KWAN-toh TYEM-poh'},{sp:'Me gusta esto.',en:'I like this.',ph:'meh GOOS-tah ES-toh'},{sp:'No me gusta.',en:"I don't like this.",ph:'noh meh GOOS-tah'},{sp:'¿Qué hora es?',en:'What time is it?',ph:'keh OH-rah ess'},{sp:'¿Hay WiFi aquí?',en:'Is there WiFi here?',ph:'eye wee-FEE ah-KEE'}],
-        hard:[{sp:'¿Podría hablar más despacio?',en:'Could you speak more slowly?',ph:'poh-DREE-ah ah-BLAR mahs des-PAH-syoh'},{sp:'No me siento bien.',en:"I don't feel well.",ph:'noh meh SYEN-toh BYEN'},{sp:'¿Dónde puedo cambiar dinero?',en:'Where can I exchange money?',ph:'DON-deh PWEH-doh kam-BYAR'},{sp:'Necesito un médico.',en:'I need a doctor.',ph:'neh-seh-SEE-toh oon MEH-dee-koh'},{sp:'La cuenta, por favor.',en:'The bill, please.',ph:'lah KWEN-tah por fah-VOR'},{sp:'¿Está incluido?',en:'Is this included?',ph:'ehs-TAH in-kloo-EE-doh'},{sp:'¿Cuál es la mejor opción?',en:'What is the best option?',ph:'kwahl ess lah meh-HOR op-SYON'},{sp:'Tengo una reserva.',en:'I have a reservation.',ph:'TEN-goh OO-nah reh-SAIR-bah'},{sp:'¿Me puede dar un descuento?',en:'Can you give me a discount?',ph:'meh PWEH-deh dar oon des-KWEN-toh'},{sp:'Solo estoy mirando.',en:"I'm just looking.",ph:'SOH-loh ehs-TOY mee-RAN-doh'},{sp:'¿Qué línea debo tomar?',en:'Which line should I take?',ph:'keh LEE-neh-ah DEH-boh toh-MAR'},{sp:'¿Puede llamar un taxi?',en:'Can you call a taxi?',ph:'PWEH-deh yah-MAR oon TAK-see'}],
-        vhard:[{sp:'Lo siento, no entendí lo que dijo.',en:"Sorry, I didn't understand.",ph:'loh SYEN-toh noh en-ten-DEE'},{sp:'¿Hay algún hospital cerca?',en:'Is there a hospital nearby?',ph:'eye al-GOON os-pee-TAL THAIR-kah'},{sp:'¿Podría escribirlo?',en:'Could you write that down?',ph:'poh-DREE-ah es-kree-BEER-loh'},{sp:'¿Cuánto tiempo se tarda en llegar?',en:'How long to get there?',ph:'KWAN-toh TYEM-poh seh TAR-dah'},{sp:'¿Tiene algo sin gluten?',en:'Do you have anything gluten-free?',ph:'TYEH-neh AL-goh seen GLOO-ten'},{sp:'¿Me recomienda un buen restaurante?',en:'Can you recommend a restaurant?',ph:'meh reh-koh-MYEN-dah'},{sp:'Quiero presentar una queja.',en:'I want to make a complaint.',ph:'KYEH-roh preh-sen-TAR'},{sp:'Por favor llame a la embajada.',en:'Please call the embassy.',ph:'por fah-VOR YAH-meh'},{sp:'¿Cuál es la fecha de caducidad?',en:'What is the expiry date?',ph:'kwahl ess lah FEH-chah'},{sp:'¿Está incluido en el precio?',en:'Is this included in the price?',ph:'ehs-TAH in-kloo-EE-doh'},{sp:'Necesito un informe del siniestro.',en:'I need an incident report.',ph:'neh-seh-SEE-toh oon in-FOR-meh'},{sp:'¿Puede confirmar mi cita?',en:'Can you confirm my appointment?',ph:'PWEH-deh kon-feer-MAR'}],
-    };
-    return lib[diff]||lib.easy;
+    if(typeof SPANISH_LIBRARY!=='undefined' && SPANISH_LIBRARY.phrases && SPANISH_LIBRARY.phrases[diff] && SPANISH_LIBRARY.phrases[diff].length)
+        return SPANISH_LIBRARY.phrases[diff];
+    return [];
 }
 
 let currentCat='colours',wordPool=[],wordIdx=0,wordHistory=[];
@@ -284,49 +372,28 @@ let phraseDiff='easy',phrasePool=[],phraseIdx=0,phraseHistory=[];
 let listType='words',listCat='colours',listPhraseDiff='easy';
 let testType='words',testCat='colours',testDiff='easy';
 let quizQs=[],quizIdx=0,quizScore=0,quizLog=[],currentQuizItem=null;
-let voices=[];
+let voices=[],voicesLoaded=false;
 
-function loadVoices(){voices=window.speechSynthesis.getVoices();}
-window.speechSynthesis.onvoiceschanged=loadVoices;loadVoices();
-function _speak(text){window.speechSynthesis.cancel();const ut=new SpeechSynthesisUtterance(text);const v=voices.find(v=>v.lang.startsWith('es'));if(v)ut.voice=v;ut.lang='es-ES';ut.rate=0.85;window.speechSynthesis.speak(ut);}
+function loadVoices(){voices=window.speechSynthesis.getVoices();if(voices.length>0)voicesLoaded=true;}
+if(window.speechSynthesis){window.speechSynthesis.onvoiceschanged=loadVoices;loadVoices();setTimeout(loadVoices,500);setTimeout(loadVoices,1500);}
+function getJaVoice(){return voices.find(v=>v.lang==='ja-JP')||voices.find(v=>v.lang.startsWith('ja'))||null;}
+function _speak(text){if(!window.speechSynthesis)return;if(!voicesLoaded)loadVoices();window.speechSynthesis.cancel();const ut=new SpeechSynthesisUtterance(text);ut.lang='ja-JP';ut.rate=0.75;const jv=getJaVoice();if(jv){ut.voice=jv;window.speechSynthesis.speak(ut);}else{setTimeout(()=>{loadVoices();const v2=getJaVoice();if(v2)ut.voice=v2;window.speechSynthesis.speak(ut);},200);}}
 function speak(id){_speak(document.getElementById(id).innerText);}
 function speakText(t){_speak(t);}
-function speakCurrentQ(){if(currentQuizItem)_speak(currentQuizItem.sp);}
+function speakCurrentQ(){if(currentQuizItem)_speak(currentQuizItem.jp);}
 
 function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 
-function buildCatButtons(containerId,activeCat,onClickFn){
-    const wrap=document.getElementById(containerId);wrap.innerHTML='';
-    CATEGORIES.forEach(cat=>{
-        const btn=document.createElement('button');
-        btn.className='cat-btn'+(cat.id===activeCat?' active':'');
-        btn.innerHTML=`<span class="cat-icon">${cat.icon}</span>${cat.label}`;
-        btn.onclick=()=>onClickFn(cat.id,btn,containerId);
-        wrap.appendChild(btn);
-    });
-}
-function setActiveCatBtn(containerId,catId){
-    const btns=document.querySelectorAll(`#${containerId} .cat-btn`);
-    const idx=CATEGORIES.findIndex(c=>c.id===catId);
-    btns.forEach(b=>b.classList.remove('active'));
-    if(btns[idx])btns[idx].classList.add('active');
-}
+function buildCatButtons(containerId,activeCat,onClickFn){const wrap=document.getElementById(containerId);wrap.innerHTML='';CATEGORIES.forEach(cat=>{const btn=document.createElement('button');btn.className='cat-btn'+(cat.id===activeCat?' active':'');btn.innerHTML=`<span class="cat-icon">${cat.icon}</span>${cat.label}`;btn.onclick=()=>onClickFn(cat.id,btn,containerId);wrap.appendChild(btn);});}
+function setActiveCatBtn(containerId,catId){const btns=document.querySelectorAll(`#${containerId} .cat-btn`);const idx=CATEGORIES.findIndex(c=>c.id===catId);btns.forEach(b=>b.classList.remove('active'));if(btns[idx])btns[idx].classList.add('active');}
 
 function loadWordCat(catId){currentCat=catId;wordPool=shuffle(WORD_LIBRARY[catId]||[]);wordIdx=0;wordHistory=[0];showWordCard();setActiveCatBtn('words-cat-scroll',catId);}
-function showWordCard(){
-    document.querySelectorAll('#words .flashcard-wrapper').forEach(w=>w.classList.remove('is-flipped'));
-    const card=wordPool[wordIdx];if(!card)return;
-    setTimeout(()=>{document.getElementById('sp-text').innerText=card.sp;document.getElementById('en-text').innerText=card.en;document.querySelectorAll('.sp-ph-view').forEach(el=>el.innerText=`[ ${card.ph} ]`);document.getElementById('words-counter').innerText=`${wordIdx+1} / ${wordPool.length}`;},150);
-}
+function showWordCard(){document.querySelectorAll('#words .flashcard-wrapper').forEach(w=>w.classList.remove('is-flipped'));const card=wordPool[wordIdx];if(!card)return;setTimeout(()=>{document.getElementById('jp-text').innerText=card.jp;document.getElementById('en-text').innerText=card.en;document.querySelectorAll('.jp-rj-view').forEach(el=>el.innerText=`[ ${card.rj} ]`);document.getElementById('words-counter').innerText=`${wordIdx+1} / ${wordPool.length}`;},150);}
 function nextCard(){wordIdx=(wordIdx+1)%wordPool.length;wordHistory.push(wordIdx);if(wordHistory.length>200)wordHistory.shift();showWordCard();}
 function prevCard(){if(wordHistory.length>1){wordHistory.pop();wordIdx=wordHistory[wordHistory.length-1];}else wordIdx=(wordIdx-1+wordPool.length)%wordPool.length;showWordCard();}
 
 function loadPhrases(){phrasePool=shuffle(getPhraseLib(phraseDiff));phraseIdx=0;phraseHistory=[0];showPhraseCard();}
-function showPhraseCard(){
-    document.querySelectorAll('#phrases .flashcard-wrapper').forEach(w=>w.classList.remove('is-flipped'));
-    const card=phrasePool[phraseIdx];if(!card)return;
-    setTimeout(()=>{document.getElementById('phrase-sp').innerText=card.sp;document.getElementById('phrase-en').innerText=card.en;document.querySelectorAll('.phrase-ph-view').forEach(el=>el.innerText=`[ ${card.ph} ]`);},150);
-}
+function showPhraseCard(){document.querySelectorAll('#phrases .flashcard-wrapper').forEach(w=>w.classList.remove('is-flipped'));const card=phrasePool[phraseIdx];if(!card)return;setTimeout(()=>{document.getElementById('phrase-jp').innerText=card.jp;document.getElementById('phrase-en').innerText=card.en;document.querySelectorAll('.phrase-rj-view').forEach(el=>el.innerText=`[ ${card.rj} ]`);},150);}
 function nextPhrase(){phraseIdx=(phraseIdx+1)%phrasePool.length;phraseHistory.push(phraseIdx);if(phraseHistory.length>200)phraseHistory.shift();showPhraseCard();}
 function prevPhrase(){if(phraseHistory.length>1){phraseHistory.pop();phraseIdx=phraseHistory[phraseHistory.length-1];}else phraseIdx=(phraseIdx-1+phrasePool.length)%phrasePool.length;showPhraseCard();}
 function setPhraseDiff(diff,btn){phraseDiff=diff;document.querySelectorAll('#phrases .diff-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');loadPhrases();}
@@ -334,12 +401,7 @@ function setPhraseDiff(diff,btn){phraseDiff=diff;document.querySelectorAll('#phr
 function setListType(type,btn){listType=type;document.querySelectorAll('.list-type-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('list-words-controls').style.display=type==='words'?'block':'none';document.getElementById('list-phrases-controls').style.display=type==='phrases'?'block':'none';renderList();}
 function setListCat(catId,btn,containerId){listCat=catId;setActiveCatBtn(containerId,catId);renderList();}
 function setListPhraseDiff(diff,btn){listPhraseDiff=diff;document.querySelectorAll('#list-phrases-controls .diff-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderList();}
-function renderList(){
-    const data=listType==='words'?(WORD_LIBRARY[listCat]||[]):getPhraseLib(listPhraseDiff);
-    document.getElementById('list-count').innerText=`${data.length} items`;
-    const tb=document.getElementById('list-body');tb.innerHTML='';
-    data.forEach(item=>{const native=item.sp,tr=document.createElement('tr');tr.innerHTML=`<td><div class="list-native">${native}</div><div class="list-ph">[ ${item.ph} ]</div></td><td><span class="list-en">${item.en}</span></td><td><button class="list-hear" onclick="event.stopPropagation();speakText('${native.replace(/'/g,"\\'")}')">🔊</button></td>`;tr.onclick=()=>speakText(native);tb.appendChild(tr);});
-}
+function renderList(){const data=listType==='words'?(WORD_LIBRARY[listCat]||[]):getPhraseLib(listPhraseDiff);document.getElementById('list-count').innerText=`${data.length} items`;const tb=document.getElementById('list-body');tb.innerHTML='';data.forEach(item=>{const native=item.jp,tr=document.createElement('tr');tr.innerHTML=`<td><div class="list-native">${native}</div><div class="list-ph">[ ${item.rj} ]</div></td><td><span class="list-en">${item.en}</span></td><td><button class="list-hear" onclick="event.stopPropagation();speakText('${native.replace(/'/g,"\\'")}')">🔊</button></td>`;tr.onclick=()=>speakText(native);tb.appendChild(tr);});}
 
 function pickTestType(type,btn){testType=type;btn.parentElement.querySelectorAll('.setup-opt').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('test-cat-section').style.display=type==='phrases'?'none':'block';document.getElementById('test-diff-section').style.display=type==='words'?'none':'block';}
 function pickTestCat(catId,btn,containerId){testCat=catId;setActiveCatBtn(containerId,catId);}
@@ -347,9 +409,9 @@ function pickTestDiff(diff,btn){testDiff=diff;btn.parentElement.querySelectorAll
 function buildTestPool(){let p=[];if(testType==='words')p=[...WORD_LIBRARY[testCat]||[]];else if(testType==='phrases')p=[...getPhraseLib(testDiff)];else p=[...(WORD_LIBRARY[testCat]||[]),...getPhraseLib(testDiff)];return shuffle(p);}
 function showSetup(){document.getElementById('test-setup').style.display='flex';document.getElementById('test-quiz').style.display='none';document.getElementById('test-results').style.display='none';}
 function beginTest(){const pool=buildTestPool();if(pool.length<4){alert('Not enough items (need 4+).');return;}quizQs=pool.slice(0,10);quizIdx=0;quizScore=0;quizLog=[];document.getElementById('test-setup').style.display='none';document.getElementById('test-quiz').style.display='flex';document.getElementById('test-results').style.display='none';showQuestion();}
-function showQuestion(){const total=quizQs.length,q=quizQs[quizIdx];currentQuizItem=q;document.getElementById('q-counter').innerText=`Question ${quizIdx+1} / ${total}`;document.getElementById('q-score-live').innerText=`Score: ${quizScore}`;document.getElementById('q-progress').style.width=`${(quizIdx/total)*100}%`;document.getElementById('q-text').innerText=q.sp;document.getElementById('q-phonetic').innerText=q.ph?`[ ${q.ph} ]`:'';const allPool=buildTestPool();const others=shuffle(allPool.filter(x=>x.en!==q.en));const opts=shuffle([q,...others.slice(0,3)]);const wrap=document.getElementById('q-options');wrap.innerHTML='';opts.forEach(opt=>{const b=document.createElement('button');b.className='quiz-opt';b.textContent=opt.en;b.onclick=()=>answerChosen(b,opt.en===q.en,q,wrap);wrap.appendChild(b);});}
-function answerChosen(btn,correct,q,wrap){wrap.querySelectorAll('.quiz-opt').forEach(b=>{b.disabled=true;b.onclick=null;});if(correct){btn.classList.add('correct');quizScore++;}else{btn.classList.add('wrong');wrap.querySelectorAll('.quiz-opt').forEach(b=>{if(b.textContent===q.en)b.classList.add('reveal');});}quizLog.push({sp:q.sp,en:q.en,ok:correct});setTimeout(()=>{quizIdx++;if(quizIdx<quizQs.length)showQuestion();else showResults();},950);}
-function showResults(){document.getElementById('test-quiz').style.display='none';document.getElementById('test-results').style.display='flex';const s=quizScore,t=quizQs.length;document.getElementById('results-num').innerText=s;const circ=2*Math.PI*65;document.getElementById('score-arc').style.strokeDashoffset=circ-(circ*(s/t));const pct=s/t;let grade,sub;if(pct===1){grade='🏆 Perfect Score!';sub='Absolutely flawless!';}else if(pct>=0.8){grade='🌟 Excellent!';sub='Almost perfect!';}else if(pct>=0.6){grade='👍 Good Job!';sub='Keep practising!';}else if(pct>=0.4){grade='📚 Keep Going!';sub='Check the List tab.';}else{grade='💪 Keep Practising!';sub='Every attempt counts!';}document.getElementById('results-grade').innerText=grade;document.getElementById('results-sub').innerText=sub;const bd=document.getElementById('results-breakdown');bd.innerHTML='';quizLog.forEach(r=>{const row=document.createElement('div');row.className=`result-row ${r.ok?'r-correct':'r-wrong'}`;row.innerHTML=`<div class="result-icon">${r.ok?'✅':'❌'}</div><div><div class="result-q">${r.sp}</div><div class="result-a">${r.en}</div></div>`;bd.appendChild(row);});}
+function showQuestion(){const total=quizQs.length,q=quizQs[quizIdx];currentQuizItem=q;document.getElementById('q-counter').innerText=`Question ${quizIdx+1} / ${total}`;document.getElementById('q-score-live').innerText=`Score: ${quizScore}`;document.getElementById('q-progress').style.width=`${(quizIdx/total)*100}%`;document.getElementById('q-text').innerText=q.jp;document.getElementById('q-phonetic').innerText=q.rj?`[ ${q.rj} ]`:'';const allPool=buildTestPool();const others=shuffle(allPool.filter(x=>x.en!==q.en));const opts=shuffle([q,...others.slice(0,3)]);const wrap=document.getElementById('q-options');wrap.innerHTML='';opts.forEach(opt=>{const b=document.createElement('button');b.className='quiz-opt';b.textContent=opt.en;b.onclick=()=>answerChosen(b,opt.en===q.en,q,wrap);wrap.appendChild(b);});}
+function answerChosen(btn,correct,q,wrap){wrap.querySelectorAll('.quiz-opt').forEach(b=>{b.disabled=true;b.onclick=null;});if(correct){btn.classList.add('correct');quizScore++;}else{btn.classList.add('wrong');wrap.querySelectorAll('.quiz-opt').forEach(b=>{if(b.textContent===q.en)b.classList.add('reveal');});}quizLog.push({jp:q.jp,en:q.en,ok:correct});setTimeout(()=>{quizIdx++;if(quizIdx<quizQs.length)showQuestion();else showResults();},950);}
+function showResults(){document.getElementById('test-quiz').style.display='none';document.getElementById('test-results').style.display='flex';const s=quizScore,t=quizQs.length;document.getElementById('results-num').innerText=s;const circ=2*Math.PI*65;document.getElementById('score-arc').style.strokeDashoffset=circ-(circ*(s/t));const pct=s/t;let grade,sub;if(pct===1){grade='🏆 Perfect Score!';sub='Absolutely flawless!';}else if(pct>=0.8){grade='🌟 Excellent!';sub='Almost perfect!';}else if(pct>=0.6){grade='👍 Good Job!';sub='Keep practising!';}else if(pct>=0.4){grade='📚 Keep Going!';sub='Check the List tab.';}else{grade='💪 Keep Practising!';sub='Every attempt counts!';}document.getElementById('results-grade').innerText=grade;document.getElementById('results-sub').innerText=sub;const bd=document.getElementById('results-breakdown');bd.innerHTML='';quizLog.forEach(r=>{const row=document.createElement('div');row.className=`result-row ${r.ok?'r-correct':'r-wrong'}`;row.innerHTML=`<div class="result-icon">${r.ok?'✅':'❌'}</div><div><div class="result-q">${r.jp}</div><div class="result-a">${r.en}</div></div>`;bd.appendChild(row);});}
 
 function showTab(id,btn){document.querySelectorAll('.content-section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));document.getElementById(id).classList.add('active');btn.classList.add('active');if(id==='list')renderList();if(id==='test')showSetup();}
 

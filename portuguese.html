@@ -301,69 +301,106 @@ const CATEGORIES = [
 ];
 
 const WORD_LIBRARY = {
-    colours: [
+    colours:[
         {pt:'Vermelho',en:'Red',ph:'vair-MEL-yoo'},{pt:'Azul',en:'Blue',ph:'ah-ZOOL'},
         {pt:'Verde',en:'Green',ph:'VAIR-jee'},{pt:'Amarelo',en:'Yellow',ph:'ah-mah-REL-oo'},
         {pt:'Preto',en:'Black',ph:'PRAY-too'},{pt:'Branco',en:'White',ph:'BRAN-koo'},
         {pt:'Laranja',en:'Orange',ph:'lah-RAN-zhah'},{pt:'Rosa',en:'Pink',ph:'HOH-zah'},
         {pt:'Roxo',en:'Purple',ph:'HOH-shoo'},{pt:'Cinza',en:'Grey',ph:'SIN-zah'},
         {pt:'Marrom',en:'Brown',ph:'mah-HOWN'},{pt:'Dourado',en:'Gold',ph:'doh-RAH-doo'},
+        {pt:'Prateado',en:'Silver',ph:'prah-chee-AH-doo'},{pt:'Bege',en:'Beige',ph:'BEH-zhee'},
+        {pt:'Turquesa',en:'Turquoise',ph:'tur-KEH-zah'},{pt:'Lilás',en:'Lilac',ph:'lee-LAHS'},
+        {pt:'Bordô',en:'Burgundy',ph:'bor-DOH'},{pt:'Creme',en:'Cream',ph:'KREH-mee'},
+        {pt:'Magenta',en:'Magenta',ph:'mah-ZHEN-tah'},{pt:'Coral',en:'Coral',ph:'koh-RAHL'},
     ],
-    numbers: [
+    numbers:[
         {pt:'Um',en:'One',ph:'oong'},{pt:'Dois',en:'Two',ph:'doyss'},
         {pt:'Três',en:'Three',ph:'trays'},{pt:'Quatro',en:'Four',ph:'KWAH-troo'},
         {pt:'Cinco',en:'Five',ph:'SINK-oo'},{pt:'Seis',en:'Six',ph:'sayss'},
         {pt:'Sete',en:'Seven',ph:'SEH-chee'},{pt:'Oito',en:'Eight',ph:'OY-too'},
         {pt:'Nove',en:'Nine',ph:'NOH-vee'},{pt:'Dez',en:'Ten',ph:'desh'},
-        {pt:'Vinte',en:'Twenty',ph:'VIN-chee'},{pt:'Cem',en:'Hundred',ph:'seng'},
+        {pt:'Onze',en:'Eleven',ph:'ON-zee'},{pt:'Doze',en:'Twelve',ph:'DOH-zee'},
+        {pt:'Treze',en:'Thirteen',ph:'TREH-zee'},{pt:'Catorze',en:'Fourteen',ph:'kah-TOR-zee'},
+        {pt:'Quinze',en:'Fifteen',ph:'KEEN-zee'},{pt:'Dezesseis',en:'Sixteen',ph:'deh-zeh-SAYSS'},
+        {pt:'Dezessete',en:'Seventeen',ph:'deh-zeh-SEH-chee'},{pt:'Dezoito',en:'Eighteen',ph:'deh-ZOY-too'},
+        {pt:'Dezenove',en:'Nineteen',ph:'deh-zeh-NOH-vee'},{pt:'Vinte',en:'Twenty',ph:'VIN-chee'},
+        {pt:'Trinta',en:'Thirty',ph:'TRIN-tah'},{pt:'Quarenta',en:'Forty',ph:'kwah-REN-tah'},
+        {pt:'Cinquenta',en:'Fifty',ph:'sin-KWEN-tah'},{pt:'Cem',en:'Hundred',ph:'seng'},
+        {pt:'Mil',en:'Thousand',ph:'meel'},
     ],
-    body: [
+    body:[
         {pt:'Cabeça',en:'Head',ph:'kah-BAY-sah'},{pt:'Olho',en:'Eye',ph:'OL-yoo'},
         {pt:'Nariz',en:'Nose',ph:'nah-REEZ'},{pt:'Boca',en:'Mouth',ph:'BOH-kah'},
         {pt:'Orelha',en:'Ear',ph:'oh-REL-yah'},{pt:'Mão',en:'Hand',ph:'mowng'},
         {pt:'Pé',en:'Foot',ph:'peh'},{pt:'Braço',en:'Arm',ph:'BRAH-soo'},
         {pt:'Perna',en:'Leg',ph:'PAIR-nah'},{pt:'Costas',en:'Back',ph:'KOS-tahs'},
         {pt:'Coração',en:'Heart',ph:'kor-ah-SOWNG'},{pt:'Dente',en:'Tooth',ph:'DEN-chee'},
+        {pt:'Pescoço',en:'Neck',ph:'pes-KOH-soo'},{pt:'Ombro',en:'Shoulder',ph:'OM-broo'},
+        {pt:'Joelho',en:'Knee',ph:'zhoo-EL-yoo'},{pt:'Dedo',en:'Finger',ph:'DEH-doo'},
+        {pt:'Barriga',en:'Belly',ph:'bah-HEE-gah'},{pt:'Língua',en:'Tongue',ph:'LIN-gwah'},
+        {pt:'Cabelo',en:'Hair',ph:'kah-BEH-loo'},{pt:'Rosto',en:'Face',ph:'HOS-too'},
     ],
-    food: [
+    food:[
         {pt:'Arroz',en:'Rice',ph:'ah-HOSS'},{pt:'Feijão',en:'Beans',ph:'fay-ZHOWNG'},
         {pt:'Frango',en:'Chicken',ph:'FRAN-goo'},{pt:'Peixe',en:'Fish',ph:'PAY-shee'},
         {pt:'Pão',en:'Bread',ph:'powng'},{pt:'Leite',en:'Milk',ph:'LAY-chee'},
         {pt:'Ovo',en:'Egg',ph:'OH-voo'},{pt:'Queijo',en:'Cheese',ph:'KAY-zhoo'},
         {pt:'Fruta',en:'Fruit',ph:'FROO-tah'},{pt:'Legumes',en:'Vegetables',ph:'leh-GOO-mees'},
         {pt:'Café',en:'Coffee',ph:'kah-FEH'},{pt:'Suco',en:'Juice',ph:'SOO-koo'},
+        {pt:'Carne',en:'Meat',ph:'KAR-nee'},{pt:'Macarrão',en:'Pasta',ph:'mah-kah-HOWNG'},
+        {pt:'Salada',en:'Salad',ph:'sah-LAH-dah'},{pt:'Sopa',en:'Soup',ph:'SOH-pah'},
+        {pt:'Bolo',en:'Cake',ph:'BOH-loo'},{pt:'Sorvete',en:'Ice cream',ph:'sor-VEH-chee'},
+        {pt:'Manteiga',en:'Butter',ph:'man-TAY-gah'},{pt:'Alho',en:'Garlic',ph:'AHL-yoo'},
+        {pt:'Cebola',en:'Onion',ph:'seh-BOH-lah'},{pt:'Tomate',en:'Tomato',ph:'toh-MAH-chee'},
+        {pt:'Batata',en:'Potato',ph:'bah-TAH-tah'},{pt:'Açúcar',en:'Sugar',ph:'ah-SOO-kar'},
     ],
-    animals: [
+    animals:[
         {pt:'Cachorro',en:'Dog',ph:'kah-SHOH-hoo'},{pt:'Gato',en:'Cat',ph:'GAH-too'},
         {pt:'Pássaro',en:'Bird',ph:'PAH-sah-roo'},{pt:'Peixe',en:'Fish',ph:'PAY-shee'},
         {pt:'Cavalo',en:'Horse',ph:'kah-VAH-loo'},{pt:'Vaca',en:'Cow',ph:'VAH-kah'},
         {pt:'Porco',en:'Pig',ph:'POR-koo'},{pt:'Ovelha',en:'Sheep',ph:'oh-VEL-yah'},
         {pt:'Macaco',en:'Monkey',ph:'mah-KAH-koo'},{pt:'Leão',en:'Lion',ph:'leh-OWNG'},
         {pt:'Elefante',en:'Elephant',ph:'el-eh-FAN-chee'},{pt:'Cobra',en:'Snake',ph:'KOH-brah'},
+        {pt:'Coelho',en:'Rabbit',ph:'koo-EL-yoo'},{pt:'Tigre',en:'Tiger',ph:'CHEE-gree'},
+        {pt:'Urso',en:'Bear',ph:'OOR-soo'},{pt:'Sapo',en:'Frog',ph:'SAH-poo'},
+        {pt:'Rato',en:'Mouse',ph:'HAH-too'},{pt:'Galinha',en:'Chicken',ph:'gah-LEEN-yah'},
+        {pt:'Papagaio',en:'Parrot',ph:'pah-pah-GYE-oo'},{pt:'Tartaruga',en:'Turtle',ph:'tar-tah-ROO-gah'},
     ],
-    travel: [
+    travel:[
         {pt:'Aeroporto',en:'Airport',ph:'ah-eh-roh-POR-too'},{pt:'Hotel',en:'Hotel',ph:'oh-TEL'},
         {pt:'Trem',en:'Train',ph:'treng'},{pt:'Ônibus',en:'Bus',ph:'OH-nee-boos'},
         {pt:'Táxi',en:'Taxi',ph:'TAK-see'},{pt:'Passaporte',en:'Passport',ph:'pah-sah-POR-chee'},
         {pt:'Mala',en:'Suitcase',ph:'MAH-lah'},{pt:'Mapa',en:'Map',ph:'MAH-pah'},
         {pt:'Praia',en:'Beach',ph:'PRAH-yah'},{pt:'Museu',en:'Museum',ph:'moo-ZEH-oo'},
         {pt:'Restaurante',en:'Restaurant',ph:'hes-tah-oo-RAN-chee'},{pt:'Dinheiro',en:'Money',ph:'jin-YAY-roo'},
+        {pt:'Metrô',en:'Metro/Subway',ph:'meh-TROH'},{pt:'Avião',en:'Aeroplane',ph:'ah-vee-OWN'},
+        {pt:'Bilhete',en:'Ticket',ph:'beel-YEH-chee'},{pt:'Reserva',en:'Reservation',ph:'heh-ZAIR-vah'},
+        {pt:'Moto',en:'Motorcycle',ph:'MOH-too'},{pt:'Barco',en:'Boat',ph:'BAR-koo'},
+        {pt:'Câmbio',en:'Exchange office',ph:'KAM-byoo'},{pt:'Bagagem',en:'Luggage',ph:'bah-GAH-zheng'},
     ],
-    family: [
+    family:[
         {pt:'Mãe',en:'Mother',ph:'mowng'},{pt:'Pai',en:'Father',ph:'pye'},
         {pt:'Irmão',en:'Brother',ph:'eer-MOWNG'},{pt:'Irmã',en:'Sister',ph:'eer-MAH'},
         {pt:'Avó',en:'Grandmother',ph:'ah-VOH'},{pt:'Avô',en:'Grandfather',ph:'ah-VOH'},
         {pt:'Filho',en:'Son',ph:'FEE-lyoo'},{pt:'Filha',en:'Daughter',ph:'FEE-lyah'},
         {pt:'Tio',en:'Uncle',ph:'CHEE-oo'},{pt:'Tia',en:'Aunt',ph:'CHEE-ah'},
         {pt:'Primo',en:'Cousin (m)',ph:'PREE-moo'},{pt:'Marido',en:'Husband',ph:'mah-HEE-doo'},
+        {pt:'Esposa',en:'Wife',ph:'es-POH-zah'},{pt:'Bebê',en:'Baby',ph:'beh-BEH'},
+        {pt:'Sobrinho',en:'Nephew',ph:'soh-BREEN-yoo'},{pt:'Sobrinha',en:'Niece',ph:'soh-BREEN-yah'},
+        {pt:'Cunhado',en:'Brother-in-law',ph:'koon-YAH-doo'},{pt:'Sogra',en:'Mother-in-law',ph:'SOH-grah'},
+        {pt:'Sogro',en:'Father-in-law',ph:'SOH-groo'},{pt:'Padrinho',en:'Godfather',ph:'pah-DREEN-yoo'},
     ],
-    time: [
+    time:[
         {pt:'Hoje',en:'Today',ph:'OH-zhee'},{pt:'Amanhã',en:'Tomorrow',ph:'ah-mah-NYAH'},
         {pt:'Ontem',en:'Yesterday',ph:'ON-teng'},{pt:'Semana',en:'Week',ph:'seh-MAH-nah'},
         {pt:'Mês',en:'Month',ph:'mess'},{pt:'Ano',en:'Year',ph:'AH-noo'},
         {pt:'Hora',en:'Hour',ph:'OH-rah'},{pt:'Minuto',en:'Minute',ph:'mee-NOO-too'},
         {pt:'Manhã',en:'Morning',ph:'mah-NYAH'},{pt:'Tarde',en:'Afternoon',ph:'TAR-jee'},
         {pt:'Noite',en:'Night',ph:'NOY-chee'},{pt:'Agora',en:'Now',ph:'ah-GOH-rah'},
+        {pt:'Segunda',en:'Monday',ph:'seh-GOON-dah'},{pt:'Terça',en:'Tuesday',ph:'TER-sah'},
+        {pt:'Quarta',en:'Wednesday',ph:'KWAR-tah'},{pt:'Quinta',en:'Thursday',ph:'KEEN-tah'},
+        {pt:'Sexta',en:'Friday',ph:'SEHS-tah'},{pt:'Sábado',en:'Saturday',ph:'SAH-bah-doo'},
+        {pt:'Domingo',en:'Sunday',ph:'doh-MEEN-goo'},{pt:'Segundo',en:'Second',ph:'seh-GOON-doo'},
     ],
 };
 
@@ -371,42 +408,9 @@ const WORD_LIBRARY = {
 // PHRASE LIBRARY — by difficulty
 // ════════════════════════════════════════════════════
 function getPhraseLib(diff){
-    if(typeof PORTUGUESE_LIBRARY!=='undefined' && PORTUGUESE_LIBRARY.phrases) return PORTUGUESE_LIBRARY.phrases[diff]||[];
-    const lib = {
-        easy:[
-            {pt:'Bom dia!',en:'Good morning!',ph:'bom JEE-ah'},{pt:'Como vai?',en:'How are you?',ph:'KOH-moo VY'},
-            {pt:'Tudo bem.',en:'All good.',ph:'TOO-doo beng'},{pt:'Com licença.',en:'Excuse me.',ph:'kong lee-SEN-sah'},
-            {pt:'Onde fica?',en:'Where is it?',ph:'ON-jee FEE-kah'},{pt:'Quanto custa?',en:'How much?',ph:'KWAN-too KOOS-tah'},
-            {pt:'Não entendo.',en:"I don't understand.",ph:'nowng en-TEN-doo'},{pt:'Pode repetir?',en:'Can you repeat?',ph:'POH-jee heh-peh-CHEER'},
-            {pt:'Muito obrigado.',en:'Thank you very much.',ph:'MWEE-too oh-bree-GAH-doo'},{pt:'De nada.',en:"You're welcome.",ph:'jee NAH-dah'},
-            {pt:'Até logo.',en:'See you later.',ph:'ah-TEH LOH-goo'},{pt:'Boa noite.',en:'Good night.',ph:'BOH-ah NOY-chee'},
-        ],
-        medium:[
-            {pt:'Você fala inglês?',en:'Do you speak English?',ph:'voh-SAY FAH-lah in-GLESH'},{pt:'Onde é o banheiro?',en:'Where is the bathroom?',ph:'ON-jee eh oo bah-NYAY-roo'},
-            {pt:'Preciso de ajuda.',en:'I need help.',ph:'preh-SEE-zoo jee ah-ZHOO-dah'},{pt:'Qual é o seu nome?',en:'What is your name?',ph:'kwahl eh oo seh-oo NOH-mee'},
-            {pt:'Meu nome é...',en:'My name is...',ph:'meh-oo NOH-mee eh'},{pt:'Estou perdido.',en:'I am lost.',ph:'es-TOH pehr-JEE-doo'},
-            {pt:'Pode me ajudar?',en:'Can you help me?',ph:'POH-jee mee ah-zhoo-DAR'},{pt:'Quanto tempo leva?',en:'How long does it take?',ph:'KWAN-too TEM-poo LEH-vah'},
-            {pt:'Eu gosto disso.',en:'I like this.',ph:'eh-oo GOS-too JEE-soo'},{pt:'Não gosto disso.',en:'I don\'t like this.',ph:'nowng GOS-too JEE-soo'},
-            {pt:'Que horas são?',en:'What time is it?',ph:'kee OH-rahs sowng'},{pt:'Tem WiFi aqui?',en:'Is there WiFi here?',ph:'teng wee-FEE ah-KEE'},
-        ],
-        hard:[
-            {pt:'Poderia falar mais devagar?',en:'Could you speak more slowly?',ph:'poh-deh-REE-ah fah-LAR mice deh-vah-GAR'},{pt:'Eu não me sinto bem.',en:'I don\'t feel well.',ph:'eh-oo nowng mee SIN-too beng'},
-            {pt:'Onde posso trocar dinheiro?',en:'Where can I exchange money?',ph:'ON-jee POS-soo troh-KAR jin-YAY-roo'},{pt:'Preciso de um médico.',en:'I need a doctor.',ph:'preh-SEE-zoo jee oong MEH-jee-koo'},
-            {pt:'A conta, por favor.',en:'The bill, please.',ph:'ah KON-tah por fah-VOR'},{pt:'Isso está incluído?',en:'Is this included?',ph:'EE-soo es-TAH in-kloo-EE-doo'},
-            {pt:'Qual é a melhor opção?',en:'What is the best option?',ph:'kwahl eh ah mel-YOR op-SOWNG'},{pt:'Tenho uma reserva.',en:'I have a reservation.',ph:'TEN-yoo OO-mah heh-ZAIR-vah'},
-            {pt:'Pode me dar um desconto?',en:'Can you give me a discount?',ph:'POH-jee mee dar oong des-KON-too'},{pt:'Estou apenas olhando.',en:'I\'m just looking.',ph:'es-TOH ah-PEH-nahs ol-YAN-doo'},
-            {pt:'Qual linha devo pegar?',en:'Which line should I take?',ph:'kwahl LEE-nyah DEH-voo peh-GAR'},{pt:'Pode chamar um táxi?',en:'Can you call a taxi?',ph:'POH-jee shah-MAR oong TAK-see'},
-        ],
-        vhard:[
-            {pt:'Desculpe, não compreendi o que disse.',en:'Sorry, I didn\'t understand what you said.',ph:'des-KOOL-pee nowng kom-preh-EN-jee'},{pt:'Existe algum hospital por perto?',en:'Is there a hospital nearby?',ph:'eg-ZIS-chee al-GOONG os-pee-TAHL'},
-            {pt:'Poderia escrever isso para mim?',en:'Could you write that down for me?',ph:'poh-deh-REE-ah es-kreh-VAIR EE-soo'},{pt:'Quanto tempo demora para chegar?',en:'How long does it take to get there?',ph:'KWAN-too TEM-poo deh-MOH-rah'},
-            {pt:'Tem alguma coisa sem glúten?',en:'Do you have anything gluten-free?',ph:'teng al-GOO-mah KOY-zah seng GLOO-teng'},{pt:'Poderia recomendar um bom restaurante?',en:'Could you recommend a good restaurant?',ph:'poh-deh-REE-ah heh-koh-men-DAR'},
-            {pt:'Quero fazer uma reclamação.',en:'I want to make a complaint.',ph:'KEH-roo fah-ZER OO-mah heh-klah-mah-SOWNG'},{pt:'Por favor, ligue para a embaixada.',en:'Please call the embassy.',ph:'por fah-VOR LEE-gee pah-rah ah em-bah-SHAH-dah'},
-            {pt:'Qual é o prazo de validade?',en:'What is the expiry date?',ph:'kwahl eh oo PRAH-zoo jee vah-lee-DAH-jee'},{pt:'Isso está incluído no preço?',en:'Is this included in the price?',ph:'EE-soo es-TAH in-kloo-EE-doo noo PREH-soo'},
-            {pt:'Preciso de uma declaração de sinistro.',en:'I need an incident report.',ph:'preh-SEE-zoo jee OO-mah deh-klah-rah-SOWNG'},{pt:'Pode confirmar o meu agendamento?',en:'Can you confirm my appointment?',ph:'POH-jee kon-feer-MAR oo meh-oo ah-zhen-dah-MEN-too'},
-        ],
-    };
-    return lib[diff]||lib.easy;
+    if(typeof PORTUGUESE_LIBRARY!=='undefined' && PORTUGUESE_LIBRARY.phrases && PORTUGUESE_LIBRARY.phrases[diff] && PORTUGUESE_LIBRARY.phrases[diff].length)
+        return PORTUGUESE_LIBRARY.phrases[diff];
+    return [];
 }
 
 // ════════════════════════════════════════════════════

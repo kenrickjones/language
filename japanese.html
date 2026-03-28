@@ -19,10 +19,9 @@
         .nav-btn.active{background:var(--primary);color:white;}
         .content-section{display:none;width:100%;flex-direction:column;align-items:center;}
         .content-section.active{display:flex;animation:fadeIn 0.3s ease;}
-        .cat-scroll-wrap{width:100%;overflow-x:auto;overflow-y:visible;margin-bottom:15px;-webkit-overflow-scrolling:touch;scrollbar-width:none;min-width:0;}
+        .cat-scroll-wrap{width:100%;overflow-x:auto;margin-bottom:15px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
         .cat-scroll-wrap::-webkit-scrollbar{display:none;}
         .cat-scroll{display:flex;gap:8px;padding:4px 2px;width:max-content;}
-        #list-words-controls{width:100%;overflow:hidden;min-width:0;} #test-cat-section{width:100%;overflow:hidden;min-width:0;}
         .cat-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 14px;background:var(--card);border:2px solid var(--border);border-radius:14px;cursor:pointer;color:var(--text-dim);font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;white-space:nowrap;}
         .cat-btn .cat-icon{font-size:1.4rem;line-height:1;}
         .cat-btn.active{border-color:var(--primary);color:var(--primary);background:rgba(244,114,182,0.08);}
@@ -258,25 +257,113 @@
 const CATEGORIES=[{id:'colours',label:'Colours',icon:'🎨'},{id:'numbers',label:'Numbers',icon:'🔢'},{id:'body',label:'Body',icon:'🫀'},{id:'food',label:'Food',icon:'🍽️'},{id:'animals',label:'Animals',icon:'🐾'},{id:'travel',label:'Travel',icon:'✈️'},{id:'family',label:'Family',icon:'👨‍👩‍👧'},{id:'time',label:'Time',icon:'⏰'}];
 
 const WORD_LIBRARY={
-    colours:[{jp:'赤',en:'Red',rj:'Aka'},{jp:'青',en:'Blue',rj:'Ao'},{jp:'緑',en:'Green',rj:'Midori'},{jp:'黄色',en:'Yellow',rj:'Kiiro'},{jp:'黒',en:'Black',rj:'Kuro'},{jp:'白',en:'White',rj:'Shiro'},{jp:'オレンジ',en:'Orange',rj:'Orenji'},{jp:'ピンク',en:'Pink',rj:'Pinku'},{jp:'紫',en:'Purple',rj:'Murasaki'},{jp:'灰色',en:'Grey',rj:'Haiiro'},{jp:'茶色',en:'Brown',rj:'Chairo'},{jp:'金色',en:'Gold',rj:'Kiniro'}],
-    numbers:[{jp:'一',en:'One',rj:'Ichi'},{jp:'二',en:'Two',rj:'Ni'},{jp:'三',en:'Three',rj:'San'},{jp:'四',en:'Four',rj:'Shi / Yon'},{jp:'五',en:'Five',rj:'Go'},{jp:'六',en:'Six',rj:'Roku'},{jp:'七',en:'Seven',rj:'Shichi / Nana'},{jp:'八',en:'Eight',rj:'Hachi'},{jp:'九',en:'Nine',rj:'Ku / Kyuu'},{jp:'十',en:'Ten',rj:'Juu'},{jp:'二十',en:'Twenty',rj:'Nijuu'},{jp:'百',en:'Hundred',rj:'Hyaku'}],
-    body:[{jp:'頭',en:'Head',rj:'Atama'},{jp:'目',en:'Eye',rj:'Me'},{jp:'鼻',en:'Nose',rj:'Hana'},{jp:'口',en:'Mouth',rj:'Kuchi'},{jp:'耳',en:'Ear',rj:'Mimi'},{jp:'手',en:'Hand',rj:'Te'},{jp:'足',en:'Foot',rj:'Ashi'},{jp:'腕',en:'Arm',rj:'Ude'},{jp:'脚',en:'Leg',rj:'Ashi / Kyaku'},{jp:'背中',en:'Back',rj:'Senaka'},{jp:'心臓',en:'Heart',rj:'Shinzou'},{jp:'歯',en:'Tooth',rj:'Ha'}],
-    food:[{jp:'ご飯',en:'Rice',rj:'Gohan'},{jp:'パン',en:'Bread',rj:'Pan'},{jp:'鶏肉',en:'Chicken',rj:'Toriniku'},{jp:'魚',en:'Fish',rj:'Sakana'},{jp:'牛乳',en:'Milk',rj:'Gyuunyuu'},{jp:'卵',en:'Egg',rj:'Tamago'},{jp:'チーズ',en:'Cheese',rj:'Chiizu'},{jp:'果物',en:'Fruit',rj:'Kudamono'},{jp:'野菜',en:'Vegetable',rj:'Yasai'},{jp:'コーヒー',en:'Coffee',rj:'Koohii'},{jp:'ジュース',en:'Juice',rj:'Juusu'},{jp:'水',en:'Water',rj:'Mizu'}],
-    animals:[{jp:'犬',en:'Dog',rj:'Inu'},{jp:'猫',en:'Cat',rj:'Neko'},{jp:'鳥',en:'Bird',rj:'Tori'},{jp:'魚',en:'Fish',rj:'Sakana'},{jp:'馬',en:'Horse',rj:'Uma'},{jp:'牛',en:'Cow',rj:'Ushi'},{jp:'豚',en:'Pig',rj:'Buta'},{jp:'羊',en:'Sheep',rj:'Hitsuji'},{jp:'猿',en:'Monkey',rj:'Saru'},{jp:'ライオン',en:'Lion',rj:'Raion'},{jp:'象',en:'Elephant',rj:'Zou'},{jp:'蛇',en:'Snake',rj:'Hebi'}],
-    travel:[{jp:'空港',en:'Airport',rj:'Kuukou'},{jp:'ホテル',en:'Hotel',rj:'Hoteru'},{jp:'電車',en:'Train',rj:'Densha'},{jp:'バス',en:'Bus',rj:'Basu'},{jp:'タクシー',en:'Taxi',rj:'Takushii'},{jp:'パスポート',en:'Passport',rj:'Pasupooto'},{jp:'スーツケース',en:'Suitcase',rj:'Suutsukeesu'},{jp:'地図',en:'Map',rj:'Chizu'},{jp:'海',en:'Beach / Sea',rj:'Umi'},{jp:'博物館',en:'Museum',rj:'Hakubutsukan'},{jp:'レストラン',en:'Restaurant',rj:'Resutoran'},{jp:'お金',en:'Money',rj:'Okane'}],
-    family:[{jp:'お母さん',en:'Mother',rj:'Okaasan'},{jp:'お父さん',en:'Father',rj:'Otousan'},{jp:'兄',en:'Elder brother',rj:'Ani'},{jp:'姉',en:'Elder sister',rj:'Ane'},{jp:'祖母',en:'Grandmother',rj:'Sobo'},{jp:'祖父',en:'Grandfather',rj:'Sofu'},{jp:'息子',en:'Son',rj:'Musuko'},{jp:'娘',en:'Daughter',rj:'Musume'},{jp:'叔父',en:'Uncle',rj:'Oji'},{jp:'叔母',en:'Aunt',rj:'Oba'},{jp:'いとこ',en:'Cousin',rj:'Itoko'},{jp:'夫',en:'Husband',rj:'Otto'}],
-    time:[{jp:'今日',en:'Today',rj:'Kyou'},{jp:'明日',en:'Tomorrow',rj:'Ashita'},{jp:'昨日',en:'Yesterday',rj:'Kinou'},{jp:'週',en:'Week',rj:'Shuu'},{jp:'月',en:'Month',rj:'Tsuki'},{jp:'年',en:'Year',rj:'Nen / Toshi'},{jp:'時間',en:'Hour',rj:'Jikan'},{jp:'分',en:'Minute',rj:'Fun / Pun'},{jp:'朝',en:'Morning',rj:'Asa'},{jp:'午後',en:'Afternoon',rj:'Gogo'},{jp:'夜',en:'Night',rj:'Yoru'},{jp:'今',en:'Now',rj:'Ima'}],
+    colours:[
+        {jp:'赤',en:'Red',rj:'Aka'},{jp:'青',en:'Blue',rj:'Ao'},
+        {jp:'緑',en:'Green',rj:'Midori'},{jp:'黄色',en:'Yellow',rj:'Kiiro'},
+        {jp:'黒',en:'Black',rj:'Kuro'},{jp:'白',en:'White',rj:'Shiro'},
+        {jp:'橙',en:'Orange',rj:'Orenji'},{jp:'ピンク',en:'Pink',rj:'Pinku'},
+        {jp:'紫',en:'Purple',rj:'Murasaki'},{jp:'灰色',en:'Grey',rj:'Haiiro'},
+        {jp:'茶色',en:'Brown',rj:'Chairo'},{jp:'金色',en:'Gold',rj:'Kin-iro'},
+        {jp:'銀色',en:'Silver',rj:'Gin-iro'},{jp:'水色',en:'Sky blue',rj:'Mizu-iro'},
+        {jp:'紺',en:'Navy blue',rj:'Kon'},{jp:'ベージュ',en:'Beige',rj:'Beiju'},
+        {jp:'ターコイズ',en:'Turquoise',rj:'Taakoizu'},{jp:'ライム',en:'Lime green',rj:'Raimu'},
+        {jp:'マゼンタ',en:'Magenta',rj:'Mazenta'},{jp:'コーラル',en:'Coral',rj:'Kooraru'},
+    ],
+    numbers:[
+        {jp:'一',en:'One',rj:'Ichi'},{jp:'二',en:'Two',rj:'Ni'},
+        {jp:'三',en:'Three',rj:'San'},{jp:'四',en:'Four',rj:'Shi / Yon'},
+        {jp:'五',en:'Five',rj:'Go'},{jp:'六',en:'Six',rj:'Roku'},
+        {jp:'七',en:'Seven',rj:'Shichi / Nana'},{jp:'八',en:'Eight',rj:'Hachi'},
+        {jp:'九',en:'Nine',rj:'Ku / Kyuu'},{jp:'十',en:'Ten',rj:'Juu'},
+        {jp:'十一',en:'Eleven',rj:'Juuichi'},{jp:'十二',en:'Twelve',rj:'Juuni'},
+        {jp:'十三',en:'Thirteen',rj:'Juusan'},{jp:'十四',en:'Fourteen',rj:'Juushi'},
+        {jp:'十五',en:'Fifteen',rj:'Juugo'},{jp:'十六',en:'Sixteen',rj:'Juuroku'},
+        {jp:'十七',en:'Seventeen',rj:'Juunana'},{jp:'十八',en:'Eighteen',rj:'Juuhachi'},
+        {jp:'十九',en:'Nineteen',rj:'Juuku'},{jp:'二十',en:'Twenty',rj:'Nijuu'},
+        {jp:'三十',en:'Thirty',rj:'Sanjuu'},{jp:'四十',en:'Forty',rj:'Yonjuu'},
+        {jp:'五十',en:'Fifty',rj:'Gojuu'},{jp:'百',en:'Hundred',rj:'Hyaku'},
+        {jp:'千',en:'Thousand',rj:'Sen'},
+    ],
+    body:[
+        {jp:'頭',en:'Head',rj:'Atama'},{jp:'目',en:'Eye',rj:'Me'},
+        {jp:'鼻',en:'Nose',rj:'Hana'},{jp:'口',en:'Mouth',rj:'Kuchi'},
+        {jp:'耳',en:'Ear',rj:'Mimi'},{jp:'手',en:'Hand',rj:'Te'},
+        {jp:'足',en:'Foot',rj:'Ashi'},{jp:'腕',en:'Arm',rj:'Ude'},
+        {jp:'脚',en:'Leg',rj:'Ashi / Kyaku'},{jp:'背中',en:'Back',rj:'Senaka'},
+        {jp:'心臓',en:'Heart',rj:'Shinzou'},{jp:'歯',en:'Tooth',rj:'Ha'},
+        {jp:'首',en:'Neck',rj:'Kubi'},{jp:'肩',en:'Shoulder',rj:'Kata'},
+        {jp:'膝',en:'Knee',rj:'Hiza'},{jp:'指',en:'Finger',rj:'Yubi'},
+        {jp:'腹',en:'Belly',rj:'Hara'},{jp:'舌',en:'Tongue',rj:'Shita'},
+        {jp:'髪',en:'Hair',rj:'Kami'},{jp:'顔',en:'Face',rj:'Kao'},
+    ],
+    food:[
+        {jp:'ご飯',en:'Rice',rj:'Gohan'},{jp:'パン',en:'Bread',rj:'Pan'},
+        {jp:'鶏肉',en:'Chicken',rj:'Toriniku'},{jp:'魚',en:'Fish',rj:'Sakana'},
+        {jp:'牛乳',en:'Milk',rj:'Gyuunyuu'},{jp:'卵',en:'Egg',rj:'Tamago'},
+        {jp:'チーズ',en:'Cheese',rj:'Chiizu'},{jp:'果物',en:'Fruit',rj:'Kudamono'},
+        {jp:'野菜',en:'Vegetable',rj:'Yasai'},{jp:'コーヒー',en:'Coffee',rj:'Koohii'},
+        {jp:'ジュース',en:'Juice',rj:'Juusu'},{jp:'水',en:'Water',rj:'Mizu'},
+        {jp:'肉',en:'Meat',rj:'Niku'},{jp:'麺',en:'Noodles',rj:'Men'},
+        {jp:'サラダ',en:'Salad',rj:'Sarada'},{jp:'スープ',en:'Soup',rj:'Suupu'},
+        {jp:'ケーキ',en:'Cake',rj:'Keeki'},{jp:'アイスクリーム',en:'Ice cream',rj:'Aisu kuriimu'},
+        {jp:'バター',en:'Butter',rj:'Bataa'},{jp:'にんにく',en:'Garlic',rj:'Ninniku'},
+        {jp:'玉ねぎ',en:'Onion',rj:'Tamanegi'},{jp:'トマト',en:'Tomato',rj:'Tomato'},
+        {jp:'じゃがいも',en:'Potato',rj:'Jagaimo'},{jp:'砂糖',en:'Sugar',rj:'Satou'},
+    ],
+    animals:[
+        {jp:'犬',en:'Dog',rj:'Inu'},{jp:'猫',en:'Cat',rj:'Neko'},
+        {jp:'鳥',en:'Bird',rj:'Tori'},{jp:'魚',en:'Fish',rj:'Sakana'},
+        {jp:'馬',en:'Horse',rj:'Uma'},{jp:'牛',en:'Cow',rj:'Ushi'},
+        {jp:'豚',en:'Pig',rj:'Buta'},{jp:'羊',en:'Sheep',rj:'Hitsuji'},
+        {jp:'猿',en:'Monkey',rj:'Saru'},{jp:'ライオン',en:'Lion',rj:'Raion'},
+        {jp:'象',en:'Elephant',rj:'Zou'},{jp:'蛇',en:'Snake',rj:'Hebi'},
+        {jp:'兎',en:'Rabbit',rj:'Usagi'},{jp:'虎',en:'Tiger',rj:'Tora'},
+        {jp:'熊',en:'Bear',rj:'Kuma'},{jp:'蛙',en:'Frog',rj:'Kaeru'},
+        {jp:'ねずみ',en:'Mouse',rj:'Nezumi'},{jp:'ニワトリ',en:'Chicken (hen)',rj:'Niwatori'},
+        {jp:'オウム',en:'Parrot',rj:'Oumu'},{jp:'亀',en:'Turtle',rj:'Kame'},
+    ],
+    travel:[
+        {jp:'空港',en:'Airport',rj:'Kuukou'},{jp:'ホテル',en:'Hotel',rj:'Hoteru'},
+        {jp:'電車',en:'Train',rj:'Densha'},{jp:'バス',en:'Bus',rj:'Basu'},
+        {jp:'タクシー',en:'Taxi',rj:'Takushii'},{jp:'パスポート',en:'Passport',rj:'Pasupooto'},
+        {jp:'スーツケース',en:'Suitcase',rj:'Suutsukeesu'},{jp:'地図',en:'Map',rj:'Chizu'},
+        {jp:'海',en:'Beach / Sea',rj:'Umi'},{jp:'博物館',en:'Museum',rj:'Hakubutsukan'},
+        {jp:'レストラン',en:'Restaurant',rj:'Resutoran'},{jp:'お金',en:'Money',rj:'Okane'},
+        {jp:'地下鉄',en:'Metro/Subway',rj:'Chikatetsu'},{jp:'飛行機',en:'Aeroplane',rj:'Hikouki'},
+        {jp:'チケット',en:'Ticket',rj:'Chiketto'},{jp:'予約',en:'Reservation',rj:'Yoyaku'},
+        {jp:'バイク',en:'Motorcycle',rj:'Baiku'},{jp:'船',en:'Boat',rj:'Fune'},
+        {jp:'両替所',en:'Exchange office',rj:'Ryougaejo'},{jp:'荷物',en:'Luggage',rj:'Nimotsu'},
+    ],
+    family:[
+        {jp:'お母さん',en:'Mother',rj:'Okaasan'},{jp:'お父さん',en:'Father',rj:'Otousan'},
+        {jp:'兄',en:'Elder brother',rj:'Ani'},{jp:'姉',en:'Elder sister',rj:'Ane'},
+        {jp:'祖母',en:'Grandmother',rj:'Sobo'},{jp:'祖父',en:'Grandfather',rj:'Sofu'},
+        {jp:'息子',en:'Son',rj:'Musuko'},{jp:'娘',en:'Daughter',rj:'Musume'},
+        {jp:'叔父',en:'Uncle',rj:'Oji'},{jp:'叔母',en:'Aunt',rj:'Oba'},
+        {jp:'いとこ',en:'Cousin',rj:'Itoko'},{jp:'夫',en:'Husband',rj:'Otto'},
+        {jp:'妻',en:'Wife',rj:'Tsuma'},{jp:'赤ちゃん',en:'Baby',rj:'Akachan'},
+        {jp:'甥',en:'Nephew',rj:'Oi'},{jp:'姪',en:'Niece',rj:'Mei'},
+        {jp:'義理の兄',en:'Brother-in-law',rj:'Giri no ani'},{jp:'義母',en:'Mother-in-law',rj:'Gibo'},
+        {jp:'義父',en:'Father-in-law',rj:'Gifu'},{jp:'弟',en:'Younger brother',rj:'Otouto'},
+    ],
+    time:[
+        {jp:'今日',en:'Today',rj:'Kyou'},{jp:'明日',en:'Tomorrow',rj:'Ashita'},
+        {jp:'昨日',en:'Yesterday',rj:'Kinou'},{jp:'週',en:'Week',rj:'Shuu'},
+        {jp:'月',en:'Month',rj:'Tsuki'},{jp:'年',en:'Year',rj:'Nen / Toshi'},
+        {jp:'時間',en:'Hour',rj:'Jikan'},{jp:'分',en:'Minute',rj:'Fun / Pun'},
+        {jp:'朝',en:'Morning',rj:'Asa'},{jp:'午後',en:'Afternoon',rj:'Gogo'},
+        {jp:'夜',en:'Night',rj:'Yoru'},{jp:'今',en:'Now',rj:'Ima'},
+        {jp:'月曜日',en:'Monday',rj:'Getsuyoubi'},{jp:'火曜日',en:'Tuesday',rj:'Kayoubi'},
+        {jp:'水曜日',en:'Wednesday',rj:'Suiyoubi'},{jp:'木曜日',en:'Thursday',rj:'Mokuyoubi'},
+        {jp:'金曜日',en:'Friday',rj:'Kin'youbi'},{jp:'土曜日',en:'Saturday',rj:'Doyoubi'},
+        {jp:'日曜日',en:'Sunday',rj:'Nichiyoubi'},{jp:'秒',en:'Second',rj:'Byou'},
+    ],
 };
 
 function getPhraseLib(diff){
-    if(typeof JAPANESE_LIBRARY!=='undefined'&&JAPANESE_LIBRARY.phrases) return JAPANESE_LIBRARY.phrases[diff]||[];
-    const lib={
-        easy:[{jp:'おはようございます',en:'Good morning',rj:'Ohayou gozaimasu'},{jp:'こんにちは',en:'Hello',rj:'Konnichiwa'},{jp:'ありがとうございます',en:'Thank you very much',rj:'Arigatou gozaimasu'},{jp:'すみません',en:'Excuse me',rj:'Sumimasen'},{jp:'どこですか？',en:'Where is it?',rj:'Doko desu ka?'},{jp:'いくらですか？',en:'How much?',rj:'Ikura desu ka?'},{jp:'わかりません',en:"I don't understand",rj:'Wakarimasen'},{jp:'もう一度お願いします',en:'Please say again',rj:'Mou ichido onegaishimasu'},{jp:'おやすみなさい',en:'Good night',rj:'Oyasuminasai'},{jp:'さようなら',en:'Goodbye',rj:'Sayounara'},{jp:'はじめまして',en:'Nice to meet you',rj:'Hajimemashite'},{jp:'どうぞよろしく',en:'Pleased to meet you',rj:'Douzo yoroshiku'}],
-        medium:[{jp:'英語を話せますか？',en:'Do you speak English?',rj:'Eigo wo hanasemasu ka?'},{jp:'トイレはどこですか？',en:'Where is the toilet?',rj:'Toire wa doko desu ka?'},{jp:'助けてください。',en:'Please help me.',rj:'Tasukete kudasai.'},{jp:'お名前は何ですか？',en:'What is your name?',rj:'Onamae wa nan desu ka?'},{jp:'私の名前は…です。',en:'My name is...',rj:'Watashi no namae wa... desu.'},{jp:'迷子になりました。',en:'I am lost.',rj:'Maigo ni narimashita.'},{jp:'手伝ってもらえますか？',en:'Can you help me?',rj:'Tetsudatte moraemasu ka?'},{jp:'どのくらいかかりますか？',en:'How long does it take?',rj:'Dono kurai kakarimasu ka?'},{jp:'これが好きです。',en:'I like this.',rj:'Kore ga suki desu.'},{jp:'これが嫌いです。',en:"I don't like this.",rj:'Kore ga kirai desu.'},{jp:'今何時ですか？',en:'What time is it?',rj:'Ima nanji desu ka?'},{jp:'WiFiはありますか？',en:'Is there WiFi?',rj:'WiFi wa arimasu ka?'}],
-        hard:[{jp:'もっとゆっくり話していただけますか？',en:'Could you speak more slowly?',rj:'Motto yukkuri hanashite itadakemasu ka?'},{jp:'気分が悪いです。',en:"I don't feel well.",rj:'Kibun ga warui desu.'},{jp:'どこで両替できますか？',en:'Where can I exchange money?',rj:'Doko de ryougae dekimasu ka?'},{jp:'医者が必要です。',en:'I need a doctor.',rj:'Isha ga hitsuyou desu.'},{jp:'お会計をお願いします。',en:'The bill, please.',rj:'Okaikei wo onegaishimasu.'},{jp:'これは含まれていますか？',en:'Is this included?',rj:'Kore wa fukumarete imasu ka?'},{jp:'一番良い選択肢は何ですか？',en:'What is the best option?',rj:'Ichiban yoi sentakushi wa nan desu ka?'},{jp:'予約があります。',en:'I have a reservation.',rj:'Yoyaku ga arimasu.'},{jp:'割引してもらえますか？',en:'Can you give me a discount?',rj:'Waribiki shite moraemasu ka?'},{jp:'見ているだけです。',en:"I'm just looking.",rj:'Mite iru dake desu.'},{jp:'どの路線に乗ればいいですか？',en:'Which line should I take?',rj:'Dono rosen ni noreba ii desu ka?'},{jp:'タクシーを呼んでもらえますか？',en:'Can you call a taxi?',rj:'Takushii wo yonde moraemasu ka?'}],
-        vhard:[{jp:'申し訳ありませんが、おっしゃったことが理解できませんでした。',en:"Sorry, I didn't understand what you said.",rj:'Moushiwake arimasen ga...'},{jp:'近くに病院はありますか？',en:'Is there a hospital nearby?',rj:'Chikaku ni byouin wa arimasu ka?'},{jp:'それを書いていただけますか？',en:'Could you write that down?',rj:'Sore wo kaite itadakemasu ka?'},{jp:'そこまでどのくらい時間がかかりますか？',en:'How long does it take to get there?',rj:'Soko made dono kurai jikan ga kakarimasu ka?'},{jp:'グルテンフリーのものはありますか？',en:'Do you have anything gluten-free?',rj:'Guruten furii no mono wa arimasu ka?'},{jp:'良いレストランを紹介していただけますか？',en:'Could you recommend a good restaurant?',rj:'Yoi resutoran wo shoukai shite itadakemasu ka?'},{jp:'苦情を申し上げたいのですが。',en:'I want to make a complaint.',rj:'Kujou wo moushiagetai no desu ga.'},{jp:'大使館に連絡してください。',en:'Please contact the embassy.',rj:'Taishikan ni renraku shite kudasai.'},{jp:'賞味期限はいつですか？',en:'What is the expiry date?',rj:'Shoumi kigen wa itsu desu ka?'},{jp:'これは料金に含まれていますか？',en:'Is this included in the price?',rj:'Kore wa ryoukin ni fukumarete imasu ka?'},{jp:'事故報告書が必要です。',en:'I need an incident report.',rj:'Jiko houkokusho ga hitsuyou desu.'},{jp:'予約を確認していただけますか？',en:'Can you confirm my reservation?',rj:'Yoyaku wo kakunin shite itadakemasu ka?'}],
-    };
-    return lib[diff]||lib.easy;
+    if(typeof JAPANESE_LIBRARY!=='undefined' && JAPANESE_LIBRARY.phrases && JAPANESE_LIBRARY.phrases[diff] && JAPANESE_LIBRARY.phrases[diff].length)
+        return JAPANESE_LIBRARY.phrases[diff];
+    return [];
 }
 
 let currentCat='colours',wordPool=[],wordIdx=0,wordHistory=[];
