@@ -141,6 +141,9 @@
         .verb-note{font-size:0.72rem;color:var(--text-dim);padding:8px 14px 10px;line-height:1.5;}
 
 
+
+        /* Card emoji visual */
+        .card-emoji{font-size:4.5rem;line-height:1;margin-bottom:8px;display:block;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.3));}
         /* Star button */
         .btn-star{position:absolute;top:14px;right:14px;background:none;border:none;font-size:1.5rem;cursor:pointer;line-height:1;padding:4px;opacity:0.5;transition:opacity 0.15s,transform 0.15s;}
         .btn-star:active{transform:scale(1.3);}
@@ -184,6 +187,7 @@
             <div class="flashcard-inner">
                 <div class="card-front" style="position:relative">
                     <button class="btn-star" id="word-star" onclick="event.stopPropagation();toggleStar()" title="Star this word">☆</button>
+                    <span id="card-emoji" class="card-emoji" style="display:none"></span>
                     <h2 id="pt-text" style="font-size:2.2rem;margin:0">--</h2>
                     <div class="pt-ph-view pronunciation">--</div>
                     <button class="btn-hear" onclick="event.stopPropagation();speak('pt-text')">🔊 HEAR</button>
@@ -401,56 +405,56 @@ const WORD_LIBRARY = {
         {pt:'Cabelo',en:'Hair',ph:'kah-BEH-loo'},{pt:'Rosto',en:'Face',ph:'HOS-too'},
     ],
     food:[
-        {pt:'Arroz',en:'Rice',ph:'ah-HOSS'},{pt:'Feijão',en:'Beans',ph:'fay-ZHOWNG'},
-        {pt:'Frango',en:'Chicken',ph:'FRAN-goo'},{pt:'Peixe',en:'Fish',ph:'PAY-shee'},
-        {pt:'Pão',en:'Bread',ph:'powng'},{pt:'Leite',en:'Milk',ph:'LAY-chee'},
-        {pt:'Ovo',en:'Egg',ph:'OH-voo'},{pt:'Queijo',en:'Cheese',ph:'KAY-zhoo'},
-        {pt:'Fruta',en:'Fruit',ph:'FROO-tah'},{pt:'Legumes',en:'Vegetables',ph:'leh-GOO-mees'},
-        {pt:'Café',en:'Coffee',ph:'kah-FEH'},{pt:'Suco',en:'Juice',ph:'SOO-koo'},
-        {pt:'Carne',en:'Meat',ph:'KAR-nee'},{pt:'Macarrão',en:'Pasta',ph:'mah-kah-HOWNG'},
-        {pt:'Salada',en:'Salad',ph:'sah-LAH-dah'},{pt:'Sopa',en:'Soup',ph:'SOH-pah'},
-        {pt:'Bolo',en:'Cake',ph:'BOH-loo'},{pt:'Sorvete',en:'Ice cream',ph:'sor-VEH-chee'},
-        {pt:'Manteiga',en:'Butter',ph:'man-TAY-gah'},{pt:'Alho',en:'Garlic',ph:'AHL-yoo'},
-        {pt:'Cebola',en:'Onion',ph:'seh-BOH-lah'},{pt:'Tomate',en:'Tomato',ph:'toh-MAH-chee'},
-        {pt:'Batata',en:'Potato',ph:'bah-TAH-tah'},{pt:'Açúcar',en:'Sugar',ph:'ah-SOO-kar'},
+        {pt:'Arroz',en:'Rice',em:'🍚',ph:'ah-HOSS'},{pt:'Feijão',en:'Beans',em:'🫘',ph:'fay-ZHOWNG'},
+        {pt:'Frango',en:'Chicken',em:'🍗',ph:'FRAN-goo'},{pt:'Peixe',en:'Fish',em:'🐟',ph:'PAY-shee'},
+        {pt:'Pão',en:'Bread',em:'🍞',ph:'powng'},{pt:'Leite',en:'Milk',em:'🥛',ph:'LAY-chee'},
+        {pt:'Ovo',en:'Egg',em:'🥚',ph:'OH-voo'},{pt:'Queijo',en:'Cheese',em:'🧀',ph:'KAY-zhoo'},
+        {pt:'Fruta',en:'Fruit',em:'🍓',ph:'FROO-tah'},{pt:'Legumes',en:'Vegetables',em:'🥦',ph:'leh-GOO-mees'},
+        {pt:'Café',en:'Coffee',em:'☕',ph:'kah-FEH'},{pt:'Suco',en:'Juice',em:'🧃',ph:'SOO-koo'},
+        {pt:'Carne',en:'Meat',em:'🥩',ph:'KAR-nee'},{pt:'Macarrão',en:'Pasta',em:'🍝',ph:'mah-kah-HOWNG'},
+        {pt:'Salada',en:'Salad',em:'🥗',ph:'sah-LAH-dah'},{pt:'Sopa',en:'Soup',em:'🍲',ph:'SOH-pah'},
+        {pt:'Bolo',en:'Cake',em:'🎂',ph:'BOH-loo'},{pt:'Sorvete',en:'Ice cream',em:'🍦',ph:'sor-VEH-chee'},
+        {pt:'Manteiga',en:'Butter',em:'🧈',ph:'man-TAY-gah'},{pt:'Alho',en:'Garlic',em:'🧄',ph:'AHL-yoo'},
+        {pt:'Cebola',en:'Onion',em:'🧅',ph:'seh-BOH-lah'},{pt:'Tomate',en:'Tomato',em:'🍅',ph:'toh-MAH-chee'},
+        {pt:'Batata',en:'Potato',em:'🥔',ph:'bah-TAH-tah'},{pt:'Açúcar',en:'Sugar',em:'🍬',ph:'ah-SOO-kar'},
         // Fruits
-        {pt:'Maçã',en:'Apple',ph:'mah-SAH'},{pt:'Banana',en:'Banana',ph:'bah-NAH-nah'},
-        {pt:'Laranja',en:'Orange',ph:'lah-RAN-zhah'},{pt:'Uva',en:'Grape',ph:'OO-vah'},
-        {pt:'Melancia',en:'Watermelon',ph:'meh-lan-SEE-ah'},{pt:'Manga',en:'Mango',ph:'MAN-gah'},
-        {pt:'Abacaxi',en:'Pineapple',ph:'ah-bah-kah-SHEE'},{pt:'Morango',en:'Strawberry',ph:'moh-RAN-goo'},
-        {pt:'Limão',en:'Lemon/Lime',ph:'lee-MOWNG'},{pt:'Melão',en:'Melon',ph:'meh-LOWNG'},
-        {pt:'Pera',en:'Pear',ph:'PEH-rah'},{pt:'Mamão',en:'Papaya',ph:'mah-MOWNG'},
+        {pt:'Maçã',en:'Apple',em:'🍎',ph:'mah-SAH'},{pt:'Banana',en:'Banana',em:'🍌',ph:'bah-NAH-nah'},
+        {pt:'Laranja',en:'Orange',em:'🍊',ph:'lah-RAN-zhah'},{pt:'Uva',en:'Grape',em:'🍇',ph:'OO-vah'},
+        {pt:'Melancia',en:'Watermelon',em:'🍉',ph:'meh-lan-SEE-ah'},{pt:'Manga',en:'Mango',em:'🥭',ph:'MAN-gah'},
+        {pt:'Abacaxi',en:'Pineapple',em:'🍍',ph:'ah-bah-kah-SHEE'},{pt:'Morango',en:'Strawberry',em:'🍓',ph:'moh-RAN-goo'},
+        {pt:'Limão',en:'Lemon/Lime',em:'🍋',ph:'lee-MOWNG'},{pt:'Melão',en:'Melon',em:'🍈',ph:'meh-LOWNG'},
+        {pt:'Pera',en:'Pear',em:'🍐',ph:'PEH-rah'},{pt:'Mamão',en:'Papaya',em:'🪷',ph:'mah-MOWNG'},
         // Vegetables
-        {pt:'Cenoura',en:'Carrot',ph:'seh-NOH-rah'},{pt:'Alface',en:'Lettuce',ph:'al-FAH-see'},
-        {pt:'Pepino',en:'Cucumber',ph:'peh-PEE-noo'},{pt:'Pimentão',en:'Bell pepper',ph:'pee-men-TOWNG'},
-        {pt:'Brócolis',en:'Broccoli',ph:'BROH-koh-lees'},{pt:'Milho',en:'Corn',ph:'MEEL-yoo'},
-        {pt:'Abobrinha',en:'Courgette',ph:'ah-boh-BREEN-yah'},{pt:'Espinafre',en:'Spinach',ph:'es-pee-NAH-free'},
+        {pt:'Cenoura',en:'Carrot',em:'🥕',ph:'seh-NOH-rah'},{pt:'Alface',en:'Lettuce',em:'🥬',ph:'al-FAH-see'},
+        {pt:'Pepino',en:'Cucumber',em:'🥒',ph:'peh-PEE-noo'},{pt:'Pimentão',en:'Bell pepper',em:'🫑',ph:'pee-men-TOWNG'},
+        {pt:'Brócolis',en:'Broccoli',em:'🥦',ph:'BROH-koh-lees'},{pt:'Milho',en:'Corn',em:'🌽',ph:'MEEL-yoo'},
+        {pt:'Abobrinha',en:'Courgette',em:'🥒',ph:'ah-boh-BREEN-yah'},{pt:'Espinafre',en:'Spinach',em:'🥬',ph:'es-pee-NAH-free'},
         // Drinks
-        {pt:'Água',en:'Water',ph:'AH-gwah'},{pt:'Chá',en:'Tea',ph:'shah'},
-        {pt:'Cerveja',en:'Beer',ph:'ser-VAY-zhah'},{pt:'Vinho',en:'Wine',ph:'VEEN-yoo'},
-        {pt:'Refrigerante',en:'Soft drink',ph:'heh-free-zheh-RAN-chee'},{pt:'Vitamina',en:'Smoothie/Milkshake',ph:'vee-tah-MEE-nah'},
+        {pt:'Água',en:'Water',em:'💧',ph:'AH-gwah'},{pt:'Chá',en:'Tea',em:'🍵',ph:'shah'},
+        {pt:'Cerveja',en:'Beer',em:'🍺',ph:'ser-VAY-zhah'},{pt:'Vinho',en:'Wine',em:'🍷',ph:'VEEN-yoo'},
+        {pt:'Refrigerante',en:'Soft drink',em:'🥤',ph:'heh-free-zheh-RAN-chee'},{pt:'Vitamina',en:'Smoothie/Milkshake',em:'🥤',ph:'vee-tah-MEE-nah'},
         // Proteins & Staples
-        {pt:'Camarão',en:'Prawn/Shrimp',ph:'kah-mah-ROWNG'},{pt:'Bacon',en:'Bacon',ph:'BAY-kon'},
-        {pt:'Linguiça',en:'Sausage',ph:'lin-GWEE-sah'},{pt:'Atum',en:'Tuna',ph:'ah-TOONG'},
+        {pt:'Camarão',en:'Prawn/Shrimp',em:'🦐',ph:'kah-mah-ROWNG'},{pt:'Bacon',en:'Bacon',em:'🥓',ph:'BAY-kon'},
+        {pt:'Linguiça',en:'Sausage',em:'🌭',ph:'lin-GWEE-sah'},{pt:'Atum',en:'Tuna',em:'🐟',ph:'ah-TOONG'},
         // Brazilian favourites
-        {pt:'Feijoada',en:'Black bean stew',ph:'fay-ZHWAH-dah'},{pt:'Pão de queijo',en:'Cheese bread',ph:'powng jee KAY-zhoo'},
-        {pt:'Brigadeiro',en:'Chocolate truffle',ph:'bree-gah-DAY-roo'},{pt:'Coxinha',en:'Chicken croquette',ph:'koh-SHEEN-yah'},
+        {pt:'Feijoada',en:'Black bean stew',em:'🫕',ph:'fay-ZHWAH-dah'},{pt:'Pão de queijo',en:'Cheese bread',em:'🧀',ph:'powng jee KAY-zhoo'},
+        {pt:'Brigadeiro',en:'Chocolate truffle',em:'🍫',ph:'bree-gah-DAY-roo'},{pt:'Coxinha',en:'Chicken croquette',em:'🍢',ph:'koh-SHEEN-yah'},
         // Condiments & other
-        {pt:'Azeite',en:'Olive oil',ph:'ah-ZAY-chee'},{pt:'Mel',en:'Honey',ph:'mel'},
-        {pt:'Pimenta',en:'Pepper/Chilli',ph:'pee-MEN-tah'},{pt:'Sal',en:'Salt',ph:'sal'},
-        {pt:'Arroz integral',en:'Brown rice',ph:'ah-HOSS in-teh-GRAL'},{pt:'Tapioca',en:'Tapioca',ph:'tah-pee-OH-kah'},
+        {pt:'Azeite',en:'Olive oil',em:'🫒',ph:'ah-ZAY-chee'},{pt:'Mel',en:'Honey',em:'🍯',ph:'mel'},
+        {pt:'Pimenta',en:'Pepper/Chilli',em:'🌶️',ph:'pee-MEN-tah'},{pt:'Sal',en:'Salt',em:'🧂',ph:'sal'},
+        {pt:'Arroz integral',en:'Brown rice',em:'🍚',ph:'ah-HOSS in-teh-GRAL'},{pt:'Tapioca',en:'Tapioca',em:'🫓',ph:'tah-pee-OH-kah'},
     ],
     animals:[
-        {pt:'Cachorro',en:'Dog',ph:'kah-SHOH-hoo'},{pt:'Gato',en:'Cat',ph:'GAH-too'},
-        {pt:'Pássaro',en:'Bird',ph:'PAH-sah-roo'},{pt:'Peixe',en:'Fish',ph:'PAY-shee'},
-        {pt:'Cavalo',en:'Horse',ph:'kah-VAH-loo'},{pt:'Vaca',en:'Cow',ph:'VAH-kah'},
-        {pt:'Porco',en:'Pig',ph:'POR-koo'},{pt:'Ovelha',en:'Sheep',ph:'oh-VEL-yah'},
-        {pt:'Macaco',en:'Monkey',ph:'mah-KAH-koo'},{pt:'Leão',en:'Lion',ph:'leh-OWNG'},
-        {pt:'Elefante',en:'Elephant',ph:'el-eh-FAN-chee'},{pt:'Cobra',en:'Snake',ph:'KOH-brah'},
-        {pt:'Coelho',en:'Rabbit',ph:'koo-EL-yoo'},{pt:'Tigre',en:'Tiger',ph:'CHEE-gree'},
-        {pt:'Urso',en:'Bear',ph:'OOR-soo'},{pt:'Sapo',en:'Frog',ph:'SAH-poo'},
-        {pt:'Rato',en:'Mouse',ph:'HAH-too'},{pt:'Galinha',en:'Chicken',ph:'gah-LEEN-yah'},
-        {pt:'Papagaio',en:'Parrot',ph:'pah-pah-GYE-oo'},{pt:'Tartaruga',en:'Turtle',ph:'tar-tah-ROO-gah'},
+        {pt:'Cachorro',en:'Dog',em:'🐶',ph:'kah-SHOH-hoo'},{pt:'Gato',en:'Cat',em:'🐱',ph:'GAH-too'},
+        {pt:'Pássaro',en:'Bird',em:'🐦',ph:'PAH-sah-roo'},{pt:'Peixe',en:'Fish',em:'🐟',ph:'PAY-shee'},
+        {pt:'Cavalo',en:'Horse',em:'🐴',ph:'kah-VAH-loo'},{pt:'Vaca',en:'Cow',em:'🐄',ph:'VAH-kah'},
+        {pt:'Porco',en:'Pig',em:'🐷',ph:'POR-koo'},{pt:'Ovelha',en:'Sheep',em:'🐑',ph:'oh-VEL-yah'},
+        {pt:'Macaco',en:'Monkey',em:'🐒',ph:'mah-KAH-koo'},{pt:'Leão',en:'Lion',em:'🦁',ph:'leh-OWNG'},
+        {pt:'Elefante',en:'Elephant',em:'🐘',ph:'el-eh-FAN-chee'},{pt:'Cobra',en:'Snake',em:'🐍',ph:'KOH-brah'},
+        {pt:'Coelho',en:'Rabbit',em:'🐰',ph:'koo-EL-yoo'},{pt:'Tigre',en:'Tiger',em:'🐯',ph:'CHEE-gree'},
+        {pt:'Urso',en:'Bear',em:'🐻',ph:'OOR-soo'},{pt:'Sapo',en:'Frog',em:'🐸',ph:'SAH-poo'},
+        {pt:'Rato',en:'Mouse',em:'🐭',ph:'HAH-too'},{pt:'Galinha',en:'Chicken',em:'🐔',ph:'gah-LEEN-yah'},
+        {pt:'Papagaio',en:'Parrot',em:'🦜',ph:'pah-pah-GYE-oo'},{pt:'Tartaruga',en:'Turtle',em:'🐢',ph:'tar-tah-ROO-gah'},
     ],
     travel:[
         {pt:'Aeroporto',en:'Airport',ph:'ah-eh-roh-POR-too'},{pt:'Hotel',en:'Hotel',ph:'oh-TEL'},
@@ -684,6 +688,15 @@ function showWordCard(){
         document.querySelectorAll('.pt-ph-view').forEach(el=>el.innerText=`[ ${card.ph} ]`);
         document.getElementById('words-counter').innerText = `${wordIdx+1} / ${wordPool.length}`;
         updateStarUI(card);
+        // Emoji visual
+        const emojiEl = document.getElementById('card-emoji');
+        if(card.em){
+            emojiEl.textContent = card.em;
+            emojiEl.style.display = 'block';
+        } else {
+            emojiEl.textContent = '';
+            emojiEl.style.display = 'none';
+        }
     },150);
 }
 function nextCard(){
