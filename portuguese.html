@@ -140,6 +140,25 @@
         .vc-ph{color:var(--text-dim);font-style:italic;font-size:0.72rem;width:26%;}
         .verb-note{font-size:0.72rem;color:var(--text-dim);padding:8px 14px 10px;line-height:1.5;}
 
+
+        /* Star button */
+        .btn-star{position:absolute;top:14px;right:14px;background:none;border:none;font-size:1.5rem;cursor:pointer;line-height:1;padding:4px;opacity:0.5;transition:opacity 0.15s,transform 0.15s;}
+        .btn-star:active{transform:scale(1.3);}
+        .btn-star.starred{opacity:1;}
+
+        /* Confidence buttons */
+        .conf-nav{display:flex;gap:8px;width:100%;margin-top:8px;}
+        .btn-conf{flex:1;padding:13px 4px;border:none;border-radius:14px;font-weight:800;font-size:0.72rem;cursor:pointer;letter-spacing:0.03em;}
+        .btn-conf:active{opacity:0.8;transform:scale(0.97);}
+        .btn-hard{background:#ef4444;color:white;box-shadow:0 4px 0 #b91c1c;}
+        .btn-good{background:var(--primary);color:white;box-shadow:0 4px 0 var(--shadow);}
+        .btn-easy{background:#6366f1;color:white;box-shadow:0 4px 0 #4338ca;}
+        .btn-prev-sm{flex:0 0 46px;padding:13px 0;background:var(--card);color:var(--text-dim);border:1px solid var(--border);border-radius:14px;font-weight:800;font-size:0.85rem;cursor:pointer;}
+        .btn-prev-sm:active{opacity:0.7;}
+
+        /* Favorites empty state */
+        .fav-empty{text-align:center;padding:40px 20px;color:var(--text-dim);font-size:0.9rem;line-height:1.6;}
+        .fav-empty .fav-empty-icon{font-size:2.5rem;display:block;margin-bottom:12px;}
         @keyframes fadeIn{from{opacity:0}to{opacity:1}}
     </style>
 </head>
@@ -163,7 +182,8 @@
         </div>
         <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
             <div class="flashcard-inner">
-                <div class="card-front">
+                <div class="card-front" style="position:relative">
+                    <button class="btn-star" id="word-star" onclick="event.stopPropagation();toggleStar()" title="Star this word">☆</button>
                     <h2 id="pt-text" style="font-size:2.2rem;margin:0">--</h2>
                     <div class="pt-ph-view pronunciation">--</div>
                     <button class="btn-hear" onclick="event.stopPropagation();speak('pt-text')">🔊 HEAR</button>
@@ -176,9 +196,11 @@
                 </div>
             </div>
         </div>
-        <div class="card-nav">
-            <button class="btn-prev" onclick="prevCard()">← PREV</button>
-            <button class="btn-next" onclick="nextCard()">NEXT →</button>
+        <div class="conf-nav">
+            <button class="btn-prev-sm" onclick="prevCard()">←</button>
+            <button class="btn-conf btn-hard" onclick="rateCard('hard')">😓 Hard</button>
+            <button class="btn-conf btn-good" onclick="rateCard('good')">👍 Good</button>
+            <button class="btn-conf btn-easy" onclick="rateCard('easy')">⚡ Easy</button>
         </div>
     </div>
 
@@ -332,6 +354,7 @@ const CATEGORIES = [
     { id:'travel',   label:'Travel',     icon:'✈️' },
     { id:'family',   label:'Family',     icon:'👨‍👩‍👧' },
     { id:'time',     label:'Time',       icon:'⏰' },
+    { id:'favorites',label:'⭐ Faves',    icon:'⭐' },
 ];
 
 const WORD_LIBRARY = {
@@ -481,6 +504,81 @@ function getPhraseLib(diff){
 // ════════════════════════════════════════════════════
 let currentCat = 'colours';
 let wordPool = [], wordIdx = 0, wordHistory = [];
+
+// ════════════════════════════════════════════════════
+// STARS & FAVORITES (localStorage)
+// ════════════════════════════════════════════════════
+const LS_STARS = 'samba_starred_v1';
+const LS_EASY  = 'samba_easy_v1';
+
+function getStarred(){ try{ return JSON.parse(localStorage.getItem(LS_STARS)||'[]'); }catch(e){ return []; } }
+function saveStarred(arr){ try{ localStorage.setItem(LS_STARS, JSON.stringify(arr)); }catch(e){} }
+function getEasyUntil(){ try{ return JSON.parse(localStorage.getItem(LS_EASY)||'{}'); }catch(e){ return {}; } }
+function saveEasyUntil(obj){ try{ localStorage.setItem(LS_EASY, JSON.stringify(obj)); }catch(e){} }
+
+function cardKey(card){ return card.pt + '|' + card.en; }
+
+function isStarred(card){
+    return getStarred().includes(cardKey(card));
+}
+
+function toggleStar(){
+    const card = wordPool[wordIdx];
+    if(!card) return;
+    const key = cardKey(card);
+    let starred = getStarred();
+    if(starred.includes(key)){
+        starred = starred.filter(k=>k!==key);
+    } else {
+        starred.push(key);
+    }
+    saveStarred(starred);
+    updateStarUI(card);
+    // Refresh favorites pool if we're in that category
+    if(currentCat === 'favorites') loadWordCat('favorites');
+}
+
+function updateStarUI(card){
+    const btn = document.getElementById('word-star');
+    if(!btn || !card) return;
+    const on = isStarred(card);
+    btn.textContent = on ? '★' : '☆';
+    btn.classList.toggle('starred', on);
+}
+
+// ════════════════════════════════════════════════════
+// CONFIDENCE / SPACED REPETITION (simple)
+// ════════════════════════════════════════════════════
+// Hard  → stays in current session pool (reshuffle to near-top)
+// Good  → move to next card normally
+// Easy  → mark as "skip until next session" (next page load)
+
+function rateCard(rating){
+    const card = wordPool[wordIdx];
+    if(!card){ nextCard(); return; }
+
+    if(rating === 'easy'){
+        // Mark card to be skipped until next session
+        const eu = getEasyUntil();
+        eu[cardKey(card)] = Date.now() + 24*60*60*1000; // 24 hrs
+        saveEasyUntil(eu);
+        // Remove from current pool so it doesn't reappear this session
+        wordPool.splice(wordIdx, 1);
+        if(wordPool.length === 0){ loadWordCat(currentCat); return; }
+        wordIdx = wordIdx % wordPool.length;
+        showWordCard();
+    } else if(rating === 'hard'){
+        // Reinsert the card 2–4 positions ahead so it comes back soon
+        wordPool.splice(wordIdx, 1);
+        const ahead = Math.min(wordPool.length, 2 + Math.floor(Math.random()*3));
+        const insertAt = (wordIdx + ahead) % (wordPool.length + 1);
+        wordPool.splice(insertAt, 0, card);
+        wordIdx = wordIdx % wordPool.length;
+        showWordCard();
+    } else {
+        nextCard();
+    }
+}
 let phraseDiff = 'easy', phrasePool = [], phraseIdx = 0, phraseHistory = [];
 let listType = 'words', listCat = 'colours', listPhraseDiff = 'easy';
 let testType = 'words', testCat = 'colours', testDiff = 'easy';
@@ -533,7 +631,26 @@ function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=M
 
 function loadWordCat(catId){
     currentCat = catId;
-    wordPool = shuffle(WORD_LIBRARY[catId] || []);
+
+    let pool;
+    if(catId === 'favorites'){
+        const starred = getStarred();
+        // Gather all words from all categories and filter by starred keys
+        const all = Object.values(WORD_LIBRARY).flat();
+        pool = all.filter(w => starred.includes(cardKey(w)));
+    } else {
+        pool = WORD_LIBRARY[catId] || [];
+    }
+
+    // Filter out "easy" words whose cooldown hasn't expired
+    const eu = getEasyUntil();
+    const now = Date.now();
+    pool = pool.filter(w => {
+        const until = eu[cardKey(w)];
+        return !until || now > until;
+    });
+
+    wordPool = shuffle(pool);
     wordIdx = 0; wordHistory = [0];
     showWordCard();
     setActiveCatBtn('words-cat-scroll', catId);
@@ -541,12 +658,32 @@ function loadWordCat(catId){
 function showWordCard(){
     document.querySelectorAll('#words .flashcard-wrapper').forEach(w=>w.classList.remove('is-flipped'));
     const card = wordPool[wordIdx];
-    if(!card) return;
+
+    // Show empty state for favorites with no starred words
+    const favEmpty = document.getElementById('fav-empty-msg');
+    if(!card){
+        document.getElementById('pt-text').innerText = '--';
+        document.getElementById('en-text').innerText = '--';
+        document.querySelectorAll('.pt-ph-view').forEach(el=>el.innerText='');
+        document.getElementById('words-counter').innerText = '';
+        updateStarUI(null);
+        if(currentCat === 'favorites' && !favEmpty){
+            const msg = document.createElement('div');
+            msg.id = 'fav-empty-msg';
+            msg.className = 'fav-empty';
+            msg.innerHTML = '<span class="fav-empty-icon">☆</span>No favourites yet!<br>Tap the ☆ on any word card to save it here.';
+            document.getElementById('words').appendChild(msg);
+        }
+        return;
+    }
+    if(favEmpty) favEmpty.remove();
+
     setTimeout(()=>{
         document.getElementById('pt-text').innerText = card.pt;
         document.getElementById('en-text').innerText = card.en;
         document.querySelectorAll('.pt-ph-view').forEach(el=>el.innerText=`[ ${card.ph} ]`);
         document.getElementById('words-counter').innerText = `${wordIdx+1} / ${wordPool.length}`;
+        updateStarUI(card);
     },150);
 }
 function nextCard(){
