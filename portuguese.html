@@ -116,6 +116,30 @@
         .video-list{width:100%;display:grid;gap:10px;}
         .video-item{display:flex;align-items:center;background:var(--card);padding:15px;border-radius:12px;text-decoration:none;color:white;border:1px solid var(--border);font-weight:600;font-size:0.9rem;}
 
+        /* Verbs */
+        .verb-picker{width:100%;display:flex;flex-direction:column;gap:12px;margin-bottom:18px;}
+        .verb-search{width:100%;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:0.95rem;font-family:inherit;outline:none;}
+        .verb-search:focus{border-color:var(--primary);}
+        .verb-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+        .verb-btn{padding:12px 10px;background:var(--card);border:2px solid var(--border);border-radius:12px;color:var(--text-dim);font-size:0.78rem;font-weight:700;cursor:pointer;text-align:left;line-height:1.3;}
+        .verb-btn:active{transform:scale(0.97);}
+        .verb-btn.active{border-color:var(--primary);color:var(--primary);background:rgba(34,197,94,0.08);}
+        .verb-btn .vb-inf{font-size:1rem;font-weight:800;color:var(--text);display:block;}
+        .verb-btn .vb-en{font-size:0.68rem;color:var(--text-dim);display:block;margin-top:2px;}
+        .verb-table-wrap{width:100%;display:flex;flex-direction:column;gap:14px;}
+        .verb-tense-block{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+        .verb-tense-title{padding:10px 14px;font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:white;background:var(--primary);}
+        .verb-tense-title.past{background:#6366f1;}
+        .verb-tense-title.future{background:#f59e0b;}
+        .verb-conj-table{width:100%;border-collapse:collapse;}
+        .verb-conj-table tr{border-bottom:1px solid var(--border);}
+        .verb-conj-table tr:last-child{border-bottom:none;}
+        .verb-conj-table td{padding:10px 14px;font-size:0.88rem;vertical-align:middle;}
+        .vc-pronoun{color:var(--text-dim);font-weight:600;width:38%;}
+        .vc-form{color:var(--text);font-weight:800;font-size:0.95rem;width:36%;}
+        .vc-ph{color:var(--text-dim);font-style:italic;font-size:0.72rem;width:26%;}
+        .verb-note{font-size:0.72rem;color:var(--text-dim);padding:8px 14px 10px;line-height:1.5;}
+
         @keyframes fadeIn{from{opacity:0}to{opacity:1}}
     </style>
 </head>
@@ -128,6 +152,7 @@
         <button class="nav-btn" onclick="showTab('phrases',this)">Phrases</button>
         <button class="nav-btn" onclick="showTab('list',this)">List</button>
         <button class="nav-btn" onclick="showTab('test',this)">Test</button>
+        <button class="nav-btn" onclick="showTab('verbs',this)">Verbs</button>
         <button class="nav-btn" onclick="showTab('watch',this)">Watch</button>
     </nav>
 
@@ -271,6 +296,15 @@
             <div class="results-breakdown" id="results-breakdown"></div>
             <button class="btn-retry" onclick="showSetup()">↩ TRY AGAIN</button>
         </div>
+    </div>
+
+    <!-- VERBS -->
+    <div id="verbs" class="content-section">
+        <div class="verb-picker">
+            <input class="verb-search" id="verb-search" type="text" placeholder="🔍  Search verbs..." oninput="filterVerbs(this.value)">
+            <div class="verb-grid" id="verb-grid"></div>
+        </div>
+        <div class="verb-table-wrap" id="verb-table-wrap"></div>
     </div>
 
     <!-- WATCH -->
@@ -697,6 +731,248 @@ function showTab(id,btn){
     document.getElementById(id).classList.add('active'); btn.classList.add('active');
     if(id==='list') renderList();
     if(id==='test') showSetup();
+    if(id==='verbs') renderVerbGrid(verbFilter);
+}
+
+// ════════════════════════════════════════════════════
+// VERBS — conjugation tables
+// ════════════════════════════════════════════════════
+// Each verb: infinitive, English, type (-ar/-er/-ir), irregular forms override
+// Conjugation rows: [pronoun, present, ph_pres, preterite, ph_pret, future, ph_fut]
+const VERB_DATA = [
+    {
+        inf:'Falar', en:'To speak', type:'-ar',
+        conj:[
+            {pro:'Eu',        pres:'falo',    ph_pres:'FAH-loo',      pret:'falei',    ph_pret:'fah-LAY',      fut:'falarei',    ph_fut:'fah-lah-RAY'},
+            {pro:'Você/Ele',  pres:'fala',    ph_pres:'FAH-lah',      pret:'falou',    ph_pret:'fah-LOH',      fut:'falará',     ph_fut:'fah-lah-RAH'},
+            {pro:'Nós',       pres:'falamos', ph_pres:'fah-LAH-moos', pret:'falamos',  ph_pret:'fah-LAH-moos', fut:'falaremos',  ph_fut:'fah-lah-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'falam',   ph_pres:'FAH-lowm',     pret:'falaram',  ph_pret:'fah-LAH-rowm', fut:'falarão',    ph_fut:'fah-lah-ROWM'},
+        ],
+        note:'Regular -ar verb. Falar follows the standard -ar pattern and is a great model for the group.',
+    },
+    {
+        inf:'Comer', en:'To eat', type:'-er',
+        conj:[
+            {pro:'Eu',        pres:'como',    ph_pres:'KOH-moo',      pret:'comi',     ph_pret:'koh-MEE',      fut:'comerei',    ph_fut:'koh-meh-RAY'},
+            {pro:'Você/Ele',  pres:'come',    ph_pres:'KOH-mee',      pret:'comeu',    ph_pret:'koh-MEH-oo',   fut:'comerá',     ph_fut:'koh-meh-RAH'},
+            {pro:'Nós',       pres:'comemos', ph_pres:'koh-MAY-moos', pret:'comemos',  ph_pret:'koh-MAY-moos', fut:'comeremos',  ph_fut:'koh-meh-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'comem',   ph_pres:'KOH-meng',     pret:'comeram',  ph_pret:'koh-MAY-rowm', fut:'comerão',    ph_fut:'koh-meh-ROWM'},
+        ],
+        note:'Regular -er verb. The model verb for the -er group.',
+    },
+    {
+        inf:'Abrir', en:'To open', type:'-ir',
+        conj:[
+            {pro:'Eu',        pres:'abro',    ph_pres:'AH-broo',      pret:'abri',     ph_pret:'ah-BREE',      fut:'abrirei',    ph_fut:'ah-bree-RAY'},
+            {pro:'Você/Ele',  pres:'abre',    ph_pres:'AH-bree',      pret:'abriu',    ph_pret:'ah-BREE-oo',   fut:'abrirá',     ph_fut:'ah-bree-RAH'},
+            {pro:'Nós',       pres:'abrimos', ph_pres:'ah-BREE-moos', pret:'abrimos',  ph_pret:'ah-BREE-moos', fut:'abriremos',  ph_fut:'ah-bree-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'abrem',   ph_pres:'AH-breng',     pret:'abriram',  ph_pret:'ah-BREE-rowm', fut:'abrirão',    ph_fut:'ah-bree-ROWM'},
+        ],
+        note:'Regular -ir verb. Model for the -ir group.',
+    },
+    {
+        inf:'Ser', en:'To be (permanent)', type:'irreg',
+        conj:[
+            {pro:'Eu',        pres:'sou',     ph_pres:'soh',          pret:'fui',      ph_pret:'fwee',         fut:'serei',      ph_fut:'seh-RAY'},
+            {pro:'Você/Ele',  pres:'é',       ph_pres:'eh',           pret:'foi',      ph_pret:'foy',          fut:'será',       ph_fut:'seh-RAH'},
+            {pro:'Nós',       pres:'somos',   ph_pres:'SOH-moos',     pret:'fomos',    ph_pret:'FOH-moos',     fut:'seremos',    ph_fut:'seh-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'são',     ph_pres:'sowm',         pret:'foram',    ph_pret:'FOH-rowm',     fut:'serão',      ph_fut:'seh-ROWM'},
+        ],
+        note:'Highly irregular. Ser is used for permanent states: identity, nationality, profession, characteristics.',
+    },
+    {
+        inf:'Estar', en:'To be (temporary)', type:'irreg',
+        conj:[
+            {pro:'Eu',        pres:'estou',   ph_pres:'es-TOH',       pret:'estive',   ph_pret:'es-CHEE-vee',  fut:'estarei',    ph_fut:'es-tah-RAY'},
+            {pro:'Você/Ele',  pres:'está',    ph_pres:'es-TAH',       pret:'esteve',   ph_pret:'es-TEH-vee',   fut:'estará',     ph_fut:'es-tah-RAH'},
+            {pro:'Nós',       pres:'estamos', ph_pres:'es-TAH-moos',  pret:'estivemos',ph_pret:'es-chee-VAY-moos',fut:'estaremos',ph_fut:'es-tah-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'estão',   ph_pres:'es-TOWM',      pret:'estiveram',ph_pret:'es-chee-VAY-rowm',fut:'estarão', ph_fut:'es-tah-ROWM'},
+        ],
+        note:'Irregular. Estar is used for temporary states, feelings, and locations: "Estou cansado" (I am tired).',
+    },
+    {
+        inf:'Ter', en:'To have', type:'irreg',
+        conj:[
+            {pro:'Eu',        pres:'tenho',   ph_pres:'TEN-yoo',      pret:'tive',     ph_pret:'CHEE-vee',     fut:'terei',      ph_fut:'teh-RAY'},
+            {pro:'Você/Ele',  pres:'tem',     ph_pres:'teng',         pret:'teve',     ph_pret:'TEH-vee',      fut:'terá',       ph_fut:'teh-RAH'},
+            {pro:'Nós',       pres:'temos',   ph_pres:'TAY-moos',     pret:'tivemos',  ph_pret:'chee-VAY-moos',fut:'teremos',    ph_fut:'teh-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'têm',     ph_pres:'teng',         pret:'tiveram',  ph_pret:'chee-VAY-rowm',fut:'terão',      ph_fut:'teh-ROWM'},
+        ],
+        note:'Irregular. Also used as an auxiliary verb: "Tenho que ir" (I have to go).',
+    },
+    {
+        inf:'Ir', en:'To go', type:'irreg',
+        conj:[
+            {pro:'Eu',        pres:'vou',     ph_pres:'voh',          pret:'fui',      ph_pret:'fwee',         fut:'irei',       ph_fut:'ee-RAY'},
+            {pro:'Você/Ele',  pres:'vai',     ph_pres:'vye',          pret:'foi',      ph_pret:'foy',          fut:'irá',        ph_fut:'ee-RAH'},
+            {pro:'Nós',       pres:'vamos',   ph_pres:'VAH-moos',     pret:'fomos',    ph_pret:'FOH-moos',     fut:'iremos',     ph_fut:'ee-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'vão',     ph_pres:'vowm',         pret:'foram',    ph_pret:'FOH-rowm',     fut:'irão',       ph_fut:'ee-ROWM'},
+        ],
+        note:'Highly irregular — shares past tense with Ser. Present tense comes from "vir" (to come) historically.',
+    },
+    {
+        inf:'Fazer', en:'To do / make', type:'irreg',
+        conj:[
+            {pro:'Eu',        pres:'faço',    ph_pres:'FAH-soo',      pret:'fiz',      ph_pret:'feez',         fut:'farei',      ph_fut:'fah-RAY'},
+            {pro:'Você/Ele',  pres:'faz',     ph_pres:'fahz',         pret:'fez',      ph_pret:'fez',          fut:'fará',       ph_fut:'fah-RAH'},
+            {pro:'Nós',       pres:'fazemos', ph_pres:'fah-ZAY-moos', pret:'fizemos',  ph_pret:'fee-ZAY-moos', fut:'faremos',    ph_fut:'fah-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'fazem',   ph_pres:'FAH-zeng',     pret:'fizeram',  ph_pret:'fee-ZAY-rowm', fut:'farão',      ph_fut:'fah-ROWM'},
+        ],
+        note:'Irregular. Note the irregular future stem "far-" instead of "fazer-".',
+    },
+    {
+        inf:'Poder', en:'To be able to / can', type:'irreg',
+        conj:[
+            {pro:'Eu',        pres:'posso',   ph_pres:'POH-soo',      pret:'pude',     ph_pret:'POO-jee',      fut:'poderei',    ph_fut:'poh-deh-RAY'},
+            {pro:'Você/Ele',  pres:'pode',    ph_pres:'POH-jee',      pret:'pôde',     ph_pret:'POH-jee',      fut:'poderá',     ph_fut:'poh-deh-RAH'},
+            {pro:'Nós',       pres:'podemos', ph_pres:'poh-DAY-moos', pret:'pudemos',  ph_pret:'poo-DAY-moos', fut:'poderemos',  ph_fut:'poh-deh-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'podem',   ph_pres:'POH-deng',     pret:'puderam',  ph_pret:'poo-DAY-rowm', fut:'poderão',    ph_fut:'poh-deh-ROWM'},
+        ],
+        note:'Irregular stem-changer. "Posso" (I can) is one of the most useful words in Portuguese.',
+    },
+    {
+        inf:'Querer', en:'To want', type:'irreg',
+        conj:[
+            {pro:'Eu',        pres:'quero',   ph_pres:'KEH-roo',      pret:'quis',     ph_pret:'keez',         fut:'quererei',   ph_fut:'keh-reh-RAY'},
+            {pro:'Você/Ele',  pres:'quer',    ph_pres:'kehr',         pret:'quis',     ph_pret:'keez',         fut:'quererá',    ph_fut:'keh-reh-RAH'},
+            {pro:'Nós',       pres:'queremos',ph_pres:'keh-RAY-moos', pret:'quisemos', ph_pret:'kee-ZAY-moos', fut:'quereremos', ph_fut:'keh-reh-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'querem',  ph_pres:'KEH-reng',     pret:'quiseram', ph_pret:'kee-ZAY-rowm', fut:'quererão',   ph_fut:'keh-reh-ROWM'},
+        ],
+        note:'Irregular. "Quero" is essential — use it to order food, ask for things, and express desires.',
+    },
+    {
+        inf:'Saber', en:'To know (a fact)', type:'irreg',
+        conj:[
+            {pro:'Eu',        pres:'sei',     ph_pres:'say',          pret:'soube',    ph_pret:'SOH-bee',      fut:'saberei',    ph_fut:'sah-beh-RAY'},
+            {pro:'Você/Ele',  pres:'sabe',    ph_pres:'SAH-bee',      pret:'soube',    ph_pret:'SOH-bee',      fut:'saberá',     ph_fut:'sah-beh-RAH'},
+            {pro:'Nós',       pres:'sabemos', ph_pres:'sah-BAY-moos', pret:'soubemos', ph_pret:'soh-BAY-moos', fut:'saberemos',  ph_fut:'sah-beh-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'sabem',   ph_pres:'SAH-beng',     pret:'souberam', ph_pret:'soh-BAY-rowm', fut:'saberão',    ph_fut:'sah-beh-ROWM'},
+        ],
+        note:'Irregular. Use Saber for knowing facts/information. "Não sei" (I don\'t know) is very handy!',
+    },
+    {
+        inf:'Vir', en:'To come', type:'irreg',
+        conj:[
+            {pro:'Eu',        pres:'venho',   ph_pres:'VEN-yoo',      pret:'vim',      ph_pret:'veeng',        fut:'virei',      ph_fut:'vee-RAY'},
+            {pro:'Você/Ele',  pres:'vem',     ph_pres:'veng',         pret:'veio',     ph_pret:'VAY-oo',       fut:'virá',       ph_fut:'vee-RAH'},
+            {pro:'Nós',       pres:'vimos',   ph_pres:'VEE-moos',     pret:'viemos',   ph_pret:'vee-AY-moos',  fut:'viremos',    ph_fut:'vee-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'vêm',     ph_pres:'veng',         pret:'vieram',   ph_pret:'vee-AY-rowm',  fut:'virão',      ph_fut:'vee-ROWM'},
+        ],
+        note:'Highly irregular. "De onde você vem?" (Where do you come from?) is a classic opener.',
+    },
+    {
+        inf:'Dar', en:'To give', type:'irreg',
+        conj:[
+            {pro:'Eu',        pres:'dou',     ph_pres:'doh',          pret:'dei',      ph_pret:'day',          fut:'darei',      ph_fut:'dah-RAY'},
+            {pro:'Você/Ele',  pres:'dá',      ph_pres:'dah',          pret:'deu',      ph_pret:'deh-oo',       fut:'dará',       ph_fut:'dah-RAH'},
+            {pro:'Nós',       pres:'damos',   ph_pres:'DAH-moos',     pret:'demos',    ph_pret:'DAY-moos',     fut:'daremos',    ph_fut:'dah-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'dão',     ph_pres:'dowm',         pret:'deram',    ph_pret:'DAY-rowm',     fut:'darão',      ph_fut:'dah-ROWM'},
+        ],
+        note:'Irregular. "Me dá um café, por favor?" (Can you give me a coffee, please?) is very natural.',
+    },
+    {
+        inf:'Trabalhar', en:'To work', type:'-ar',
+        conj:[
+            {pro:'Eu',        pres:'trabalho',    ph_pres:'trah-BAL-yoo',     pret:'trabalhei',    ph_pret:'trah-bal-YAY',     fut:'trabalharei',   ph_fut:'trah-bal-yah-RAY'},
+            {pro:'Você/Ele',  pres:'trabalha',    ph_pres:'trah-BAL-yah',     pret:'trabalhou',    ph_pret:'trah-bal-YOH',     fut:'trabalhará',    ph_fut:'trah-bal-yah-RAH'},
+            {pro:'Nós',       pres:'trabalhamos', ph_pres:'trah-bal-YAH-moos',pret:'trabalhamos',  ph_pret:'trah-bal-YAH-moos',fut:'trabalharemos', ph_fut:'trah-bal-yah-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'trabalham',   ph_pres:'trah-BAL-yowm',    pret:'trabalharam',  ph_pret:'trah-bal-YAH-rowm',fut:'trabalharão',   ph_fut:'trah-bal-yah-ROWM'},
+        ],
+        note:'Regular -ar verb. "Onde você trabalha?" (Where do you work?) is a very common question.',
+    },
+    {
+        inf:'Morar', en:'To live / reside', type:'-ar',
+        conj:[
+            {pro:'Eu',        pres:'moro',    ph_pres:'MOH-roo',      pret:'morei',    ph_pret:'moh-RAY',      fut:'morarei',    ph_fut:'moh-rah-RAY'},
+            {pro:'Você/Ele',  pres:'mora',    ph_pres:'MOH-rah',      pret:'morou',    ph_pret:'moh-ROH',      fut:'morará',     ph_fut:'moh-rah-RAH'},
+            {pro:'Nós',       pres:'moramos', ph_pres:'moh-RAH-moos', pret:'moramos',  ph_pret:'moh-RAH-moos', fut:'moraremos',  ph_fut:'moh-rah-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'moram',   ph_pres:'MOH-rowm',     pret:'moraram',  ph_pret:'moh-RAH-rowm', fut:'morarão',    ph_fut:'moh-rah-ROWM'},
+        ],
+        note:'Regular -ar verb. "Eu moro no Brasil" (I live in Brazil). Essential for introductions.',
+    },
+    {
+        inf:'Beber', en:'To drink', type:'-er',
+        conj:[
+            {pro:'Eu',        pres:'bebo',    ph_pres:'BEH-boo',      pret:'bebi',     ph_pret:'beh-BEE',      fut:'beberei',    ph_fut:'beh-beh-RAY'},
+            {pro:'Você/Ele',  pres:'bebe',    ph_pres:'BEH-bee',      pret:'bebeu',    ph_pret:'beh-BEH-oo',   fut:'beberá',     ph_fut:'beh-beh-RAH'},
+            {pro:'Nós',       pres:'bebemos', ph_pres:'beh-BAY-moos', pret:'bebemos',  ph_pret:'beh-BAY-moos', fut:'beberemos',  ph_fut:'beh-beh-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'bebem',   ph_pres:'BEH-beng',     pret:'beberam',  ph_pret:'beh-BAY-rowm', fut:'beberão',    ph_fut:'beh-beh-ROWM'},
+        ],
+        note:'Regular -er verb. Great to practise alongside Comer — "comer e beber" (to eat and drink).',
+    },
+    {
+        inf:'Dormir', en:'To sleep', type:'-ir',
+        conj:[
+            {pro:'Eu',        pres:'durmo',   ph_pres:'DOOR-moo',     pret:'dormi',    ph_pret:'dor-MEE',      fut:'dormirei',   ph_fut:'dor-mee-RAY'},
+            {pro:'Você/Ele',  pres:'dorme',   ph_pres:'DOR-mee',      pret:'dormiu',   ph_pret:'dor-MEE-oo',   fut:'dormirá',    ph_fut:'dor-mee-RAH'},
+            {pro:'Nós',       pres:'dormimos',ph_pres:'dor-MEE-moos', pret:'dormimos', ph_pret:'dor-MEE-moos', fut:'dormiremos', ph_fut:'dor-mee-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'dormem',  ph_pres:'DOR-meng',     pret:'dormiram', ph_pret:'dor-MEE-rowm', fut:'dormirão',   ph_fut:'dor-mee-ROWM'},
+        ],
+        note:'Stem-changing -ir verb: the "o" changes to "u" in Eu. "Dormi bem" (I slept well).',
+    },
+    {
+        inf:'Comprar', en:'To buy', type:'-ar',
+        conj:[
+            {pro:'Eu',        pres:'compro',    ph_pres:'KOM-proo',       pret:'comprei',    ph_pret:'kom-PRAY',       fut:'comprarei',    ph_fut:'kom-prah-RAY'},
+            {pro:'Você/Ele',  pres:'compra',    ph_pres:'KOM-prah',       pret:'comprou',    ph_pret:'kom-PROH',       fut:'comprará',     ph_fut:'kom-prah-RAH'},
+            {pro:'Nós',       pres:'compramos', ph_pres:'kom-PRAH-moos',  pret:'compramos',  ph_pret:'kom-PRAH-moos',  fut:'compraremos',  ph_fut:'kom-prah-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'compram',   ph_pres:'KOM-prowm',      pret:'compraram',  ph_pret:'kom-PRAH-rowm',  fut:'comprarão',    ph_fut:'kom-prah-ROWM'},
+        ],
+        note:'Regular -ar verb. Very useful for shopping: "Quanto custa? Vou comprar!" (How much? I\'ll buy it!)',
+    },
+];
+
+let currentVerb = 0;
+let verbFilter = '';
+
+function filterVerbs(val){
+    verbFilter = val.toLowerCase();
+    renderVerbGrid(verbFilter);
+}
+
+function renderVerbGrid(filter){
+    const grid = document.getElementById('verb-grid');
+    grid.innerHTML = '';
+    const filtered = VERB_DATA.filter(v =>
+        !filter ||
+        v.inf.toLowerCase().includes(filter) ||
+        v.en.toLowerCase().includes(filter)
+    );
+    filtered.forEach((v, i) => {
+        const realIdx = VERB_DATA.indexOf(v);
+        const btn = document.createElement('button');
+        btn.className = 'verb-btn' + (realIdx === currentVerb ? ' active' : '');
+        btn.innerHTML = `<span class="vb-inf">${v.inf}</span><span class="vb-en">${v.en}</span>`;
+        btn.onclick = () => { currentVerb = realIdx; renderVerbGrid(verbFilter); renderVerbTable(); };
+        grid.appendChild(btn);
+    });
+    renderVerbTable();
+}
+
+function renderVerbTable(){
+    const v = VERB_DATA[currentVerb];
+    const wrap = document.getElementById('verb-table-wrap');
+    if(!v){ wrap.innerHTML = ''; return; }
+
+    const tenses = [
+        { key:'pres', ph:'ph_pres', label:'Present Tense — Presente',         cls:'' },
+        { key:'pret', ph:'ph_pret', label:'Past Tense — Pretérito Perfeito',   cls:'past' },
+        { key:'fut',  ph:'ph_fut',  label:'Future Tense — Futuro',             cls:'future' },
+    ];
+
+    wrap.innerHTML = tenses.map(t => `
+        <div class="verb-tense-block">
+            <div class="verb-tense-title ${t.cls}">${v.inf} &mdash; ${t.label}</div>
+            <table class="verb-conj-table">
+                ${v.conj.map(r => `
+                <tr>
+                    <td class="vc-pronoun">${r.pro}</td>
+                    <td class="vc-form" onclick="speakText('${r[t.key].replace(/'/g,"\\'")}')" style="cursor:pointer" title="Tap to hear">${r[t.key]} 🔊</td>
+                    <td class="vc-ph">${r[t.ph]}</td>
+                </tr>`).join('')}
+            </table>
+            ${t.key==='fut' && v.note ? `<div class="verb-note">💡 ${v.note}</div>` : ''}
+        </div>`).join('');
 }
 
 // ════════════════════════════════════════════════════
@@ -708,6 +984,7 @@ buildCatButtons('test-cat-scroll', testCat, pickTestCat);
 loadWordCat(currentCat);
 loadPhrases();
 showSetup();
+renderVerbGrid('');
 </script>
 </body>
 </html>
