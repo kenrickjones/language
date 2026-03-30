@@ -165,8 +165,8 @@
         .btn-hard{background:#ef4444;color:white;box-shadow:0 4px 0 #b91c1c;}
         .btn-good{background:var(--primary);color:white;box-shadow:0 4px 0 var(--shadow);}
         .btn-easy{background:#6366f1;color:white;box-shadow:0 4px 0 #4338ca;}
-        .btn-prev-sm{flex:0 0 46px;padding:13px 0;background:var(--card);color:var(--text-dim);border:1px solid var(--border);border-radius:14px;font-weight:800;font-size:0.85rem;cursor:pointer;}
-        .btn-prev-sm:active{opacity:0.7;}
+        .btn-prev-sm,.btn-next-sm{flex:0 0 46px;padding:13px 0;background:var(--card);color:var(--text-dim);border:1px solid var(--border);border-radius:14px;font-weight:800;font-size:0.85rem;cursor:pointer;}
+        .btn-prev-sm:active,.btn-next-sm:active{opacity:0.7;}
 
         /* Favorites empty state */
         .fav-empty{text-align:center;padding:40px 20px;color:var(--text-dim);font-size:0.9rem;line-height:1.6;}
@@ -221,6 +221,7 @@
             <button class="btn-conf btn-hard" onclick="rateCard('hard')">😓 Hard</button>
             <button class="btn-conf btn-good" onclick="rateCard('good')">👍 Good</button>
             <button class="btn-conf btn-easy" onclick="rateCard('easy')">⚡ Easy</button>
+            <button class="btn-next-sm" onclick="nextCard()">→</button>
         </div>
     </div>
 
