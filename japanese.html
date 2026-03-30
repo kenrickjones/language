@@ -8,7 +8,7 @@
     <script src="japanese_vault.js"></script>
     <style>
         :root{--bg:#0f172a;--card:#1e293b;--primary:#f472b6;--shadow:#be185d;--text:#f8fafc;--text-dim:#94a3b8;--border:#334155;}
-        *{box-sizing:border-box;transition:all 0.2s ease;-webkit-tap-highlight-color:transparent;}
+        *{box-sizing:border-box;transition:transform 0.2s ease,opacity 0.2s ease,border-color 0.2s ease,background-color 0.2s ease,color 0.2s ease;-webkit-tap-highlight-color:transparent;}
         body{font-family:'Inter','Noto Sans JP',sans-serif;background-color:var(--bg);color:var(--text);margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding-top:env(safe-area-inset-top);}
         .top-nav{width:100%;display:flex;padding:12px 15px;background:rgba(15,23,42,0.95);backdrop-filter:blur(10px);position:sticky;top:0;z-index:100;border-bottom:1px solid var(--border);}
         .home-link{text-decoration:none;color:var(--text-dim);font-size:0.75rem;font-weight:800;border:1px solid var(--border);padding:6px 14px;border-radius:20px;background:var(--card);}
@@ -28,10 +28,11 @@
         .diff-toggle{display:flex;background:var(--bg);padding:4px;border-radius:10px;margin-bottom:15px;width:100%;gap:4px;border:1px solid var(--border);}
         .diff-btn{flex:1;padding:10px 2px;font-size:0.6rem;border:none;background:transparent;color:var(--text-dim);cursor:pointer;border-radius:6px;font-weight:800;}
         .diff-btn.active{background:var(--card);color:var(--primary);}
-        .flashcard-wrapper{perspective:1000px;width:100%;height:340px;cursor:pointer;margin:10px 0 15px 0;}
+        .flashcard-wrapper{perspective:1000px;width:100%;height:340px;cursor:pointer;margin:10px 0 15px 0;flex-shrink:0;}
+        .flashcard-wrapper,.flashcard-inner,.card-front,.card-back{transition-property:transform,opacity,border-color,background-color,color;}
         .flashcard-inner{position:relative;width:100%;height:100%;transition:transform 0.5s;transform-style:preserve-3d;}
         .flashcard-wrapper.is-flipped .flashcard-inner{transform:rotateY(180deg);}
-        .card-front,.card-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:24px;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:25px;border:2px solid var(--primary);text-align:center;background:var(--card);}
+        .card-front,.card-back{position:absolute;top:0;left:0;width:100%;height:100%;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:24px;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:25px;border:2px solid var(--primary);text-align:center;background:var(--card);overflow:hidden;}
         .card-back{background:var(--primary);transform:rotateY(180deg);color:white;}
         .btn-hear{background:rgba(255,255,255,0.1);border:1px solid var(--primary);color:var(--primary);padding:8px 15px;border-radius:20px;font-size:0.7rem;font-weight:800;margin-top:15px;cursor:pointer;}
         .card-back .btn-hear{border-color:white;color:white;}
@@ -98,6 +99,36 @@
         .btn-retry{width:100%;padding:16px;background:var(--primary);color:white;border:none;border-radius:14px;font-weight:800;cursor:pointer;box-shadow:0 4px 0 var(--shadow);font-size:0.95rem;}
         .video-list{width:100%;display:grid;gap:10px;}
         .video-item{display:flex;align-items:center;background:var(--card);padding:15px;border-radius:12px;text-decoration:none;color:white;border:1px solid var(--border);font-weight:600;font-size:0.9rem;}
+
+        /* Card emoji visual */
+        .card-emoji{font-size:4.5rem;line-height:1;margin-bottom:8px;display:block;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.3));}
+
+        /* Example sentence — front (dark card) */
+        .card-example-front{margin-top:12px;padding:10px 14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;width:100%;text-align:center;}
+        .card-example-front .ex-sentence{font-size:0.82rem;font-weight:600;color:var(--text);line-height:1.5;}
+        /* Example sentence — back (pink card) */
+        .card-example-back{margin-top:12px;padding:10px 14px;background:rgba(0,0,0,0.2);border:1px solid rgba(0,0,0,0.15);border-radius:10px;width:100%;text-align:center;}
+        .card-example-back .ex-sentence-jp{font-size:0.9rem;font-weight:700;color:white;line-height:1.5;}
+        .card-example-back .ex-sentence-en{font-size:0.78rem;font-weight:500;color:rgba(255,255,255,0.75);line-height:1.5;margin-top:5px;font-style:italic;}
+
+        /* Star button */
+        .btn-star{position:absolute;top:14px;right:14px;background:none;border:none;font-size:1.5rem;cursor:pointer;line-height:1;padding:4px;opacity:0.5;transition:opacity 0.15s ease,transform 0.15s ease;z-index:2;}
+        .btn-star:active{transform:scale(1.3);}
+        .btn-star.starred{opacity:1;}
+
+        /* Confidence buttons */
+        .conf-nav{display:flex;gap:8px;width:100%;margin-top:8px;}
+        .btn-conf{flex:1;padding:13px 4px;border:none;border-radius:14px;font-weight:800;font-size:0.72rem;cursor:pointer;letter-spacing:0.03em;}
+        .btn-conf:active{opacity:0.8;transform:scale(0.97);}
+        .btn-hard{background:#ef4444;color:white;box-shadow:0 4px 0 #b91c1c;}
+        .btn-good{background:var(--primary);color:white;box-shadow:0 4px 0 var(--shadow);}
+        .btn-easy{background:#6366f1;color:white;box-shadow:0 4px 0 #4338ca;}
+        .btn-prev-sm,.btn-next-sm{flex:0 0 46px;padding:13px 0;background:var(--card);color:var(--text-dim);border:1px solid var(--border);border-radius:14px;font-weight:800;font-size:0.85rem;cursor:pointer;}
+        .btn-prev-sm:active,.btn-next-sm:active{opacity:0.7;}
+
+        /* Favorites empty state */
+        .fav-empty{text-align:center;padding:40px 20px;color:var(--text-dim);font-size:0.9rem;line-height:1.6;}
+        .fav-empty .fav-empty-icon{font-size:2.5rem;display:block;margin-bottom:12px;}
         @keyframes fadeIn{from{opacity:0}to{opacity:1}}
     </style>
 </head>
@@ -119,21 +150,33 @@
         <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
             <div class="flashcard-inner">
                 <div class="card-front">
+                    <button class="btn-star" id="word-star" onclick="event.stopPropagation();toggleStar()" title="Star this word">☆</button>
+                    <span id="card-emoji" class="card-emoji" style="display:none"></span>
                     <h2 id="jp-text" style="font-size:2.6rem;margin:0">--</h2>
                     <div class="jp-rj-view romaji">--</div>
                     <button class="btn-hear" onclick="event.stopPropagation();speak('jp-text')">🔊 HEAR</button>
+                    <div class="card-example-front" id="card-example-front" style="display:none">
+                        <div class="ex-sentence" id="example-jp"></div>
+                    </div>
                     <div class="card-counter" id="words-counter"></div>
                 </div>
                 <div class="card-back">
                     <h2 id="en-text" style="font-size:2rem;margin:0">--</h2>
                     <div class="jp-rj-view romaji">--</div>
                     <button class="btn-hear" onclick="event.stopPropagation();speak('jp-text')">🔊 HEAR</button>
+                    <div class="card-example-back" id="card-example-back" style="display:none">
+                        <div class="ex-sentence-jp" id="example-back-jp"></div>
+                        <div class="ex-sentence-en" id="example-en"></div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="card-nav">
-            <button class="btn-prev" onclick="prevCard()">← PREV</button>
-            <button class="btn-next" onclick="nextCard()">NEXT →</button>
+        <div class="conf-nav">
+            <button class="btn-prev-sm" onclick="prevCard()">←</button>
+            <button class="btn-conf btn-hard" onclick="rateCard('hard')">😓 Hard</button>
+            <button class="btn-conf btn-good" onclick="rateCard('good')">👍 Good</button>
+            <button class="btn-conf btn-easy" onclick="rateCard('easy')">⚡ Easy</button>
+            <button class="btn-next-sm" onclick="nextCard()">→</button>
         </div>
     </div>
 
@@ -254,109 +297,109 @@
 </div>
 
 <script>
-const CATEGORIES=[{id:'colours',label:'Colours',icon:'🎨'},{id:'numbers',label:'Numbers',icon:'🔢'},{id:'body',label:'Body',icon:'🫀'},{id:'food',label:'Food',icon:'🍽️'},{id:'animals',label:'Animals',icon:'🐾'},{id:'travel',label:'Travel',icon:'✈️'},{id:'family',label:'Family',icon:'👨‍👩‍👧'},{id:'time',label:'Time',icon:'⏰'}];
+const CATEGORIES=[{id:'colours',label:'Colours',icon:'🎨'},{id:'numbers',label:'Numbers',icon:'🔢'},{id:'body',label:'Body',icon:'🫀'},{id:'food',label:'Food',icon:'🍽️'},{id:'animals',label:'Animals',icon:'🐾'},{id:'travel',label:'Travel',icon:'✈️'},{id:'family',label:'Family',icon:'👨‍👩‍👧'},{id:'time',label:'Time',icon:'⏰'},{id:'favorites',label:'⭐ Faves',icon:'⭐'}];
 
 const WORD_LIBRARY={
     colours:[
-        {jp:'赤',en:'Red',rj:'Aka'},{jp:'青',en:'Blue',rj:'Ao'},
-        {jp:'緑',en:'Green',rj:'Midori'},{jp:'黄色',en:'Yellow',rj:'Kiiro'},
-        {jp:'黒',en:'Black',rj:'Kuro'},{jp:'白',en:'White',rj:'Shiro'},
-        {jp:'橙',en:'Orange',rj:'Orenji'},{jp:'ピンク',en:'Pink',rj:'Pinku'},
-        {jp:'紫',en:'Purple',rj:'Murasaki'},{jp:'灰色',en:'Grey',rj:'Haiiro'},
-        {jp:'茶色',en:'Brown',rj:'Chairo'},{jp:'金色',en:'Gold',rj:'Kin-iro'},
-        {jp:'銀色',en:'Silver',rj:'Gin-iro'},{jp:'水色',en:'Sky blue',rj:'Mizu-iro'},
-        {jp:'紺',en:'Navy blue',rj:'Kon'},{jp:'ベージュ',en:'Beige',rj:'Beiju'},
-        {jp:'ターコイズ',en:'Turquoise',rj:'Taakoizu'},{jp:'ライム',en:'Lime green',rj:'Raimu'},
-        {jp:'マゼンタ',en:'Magenta',rj:'Mazenta'},{jp:'コーラル',en:'Coral',rj:'Kooraru'},
+        {jp:'赤',en:'Red',rj:'Aka',example:'空が赤く染まっている。',example_en:'The sky is dyed red.'},{jp:'青',en:'Blue',rj:'Ao',example:'海は青くて美しい。',example_en:'The sea is blue and beautiful.'},
+        {jp:'緑',en:'Green',rj:'Midori',example:'木の葉が緑色だ。',example_en:'The leaves on the tree are green.'},{jp:'黄色',en:'Yellow',rj:'Kiiro',example:'ひまわりは黄色い。',example_en:'Sunflowers are yellow.'},
+        {jp:'黒',en:'Black',rj:'Kuro',example:'彼は黒い服を着ている。',example_en:'He is wearing black clothes.'},{jp:'白',en:'White',rj:'Shiro',example:'雪は白い。',example_en:'Snow is white.'},
+        {jp:'橙',en:'Orange',rj:'Orenji',example:'夕日は橙色だ。',example_en:'The sunset is orange.'},{jp:'ピンク',en:'Pink',rj:'Pinku',example:'桜の花はピンクだ。',example_en:'Cherry blossoms are pink.'},
+        {jp:'紫',en:'Purple',rj:'Murasaki',example:'ラベンダーは紫色だ。',example_en:'Lavender is purple.'},{jp:'灰色',en:'Grey',rj:'Haiiro',example:'空が灰色の雲で覆われている。',example_en:'The sky is covered with grey clouds.'},
+        {jp:'茶色',en:'Brown',rj:'Chairo',example:'犬の毛は茶色だ。',example_en:'The dog\'s fur is brown.'},{jp:'金色',en:'Gold',rj:'Kin-iro',example:'トロフィーは金色だ。',example_en:'The trophy is golden.'},
+        {jp:'銀色',en:'Silver',rj:'Gin-iro',example:'月が銀色に輝いている。',example_en:'The moon is shining silver.'},{jp:'水色',en:'Sky blue',rj:'Mizu-iro',example:'空は水色だ。',example_en:'The sky is light blue.'},
+        {jp:'紺',en:'Navy blue',rj:'Kon',example:'彼女は紺のスーツを着ている。',example_en:'She is wearing a navy suit.'},{jp:'ベージュ',en:'Beige',rj:'Beiju',example:'壁はベージュ色だ。',example_en:'The wall is beige.'},
+        {jp:'ターコイズ',en:'Turquoise',rj:'Taakoizu',example:'海はターコイズ色だ。',example_en:'The sea is turquoise.'},{jp:'ライム',en:'Lime green',rj:'Raimu',example:'そのドリンクはライムグリーンだ。',example_en:'That drink is lime green.'},
+        {jp:'マゼンタ',en:'Magenta',rj:'Mazenta',example:'花がマゼンタ色に咲いている。',example_en:'The flower is blooming in magenta.'},{jp:'コーラル',en:'Coral',rj:'Kooraru',example:'彼女はコーラル色の口紅をつけている。',example_en:'She is wearing coral lipstick.'},
     ],
     numbers:[
-        {jp:'一',en:'One',rj:'Ichi'},{jp:'二',en:'Two',rj:'Ni'},
-        {jp:'三',en:'Three',rj:'San'},{jp:'四',en:'Four',rj:'Shi / Yon'},
-        {jp:'五',en:'Five',rj:'Go'},{jp:'六',en:'Six',rj:'Roku'},
-        {jp:'七',en:'Seven',rj:'Shichi / Nana'},{jp:'八',en:'Eight',rj:'Hachi'},
-        {jp:'九',en:'Nine',rj:'Ku / Kyuu'},{jp:'十',en:'Ten',rj:'Juu'},
-        {jp:'十一',en:'Eleven',rj:'Juuichi'},{jp:'十二',en:'Twelve',rj:'Juuni'},
-        {jp:'十三',en:'Thirteen',rj:'Juusan'},{jp:'十四',en:'Fourteen',rj:'Juushi'},
-        {jp:'十五',en:'Fifteen',rj:'Juugo'},{jp:'十六',en:'Sixteen',rj:'Juuroku'},
-        {jp:'十七',en:'Seventeen',rj:'Juunana'},{jp:'十八',en:'Eighteen',rj:'Juuhachi'},
-        {jp:'十九',en:'Nineteen',rj:'Juuku'},{jp:'二十',en:'Twenty',rj:'Nijuu'},
-        {jp:'三十',en:'Thirty',rj:'Sanjuu'},{jp:'四十',en:'Forty',rj:'Yonjuu'},
-        {jp:'五十',en:'Fifty',rj:'Gojuu'},{jp:'百',en:'Hundred',rj:'Hyaku'},
-        {jp:'千',en:'Thousand',rj:'Sen'},
+        {jp:'一',en:'One',rj:'Ichi',example:'リンゴを一つください。',example_en:'Please give me one apple.'},{jp:'二',en:'Two',rj:'Ni',example:'兄弟が二人います。',example_en:'I have two siblings.'},
+        {jp:'三',en:'Three',rj:'San',example:'三時に会いましょう。',example_en:'Let\'s meet at three o\'clock.'},{jp:'四',en:'Four',rj:'Shi / Yon',example:'テーブルに椅子が四脚ある。',example_en:'There are four chairs at the table.'},
+        {jp:'五',en:'Five',rj:'Go',example:'電車は五分後に来ます。',example_en:'The train comes in five minutes.'},{jp:'六',en:'Six',rj:'Roku',example:'冷蔵庫に卵が六個ある。',example_en:'There are six eggs in the fridge.'},
+        {jp:'七',en:'Seven',rj:'Shichi / Nana',example:'週は七日ある。',example_en:'A week has seven days.'},{jp:'八',en:'Eight',rj:'Hachi',example:'八時間寝ました。',example_en:'I slept for eight hours.'},
+        {jp:'九',en:'Nine',rj:'Ku / Kyuu',example:'九時に出発します。',example_en:'We depart at nine o\'clock.'},{jp:'十',en:'Ten',rj:'Juu',example:'十個買いました。',example_en:'I bought ten of them.'},
+        {jp:'十一',en:'Eleven',rj:'Juuichi',example:'十一時に電話してください。',example_en:'Please call at eleven o\'clock.'},{jp:'十二',en:'Twelve',rj:'Juuni',example:'一年は十二ヶ月です。',example_en:'A year has twelve months.'},
+        {jp:'十三',en:'Thirteen',rj:'Juusan',example:'彼女は十三歳です。',example_en:'She is thirteen years old.'},{jp:'十四',en:'Fourteen',rj:'Juushi',example:'あと十四日あります。',example_en:'There are fourteen days left.'},
+        {jp:'十五',en:'Fifteen',rj:'Juugo',example:'十五分待ちました。',example_en:'I waited fifteen minutes.'},{jp:'十六',en:'Sixteen',rj:'Juuroku',example:'彼は十六歳になりました。',example_en:'He turned sixteen years old.'},
+        {jp:'十七',en:'Seventeen',rj:'Juunana',example:'十七時に待ち合わせしましょう。',example_en:'Let\'s meet at seventeen hundred hours.'},{jp:'十八',en:'Eighteen',rj:'Juuhachi',example:'明日、十八歳になります。',example_en:'I turn eighteen tomorrow.'},
+        {jp:'十九',en:'Nineteen',rj:'Juuku',example:'本が十九冊あります。',example_en:'I have nineteen books.'},{jp:'二十',en:'Twenty',rj:'Nijuu',example:'二十人がパーティーに来た。',example_en:'Twenty people came to the party.'},
+        {jp:'三十',en:'Thirty',rj:'Sanjuu',example:'彼は三十歳です。',example_en:'He is thirty years old.'},{jp:'四十',en:'Forty',rj:'Yonjuu',example:'駅まで四十分かかります。',example_en:'It takes forty minutes to the station.'},
+        {jp:'五十',en:'Fifty',rj:'Gojuu',example:'五十円のお菓子を買いました。',example_en:'I bought a fifty-yen sweet.'},{jp:'百',en:'Hundred',rj:'Hyaku',example:'百円ショップで買いました。',example_en:'I bought it at a hundred-yen shop.'},
+        {jp:'千',en:'Thousand',rj:'Sen',example:'千円札を出した。',example_en:'I took out a thousand-yen note.'},
     ],
     body:[
-        {jp:'頭',en:'Head',rj:'Atama'},{jp:'目',en:'Eye',rj:'Me'},
-        {jp:'鼻',en:'Nose',rj:'Hana'},{jp:'口',en:'Mouth',rj:'Kuchi'},
-        {jp:'耳',en:'Ear',rj:'Mimi'},{jp:'手',en:'Hand',rj:'Te'},
-        {jp:'足',en:'Foot',rj:'Ashi'},{jp:'腕',en:'Arm',rj:'Ude'},
-        {jp:'脚',en:'Leg',rj:'Ashi / Kyaku'},{jp:'背中',en:'Back',rj:'Senaka'},
-        {jp:'心臓',en:'Heart',rj:'Shinzou'},{jp:'歯',en:'Tooth',rj:'Ha'},
-        {jp:'首',en:'Neck',rj:'Kubi'},{jp:'肩',en:'Shoulder',rj:'Kata'},
-        {jp:'膝',en:'Knee',rj:'Hiza'},{jp:'指',en:'Finger',rj:'Yubi'},
-        {jp:'腹',en:'Belly',rj:'Hara'},{jp:'舌',en:'Tongue',rj:'Shita'},
-        {jp:'髪',en:'Hair',rj:'Kami'},{jp:'顔',en:'Face',rj:'Kao'},
+        {jp:'頭',en:'Head',rj:'Atama',example:'頭が痛いです。',example_en:'I have a headache.'},{jp:'目',en:'Eye',rj:'Me',example:'彼女は目が大きい。',example_en:'She has big eyes.'},
+        {jp:'鼻',en:'Nose',rj:'Hana',example:'鼻水が出ています。',example_en:'My nose is running.'},{jp:'口',en:'Mouth',rj:'Kuchi',example:'食べるときは口を閉じてください。',example_en:'Please close your mouth when eating.'},
+        {jp:'耳',en:'Ear',rj:'Mimi',example:'左の耳が痛い。',example_en:'My left ear hurts.'},{jp:'手',en:'Hand',rj:'Te',example:'手を洗ってください。',example_en:'Please wash your hands.'},
+        {jp:'足',en:'Foot',rj:'Ashi',example:'足がしびれています。',example_en:'My foot has gone to sleep.'},{jp:'腕',en:'Arm',rj:'Ude',example:'腕を骨折しました。',example_en:'I broke my arm.'},
+        {jp:'脚',en:'Leg',rj:'Ashi / Kyaku',example:'脚が長い人がうらやましい。',example_en:'I envy people with long legs.'},{jp:'背中',en:'Back',rj:'Senaka',example:'背中が痛い。',example_en:'My back hurts.'},
+        {jp:'心臓',en:'Heart',rj:'Shinzou',example:'心臓がドキドキしている。',example_en:'My heart is pounding.'},{jp:'歯',en:'Tooth',rj:'Ha',example:'歯医者に行かなければならない。',example_en:'I have to go to the dentist.'},
+        {jp:'首',en:'Neck',rj:'Kubi',example:'首が痛くて動かせない。',example_en:'My neck hurts and I can\'t move it.'},{jp:'肩',en:'Shoulder',rj:'Kata',example:'肩をマッサージしてもらった。',example_en:'I had my shoulder massaged.'},
+        {jp:'膝',en:'Knee',rj:'Hiza',example:'転んで膝を擦りむいた。',example_en:'I fell and scraped my knee.'},{jp:'指',en:'Finger',rj:'Yubi',example:'包丁で指を切ってしまった。',example_en:'I accidentally cut my finger with a knife.'},
+        {jp:'腹',en:'Belly',rj:'Hara',example:'お腹がいっぱいです。',example_en:'My belly is full.'},{jp:'舌',en:'Tongue',rj:'Shita',example:'日本語は難しい言語です。',example_en:'Japanese is a difficult language.'},
+        {jp:'髪',en:'Hair',rj:'Kami',example:'今日、髪を切りました。',example_en:'I got my hair cut today.'},{jp:'顔',en:'Face',rj:'Kao',example:'冷たい水で顔を洗ってください。',example_en:'Please wash your face with cold water.'},
     ],
     food:[
-        {jp:'ご飯',en:'Rice',rj:'Gohan'},{jp:'パン',en:'Bread',rj:'Pan'},
-        {jp:'鶏肉',en:'Chicken',rj:'Toriniku'},{jp:'魚',en:'Fish',rj:'Sakana'},
-        {jp:'牛乳',en:'Milk',rj:'Gyuunyuu'},{jp:'卵',en:'Egg',rj:'Tamago'},
-        {jp:'チーズ',en:'Cheese',rj:'Chiizu'},{jp:'果物',en:'Fruit',rj:'Kudamono'},
-        {jp:'野菜',en:'Vegetable',rj:'Yasai'},{jp:'コーヒー',en:'Coffee',rj:'Koohii'},
-        {jp:'ジュース',en:'Juice',rj:'Juusu'},{jp:'水',en:'Water',rj:'Mizu'},
-        {jp:'肉',en:'Meat',rj:'Niku'},{jp:'麺',en:'Noodles',rj:'Men'},
-        {jp:'サラダ',en:'Salad',rj:'Sarada'},{jp:'スープ',en:'Soup',rj:'Suupu'},
-        {jp:'ケーキ',en:'Cake',rj:'Keeki'},{jp:'アイスクリーム',en:'Ice cream',rj:'Aisu kuriimu'},
-        {jp:'バター',en:'Butter',rj:'Bataa'},{jp:'にんにく',en:'Garlic',rj:'Ninniku'},
-        {jp:'玉ねぎ',en:'Onion',rj:'Tamanegi'},{jp:'トマト',en:'Tomato',rj:'Tomato'},
-        {jp:'じゃがいも',en:'Potato',rj:'Jagaimo'},{jp:'砂糖',en:'Sugar',rj:'Satou'},
+        {jp:'ご飯',en:'Rice',em:'🍚',rj:'Gohan',example:'ご飯を炊きました。',example_en:'I cooked rice.'},{jp:'パン',en:'Bread',em:'🍞',rj:'Pan',example:'パン屋で焼きたてのパンを買った。',example_en:'I bought fresh bread at the bakery.'},
+        {jp:'鶏肉',en:'Chicken',em:'🍗',rj:'Toriniku',example:'鶏肉をオーブンで焼いています。',example_en:'The chicken is roasting in the oven.'},{jp:'魚',en:'Fish',em:'🐟',rj:'Sakana',example:'魚を焼いて食べました。',example_en:'I grilled fish and ate it.'},
+        {jp:'牛乳',en:'Milk',em:'🥛',rj:'Gyuunyuu',example:'毎朝牛乳を飲みます。',example_en:'I drink milk every morning.'},{jp:'卵',en:'Egg',em:'🥚',rj:'Tamago',example:'卵を二個使いました。',example_en:'I used two eggs.'},
+        {jp:'チーズ',en:'Cheese',em:'🧀',rj:'Chiizu',example:'チーズは好きですか？',example_en:'Do you like cheese?'},{jp:'果物',en:'Fruit',em:'🍓',rj:'Kudamono',example:'毎日果物を食べています。',example_en:'I eat fruit every day.'},
+        {jp:'野菜',en:'Vegetable',em:'🥦',rj:'Yasai',example:'野菜を食べると体にいい。',example_en:'Eating vegetables is good for your body.'},{jp:'コーヒー',en:'Coffee',em:'☕',rj:'Koohii',example:'毎朝コーヒーを飲みます。',example_en:'I drink coffee every morning.'},
+        {jp:'ジュース',en:'Juice',em:'🧃',rj:'Juusu',example:'オレンジジュースをください。',example_en:'Please give me orange juice.'},{jp:'水',en:'Water',em:'💧',rj:'Mizu',example:'水を一杯飲みたい。',example_en:'I want to drink a glass of water.'},
+        {jp:'肉',en:'Meat',em:'🥩',rj:'Niku',example:'この肉はとても柔らかい。',example_en:'This meat is very tender.'},{jp:'麺',en:'Noodles',em:'🍜',rj:'Men',example:'ラーメンの麺は太い。',example_en:'Ramen noodles are thick.'},
+        {jp:'サラダ',en:'Salad',em:'🥗',rj:'Sarada',example:'サラダを注文しました。',example_en:'I ordered a salad.'},{jp:'スープ',en:'Soup',em:'🍲',rj:'Suupu',example:'スープが熱い。',example_en:'The soup is hot.'},
+        {jp:'ケーキ',en:'Cake',em:'🎂',rj:'Keeki',example:'誕生日ケーキを作りました。',example_en:'I made a birthday cake.'},{jp:'アイスクリーム',en:'Ice cream',em:'🍦',rj:'Aisu kuriimu',example:'暑い日はアイスクリームが食べたい。',example_en:'On a hot day I want to eat ice cream.'},
+        {jp:'バター',en:'Butter',em:'🧈',rj:'Bataa',example:'パンにバターを塗ってください。',example_en:'Please spread butter on the bread.'},{jp:'にんにく',en:'Garlic',em:'🧄',rj:'Ninniku',example:'料理ににんにくを加えてください。',example_en:'Please add garlic to the dish.'},
+        {jp:'玉ねぎ',en:'Onion',em:'🧅',rj:'Tamanegi',example:'玉ねぎを切ると涙が出ます。',example_en:'Cutting onion makes you cry.'},{jp:'トマト',en:'Tomato',em:'🍅',rj:'Tomato',example:'トマトが熟れています。',example_en:'The tomato is ripe.'},
+        {jp:'じゃがいも',en:'Potato',em:'🥔',rj:'Jagaimo',example:'じゃがいもをゆでた。',example_en:'I boiled the potatoes.'},{jp:'砂糖',en:'Sugar',em:'🍬',rj:'Satou',example:'コーヒーに砂糖を入れますか？',example_en:'Do you put sugar in your coffee?'},
     ],
     animals:[
-        {jp:'犬',en:'Dog',rj:'Inu'},{jp:'猫',en:'Cat',rj:'Neko'},
-        {jp:'鳥',en:'Bird',rj:'Tori'},{jp:'魚',en:'Fish',rj:'Sakana'},
-        {jp:'馬',en:'Horse',rj:'Uma'},{jp:'牛',en:'Cow',rj:'Ushi'},
-        {jp:'豚',en:'Pig',rj:'Buta'},{jp:'羊',en:'Sheep',rj:'Hitsuji'},
-        {jp:'猿',en:'Monkey',rj:'Saru'},{jp:'ライオン',en:'Lion',rj:'Raion'},
-        {jp:'象',en:'Elephant',rj:'Zou'},{jp:'蛇',en:'Snake',rj:'Hebi'},
-        {jp:'兎',en:'Rabbit',rj:'Usagi'},{jp:'虎',en:'Tiger',rj:'Tora'},
-        {jp:'熊',en:'Bear',rj:'Kuma'},{jp:'蛙',en:'Frog',rj:'Kaeru'},
-        {jp:'ねずみ',en:'Mouse',rj:'Nezumi'},{jp:'ニワトリ',en:'Chicken (hen)',rj:'Niwatori'},
-        {jp:'オウム',en:'Parrot',rj:'Oumu'},{jp:'亀',en:'Turtle',rj:'Kame'},
+        {jp:'犬',en:'Dog',em:'🐶',rj:'Inu',example:'犬が吠えています。',example_en:'The dog is barking.'},{jp:'猫',en:'Cat',em:'🐱',rj:'Neko',example:'猫がソファで寝ています。',example_en:'The cat is sleeping on the sofa.'},
+        {jp:'鳥',en:'Bird',em:'🐦',rj:'Tori',example:'鳥が朝に鳴いています。',example_en:'The bird is singing in the morning.'},{jp:'魚',en:'Fish',em:'🐟',rj:'Sakana',example:'魚を焼いて食べました。',example_en:'I grilled fish and ate it.'},
+        {jp:'馬',en:'Horse',em:'🐴',rj:'Uma',example:'馬がとても速く走っています。',example_en:'The horse is running very fast.'},{jp:'牛',en:'Cow',em:'🐄',rj:'Ushi',example:'牛が牧草地にいます。',example_en:'The cow is in the pasture.'},
+        {jp:'豚',en:'Pig',em:'🐷',rj:'Buta',example:'豚が泥の中で転がっています。',example_en:'The pig is rolling in the mud.'},{jp:'羊',en:'Sheep',em:'🐑',rj:'Hitsuji',example:'羊は白い毛を持っています。',example_en:'The sheep has white wool.'},
+        {jp:'猿',en:'Monkey',em:'🐒',rj:'Saru',example:'猿が枝から枝へジャンプしています。',example_en:'The monkey is jumping from branch to branch.'},{jp:'ライオン',en:'Lion',em:'🦁',rj:'Raion',example:'ライオンはジャングルの王様です。',example_en:'The lion is the king of the jungle.'},
+        {jp:'象',en:'Elephant',em:'🐘',rj:'Zou',example:'象は記憶力が素晴らしい。',example_en:'Elephants have a wonderful memory.'},{jp:'蛇',en:'Snake',em:'🐍',rj:'Hebi',example:'あの蛇は危ない。',example_en:'That snake is dangerous.'},
+        {jp:'兎',en:'Rabbit',em:'🐰',rj:'Usagi',example:'ウサギがにんじんを食べています。',example_en:'The rabbit is eating a carrot.'},{jp:'虎',en:'Tiger',em:'🐯',rj:'Tora',example:'虎は夜に狩りをします。',example_en:'The tiger hunts at night.'},
+        {jp:'熊',en:'Bear',em:'🐻',rj:'Kuma',example:'熊は冬に冬眠します。',example_en:'The bear hibernates in winter.'},{jp:'蛙',en:'Frog',em:'🐸',rj:'Kaeru',example:'カエルが水たまりに飛び込んだ。',example_en:'The frog jumped into the puddle.'},
+        {jp:'ねずみ',en:'Mouse',em:'🐭',rj:'Nezumi',example:'ねずみが台所に入ってきた。',example_en:'The mouse got into the kitchen.'},{jp:'ニワトリ',en:'Chicken (hen)',em:'🐔',rj:'Niwatori',example:'ニワトリは毎日卵を産みます。',example_en:'The hen lays eggs every day.'},
+        {jp:'オウム',en:'Parrot',em:'🦜',rj:'Oumu',example:'オウムは聞いたことを繰り返す。',example_en:'The parrot repeats what it hears.'},{jp:'亀',en:'Turtle',em:'🐢',rj:'Kame',example:'亀はゆっくり歩きます。',example_en:'The turtle walks slowly.'},
     ],
     travel:[
-        {jp:'空港',en:'Airport',rj:'Kuukou'},{jp:'ホテル',en:'Hotel',rj:'Hoteru'},
-        {jp:'電車',en:'Train',rj:'Densha'},{jp:'バス',en:'Bus',rj:'Basu'},
-        {jp:'タクシー',en:'Taxi',rj:'Takushii'},{jp:'パスポート',en:'Passport',rj:'Pasupooto'},
-        {jp:'スーツケース',en:'Suitcase',rj:'Suutsukeesu'},{jp:'地図',en:'Map',rj:'Chizu'},
-        {jp:'海',en:'Beach / Sea',rj:'Umi'},{jp:'博物館',en:'Museum',rj:'Hakubutsukan'},
-        {jp:'レストラン',en:'Restaurant',rj:'Resutoran'},{jp:'お金',en:'Money',rj:'Okane'},
-        {jp:'地下鉄',en:'Metro/Subway',rj:'Chikatetsu'},{jp:'飛行機',en:'Aeroplane',rj:'Hikouki'},
-        {jp:'チケット',en:'Ticket',rj:'Chiketto'},{jp:'予約',en:'Reservation',rj:'Yoyaku'},
-        {jp:'バイク',en:'Motorcycle',rj:'Baiku'},{jp:'船',en:'Boat',rj:'Fune'},
-        {jp:'両替所',en:'Exchange office',rj:'Ryougaejo'},{jp:'荷物',en:'Luggage',rj:'Nimotsu'},
+        {jp:'空港',en:'Airport',rj:'Kuukou',example:'空港に早めに着いた。',example_en:'I arrived at the airport early.'},{jp:'ホテル',en:'Hotel',rj:'Hoteru',example:'ホテルは駅の近くにあります。',example_en:'The hotel is near the station.'},
+        {jp:'電車',en:'Train',rj:'Densha',example:'電車が来ます。',example_en:'The train is coming.'},{jp:'バス',en:'Bus',rj:'Basu',example:'バスが遅れています。',example_en:'The bus is running late.'},
+        {jp:'タクシー',en:'Taxi',rj:'Takushii',example:'タクシーを呼んでください。',example_en:'Please call a taxi.'},{jp:'パスポート',en:'Passport',rj:'Pasupooto',example:'パスポートを忘れないでください。',example_en:'Don\'t forget your passport.'},
+        {jp:'スーツケース',en:'Suitcase',rj:'Suutsukeesu',example:'スーツケースが重い。',example_en:'The suitcase is heavy.'},{jp:'地図',en:'Map',rj:'Chizu',example:'地図を見てください。',example_en:'Please look at the map.'},
+        {jp:'海',en:'Beach / Sea',rj:'Umi',example:'明日、海に行きましょう。',example_en:'Let\'s go to the sea tomorrow.'},{jp:'博物館',en:'Museum',rj:'Hakubutsukan',example:'博物館は十時に開きます。',example_en:'The museum opens at ten o\'clock.'},
+        {jp:'レストラン',en:'Restaurant',rj:'Resutoran',example:'レストランが満席です。',example_en:'The restaurant is fully booked.'},{jp:'お金',en:'Money',rj:'Okane',example:'お金を引き出す必要があります。',example_en:'I need to withdraw some money.'},
+        {jp:'地下鉄',en:'Metro/Subway',rj:'Chikatetsu',example:'地下鉄の方が速いです。',example_en:'The subway is faster.'},{jp:'飛行機',en:'Aeroplane',rj:'Hikouki',example:'飛行機が八時に離陸します。',example_en:'The plane takes off at eight.'},
+        {jp:'チケット',en:'Ticket',rj:'Chiketto',example:'チケットをオンラインで買いました。',example_en:'I bought the ticket online.'},{jp:'予約',en:'Reservation',rj:'Yoyaku',example:'二人分の予約をしました。',example_en:'I made a reservation for two.'},
+        {jp:'バイク',en:'Motorcycle',rj:'Baiku',example:'彼はバイクで来ました。',example_en:'He came by motorcycle.'},{jp:'船',en:'Boat',rj:'Fune',example:'船で川を渡りました。',example_en:'We crossed the river by boat.'},
+        {jp:'両替所',en:'Exchange office',rj:'Ryougaejo',example:'両替所はどこですか？',example_en:'Where is the exchange office?'},{jp:'荷物',en:'Luggage',rj:'Nimotsu',example:'荷物はトランクに入っています。',example_en:'The luggage is in the boot.'},
     ],
     family:[
-        {jp:'お母さん',en:'Mother',rj:'Okaasan'},{jp:'お父さん',en:'Father',rj:'Otousan'},
-        {jp:'兄',en:'Elder brother',rj:'Ani'},{jp:'姉',en:'Elder sister',rj:'Ane'},
-        {jp:'祖母',en:'Grandmother',rj:'Sobo'},{jp:'祖父',en:'Grandfather',rj:'Sofu'},
-        {jp:'息子',en:'Son',rj:'Musuko'},{jp:'娘',en:'Daughter',rj:'Musume'},
-        {jp:'叔父',en:'Uncle',rj:'Oji'},{jp:'叔母',en:'Aunt',rj:'Oba'},
-        {jp:'いとこ',en:'Cousin',rj:'Itoko'},{jp:'夫',en:'Husband',rj:'Otto'},
-        {jp:'妻',en:'Wife',rj:'Tsuma'},{jp:'赤ちゃん',en:'Baby',rj:'Akachan'},
-        {jp:'甥',en:'Nephew',rj:'Oi'},{jp:'姪',en:'Niece',rj:'Mei'},
-        {jp:'義理の兄',en:'Brother-in-law',rj:'Giri no ani'},{jp:'義母',en:'Mother-in-law',rj:'Gibo'},
-        {jp:'義父',en:'Father-in-law',rj:'Gifu'},{jp:'弟',en:'Younger brother',rj:'Otouto'},
+        {jp:'お母さん',en:'Mother',rj:'Okaasan',example:'お母さんの料理はおいしい。',example_en:'My mother\'s cooking is delicious.'},{jp:'お父さん',en:'Father',rj:'Otousan',example:'お父さんは会社で働いています。',example_en:'My father is working at the company.'},
+        {jp:'兄',en:'Elder brother',rj:'Ani',example:'兄は東京に住んでいます。',example_en:'My older brother lives in Tokyo.'},{jp:'姉',en:'Elder sister',rj:'Ane',example:'姉は医学を勉強しています。',example_en:'My older sister is studying medicine.'},
+        {jp:'祖母',en:'Grandmother',rj:'Sobo',example:'祖母は毎週ケーキを作ります。',example_en:'My grandmother makes cake every week.'},{jp:'祖父',en:'Grandfather',rj:'Sofu',example:'祖父は昔話を聞かせてくれる。',example_en:'My grandfather tells me old stories.'},
+        {jp:'息子',en:'Son',rj:'Musuko',example:'息子は五歳です。',example_en:'My son is five years old.'},{jp:'娘',en:'Daughter',rj:'Musume',example:'娘は学校にいます。',example_en:'My daughter is at school.'},
+        {jp:'叔父',en:'Uncle',rj:'Oji',example:'叔父は大阪に住んでいます。',example_en:'My uncle lives in Osaka.'},{jp:'叔母',en:'Aunt',rj:'Oba',example:'叔母がプレゼントをくれた。',example_en:'My aunt gave me a present.'},
+        {jp:'いとこ',en:'Cousin',rj:'Itoko',example:'いとこが遊びに来ました。',example_en:'My cousin came to visit.'},{jp:'夫',en:'Husband',rj:'Otto',example:'夫はとても親切です。',example_en:'My husband is very kind.'},
+        {jp:'妻',en:'Wife',rj:'Tsuma',example:'妻は先生です。',example_en:'My wife is a teacher.'},{jp:'赤ちゃん',en:'Baby',rj:'Akachan',example:'赤ちゃんが泣いています。',example_en:'The baby is crying.'},
+        {jp:'甥',en:'Nephew',rj:'Oi',example:'甥は二歳です。',example_en:'My nephew is two years old.'},{jp:'姪',en:'Niece',rj:'Mei',example:'姪はとても可愛い。',example_en:'My niece is very cute.'},
+        {jp:'義理の兄',en:'Brother-in-law',rj:'Giri no ani',example:'義理の兄は医者です。',example_en:'My brother-in-law is a doctor.'},{jp:'義母',en:'Mother-in-law',rj:'Gibo',example:'義母が夕食に来ました。',example_en:'My mother-in-law came for dinner.'},
+        {jp:'義父',en:'Father-in-law',rj:'Gifu',example:'義父はとても寛大です。',example_en:'My father-in-law is very generous.'},{jp:'弟',en:'Younger brother',rj:'Otouto',example:'弟は高校生です。',example_en:'My younger brother is a high school student.'},
     ],
     time:[
-        {jp:'今日',en:'Today',rj:'Kyou'},{jp:'明日',en:'Tomorrow',rj:'Ashita'},
-        {jp:'昨日',en:'Yesterday',rj:'Kinou'},{jp:'週',en:'Week',rj:'Shuu'},
-        {jp:'月',en:'Month',rj:'Tsuki'},{jp:'年',en:'Year',rj:'Nen / Toshi'},
-        {jp:'時間',en:'Hour',rj:'Jikan'},{jp:'分',en:'Minute',rj:'Fun / Pun'},
-        {jp:'朝',en:'Morning',rj:'Asa'},{jp:'午後',en:'Afternoon',rj:'Gogo'},
-        {jp:'夜',en:'Night',rj:'Yoru'},{jp:'今',en:'Now',rj:'Ima'},
-        {jp:'月曜日',en:'Monday',rj:'Getsuyoubi'},{jp:'火曜日',en:'Tuesday',rj:'Kayoubi'},
-        {jp:'水曜日',en:'Wednesday',rj:'Suiyoubi'},{jp:'木曜日',en:'Thursday',rj:'Mokuyoubi'},
-        {jp:'金曜日',en:'Friday',rj:'Kin-youbi'},{jp:'土曜日',en:'Saturday',rj:'Doyoubi'},
-        {jp:'日曜日',en:'Sunday',rj:'Nichiyoubi'},{jp:'秒',en:'Second',rj:'Byou'},
+        {jp:'今日',en:'Today',rj:'Kyou',example:'今日は何をしますか？',example_en:'What are you going to do today?'},{jp:'明日',en:'Tomorrow',rj:'Ashita',example:'明日は早い会議があります。',example_en:'There\'s an early meeting tomorrow.'},
+        {jp:'昨日',en:'Yesterday',rj:'Kinou',example:'昨日、映画を見に行きました。',example_en:'Yesterday I went to the cinema.'},{jp:'週',en:'Week',rj:'Shuu',example:'今週はあっという間でした。',example_en:'This week went by so fast.'},
+        {jp:'月',en:'Month',rj:'Tsuki',example:'先月、日本に行きました。',example_en:'Last month I went to Japan.'},{jp:'年',en:'Year',rj:'Nen / Toshi',example:'新年が近づいています。',example_en:'The new year is approaching.'},
+        {jp:'時間',en:'Hour',rj:'Jikan',example:'もう行く時間です。',example_en:'It\'s already time to go.'},{jp:'分',en:'Minute',rj:'Fun / Pun',example:'少々お待ちください。',example_en:'Please wait a moment.'},
+        {jp:'朝',en:'Morning',rj:'Asa',example:'朝はコーヒーを飲みます。',example_en:'I drink coffee in the morning.'},{jp:'午後',en:'Afternoon',rj:'Gogo',example:'午後は公園に行きます。',example_en:'I\'m going to the park in the afternoon.'},
+        {jp:'夜',en:'Night',rj:'Yoru',example:'夜は映画を見るのが好きです。',example_en:'I like watching films at night.'},{jp:'今',en:'Now',rj:'Ima',example:'今すぐ出発しなければなりません。',example_en:'I have to leave right now.'},
+        {jp:'月曜日',en:'Monday',rj:'Getsuyoubi',example:'月曜日は仕事の日です。',example_en:'Monday is a work day.'},{jp:'火曜日',en:'Tuesday',rj:'Kayoubi',example:'火曜日に日本語のクラスがあります。',example_en:'I have Japanese class on Tuesday.'},
+        {jp:'水曜日',en:'Wednesday',rj:'Suiyoubi',example:'水曜日に会議があります。',example_en:'There\'s a meeting on Wednesday.'},{jp:'木曜日',en:'Thursday',rj:'Mokuyoubi',example:'木曜日はもうすぐ週末です。',example_en:'Thursday is almost the weekend.'},
+        {jp:'金曜日',en:'Friday',rj:'Kin-youbi',example:'みんな金曜日が大好きです。',example_en:'Everyone loves Friday.'},{jp:'土曜日',en:'Saturday',rj:'Doyoubi',example:'土曜日は海に行きます。',example_en:'On Saturday I\'m going to the sea.'},
+        {jp:'日曜日',en:'Sunday',rj:'Nichiyoubi',example:'日曜日は家族の日です。',example_en:'Sunday is family day.'},{jp:'秒',en:'Second',rj:'Byou',example:'一秒しかかかりません。',example_en:'It only takes a second.'},
     ],
 };
 
@@ -367,6 +410,56 @@ function getPhraseLib(diff){
 }
 
 let currentCat='colours',wordPool=[],wordIdx=0,wordHistory=[];
+
+// ════════════════════════════════════════════════════
+// STARS & FAVORITES (localStorage)
+// ════════════════════════════════════════════════════
+const LS_STARS='sakura_starred_v1';
+const LS_EASY='sakura_easy_v1';
+
+function getStarred(){try{return JSON.parse(localStorage.getItem(LS_STARS)||'[]');}catch(e){return[];}}
+function saveStarred(arr){try{localStorage.setItem(LS_STARS,JSON.stringify(arr));}catch(e){}}
+function getEasyUntil(){try{return JSON.parse(localStorage.getItem(LS_EASY)||'{}');}catch(e){return{};}}
+function saveEasyUntil(obj){try{localStorage.setItem(LS_EASY,JSON.stringify(obj));}catch(e){}}
+
+function cardKey(card){return card.jp+'|'+card.en;}
+
+function isStarred(card){return getStarred().includes(cardKey(card));}
+
+function toggleStar(){
+    const card=wordPool[wordIdx];if(!card)return;
+    const key=cardKey(card);let starred=getStarred();
+    if(starred.includes(key)){starred=starred.filter(k=>k!==key);}
+    else{starred.push(key);}
+    saveStarred(starred);updateStarUI(card);
+    if(currentCat==='favorites')loadWordCat('favorites');
+}
+
+function updateStarUI(card){
+    const btn=document.getElementById('word-star');
+    if(!btn||!card)return;
+    const on=isStarred(card);
+    btn.textContent=on?'★':'☆';btn.classList.toggle('starred',on);
+}
+
+// ════════════════════════════════════════════════════
+// CONFIDENCE / SPACED REPETITION
+// ════════════════════════════════════════════════════
+function rateCard(rating){
+    const card=wordPool[wordIdx];if(!card){nextCard();return;}
+    if(rating==='easy'){
+        const eu=getEasyUntil();eu[cardKey(card)]=Date.now()+24*60*60*1000;saveEasyUntil(eu);
+        wordPool.splice(wordIdx,1);
+        if(wordPool.length===0){loadWordCat(currentCat);return;}
+        wordIdx=wordIdx%wordPool.length;showWordCard();
+    }else if(rating==='hard'){
+        wordPool.splice(wordIdx,1);
+        const ahead=Math.min(wordPool.length,2+Math.floor(Math.random()*3));
+        const insertAt=(wordIdx+ahead)%(wordPool.length+1);
+        wordPool.splice(insertAt,0,card);
+        wordIdx=wordIdx%wordPool.length;showWordCard();
+    }else{nextCard();}
+}
 let phraseDiff='easy',phrasePool=[],phraseIdx=0,phraseHistory=[];
 let listType='words',listCat='colours',listPhraseDiff='easy';
 let testType='words',testCat='colours',testDiff='easy';
@@ -386,8 +479,59 @@ function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Mat
 function buildCatButtons(containerId,activeCat,onClickFn){const wrap=document.getElementById(containerId);wrap.innerHTML='';CATEGORIES.forEach(cat=>{const btn=document.createElement('button');btn.className='cat-btn'+(cat.id===activeCat?' active':'');btn.innerHTML=`<span class="cat-icon">${cat.icon}</span>${cat.label}`;btn.onclick=()=>onClickFn(cat.id,btn,containerId);wrap.appendChild(btn);});}
 function setActiveCatBtn(containerId,catId){const btns=document.querySelectorAll(`#${containerId} .cat-btn`);const idx=CATEGORIES.findIndex(c=>c.id===catId);btns.forEach(b=>b.classList.remove('active'));if(btns[idx])btns[idx].classList.add('active');}
 
-function loadWordCat(catId){currentCat=catId;wordPool=shuffle(WORD_LIBRARY[catId]||[]);wordIdx=0;wordHistory=[0];showWordCard();setActiveCatBtn('words-cat-scroll',catId);}
-function showWordCard(){document.querySelectorAll('#words .flashcard-wrapper').forEach(w=>w.classList.remove('is-flipped'));const card=wordPool[wordIdx];if(!card)return;setTimeout(()=>{document.getElementById('jp-text').innerText=card.jp;document.getElementById('en-text').innerText=card.en;document.querySelectorAll('.jp-rj-view').forEach(el=>el.innerText=`[ ${card.rj} ]`);document.getElementById('words-counter').innerText=`${wordIdx+1} / ${wordPool.length}`;},150);}
+function loadWordCat(catId){
+    currentCat=catId;
+    let pool;
+    if(catId==='favorites'){
+        const starred=getStarred();
+        pool=Object.values(WORD_LIBRARY).flat().filter(w=>starred.includes(cardKey(w)));
+    }else{
+        pool=WORD_LIBRARY[catId]||[];
+    }
+    const eu=getEasyUntil(),now=Date.now();
+    pool=pool.filter(w=>{const u=eu[cardKey(w)];return !u||now>u;});
+    wordPool=shuffle(pool);wordIdx=0;wordHistory=[0];
+    showWordCard();setActiveCatBtn('words-cat-scroll',catId);
+}
+function showWordCard(){
+    document.querySelectorAll('#words .flashcard-wrapper').forEach(w=>w.classList.remove('is-flipped'));
+    const card=wordPool[wordIdx];
+    const favEmpty=document.getElementById('fav-empty-msg');
+    if(!card){
+        document.getElementById('jp-text').innerText='--';
+        document.getElementById('en-text').innerText='--';
+        document.querySelectorAll('.jp-rj-view').forEach(el=>el.innerText='');
+        document.getElementById('words-counter').innerText='';
+        updateStarUI(null);
+        if(currentCat==='favorites'&&!favEmpty){
+            const msg=document.createElement('div');msg.id='fav-empty-msg';msg.className='fav-empty';
+            msg.innerHTML='<span class="fav-empty-icon">☆</span>No favourites yet!<br>Tap the ☆ on any word card to save it here.';
+            document.getElementById('words').appendChild(msg);
+        }
+        return;
+    }
+    if(favEmpty)favEmpty.remove();
+    setTimeout(()=>{
+        document.getElementById('jp-text').innerText=card.jp;
+        document.getElementById('en-text').innerText=card.en;
+        document.querySelectorAll('.jp-rj-view').forEach(el=>el.innerText=`[ ${card.rj} ]`);
+        document.getElementById('words-counter').innerText=`${wordIdx+1} / ${wordPool.length}`;
+        updateStarUI(card);
+        // Emoji
+        const emojiEl=document.getElementById('card-emoji');
+        if(card.em){emojiEl.textContent=card.em;emojiEl.style.display='block';}
+        else{emojiEl.textContent='';emojiEl.style.display='none';}
+        // Example sentences
+        const exFront=document.getElementById('card-example-front');
+        const exBack=document.getElementById('card-example-back');
+        if(card.example){
+            document.getElementById('example-jp').textContent=card.example;
+            document.getElementById('example-back-jp').textContent=card.example;
+            document.getElementById('example-en').textContent=card.example_en||'';
+            exFront.style.display='block';exBack.style.display='block';
+        }else{exFront.style.display='none';exBack.style.display='none';}
+    },150);
+}
 function nextCard(){wordIdx=(wordIdx+1)%wordPool.length;wordHistory.push(wordIdx);if(wordHistory.length>200)wordHistory.shift();showWordCard();}
 function prevCard(){if(wordHistory.length>1){wordHistory.pop();wordIdx=wordHistory[wordHistory.length-1];}else wordIdx=(wordIdx-1+wordPool.length)%wordPool.length;showWordCard();}
 
