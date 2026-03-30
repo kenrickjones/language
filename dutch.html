@@ -8,7 +8,7 @@
     <script src="dutch_vault.js"></script>
     <style>
         :root{--bg:#0f172a;--card:#1e293b;--primary:#38bdf8;--shadow:#0369a1;--text:#f8fafc;--text-dim:#94a3b8;--border:#334155;}
-        *{box-sizing:border-box;transition:all 0.2s ease;-webkit-tap-highlight-color:transparent;}
+        *{box-sizing:border-box;transition:transform 0.2s ease,opacity 0.2s ease,border-color 0.2s ease,background-color 0.2s ease,color 0.2s ease;-webkit-tap-highlight-color:transparent;}
         body{font-family:'Inter',sans-serif;background-color:var(--bg);color:var(--text);margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding-top:env(safe-area-inset-top);}
         .top-nav{width:100%;display:flex;padding:12px 15px;background:rgba(15,23,42,0.95);backdrop-filter:blur(10px);position:sticky;top:0;z-index:100;border-bottom:1px solid var(--border);}
         .home-link{text-decoration:none;color:var(--text-dim);font-size:0.75rem;font-weight:800;border:1px solid var(--border);padding:6px 14px;border-radius:20px;background:var(--card);}
@@ -29,10 +29,11 @@
         .diff-toggle{display:flex;background:var(--bg);padding:4px;border-radius:10px;margin-bottom:15px;width:100%;gap:4px;border:1px solid var(--border);}
         .diff-btn{flex:1;padding:10px 2px;font-size:0.6rem;border:none;background:transparent;color:var(--text-dim);cursor:pointer;border-radius:6px;font-weight:800;}
         .diff-btn.active{background:var(--card);color:var(--primary);}
-        .flashcard-wrapper{perspective:1000px;width:100%;height:340px;cursor:pointer;margin:10px 0 15px 0;}
+        .flashcard-wrapper{perspective:1000px;width:100%;height:340px;cursor:pointer;margin:10px 0 15px 0;flex-shrink:0;}
+        .flashcard-wrapper,.flashcard-inner,.card-front,.card-back{transition-property:transform,opacity,border-color,background-color,color;}
         .flashcard-inner{position:relative;width:100%;height:100%;transition:transform 0.5s;transform-style:preserve-3d;}
         .flashcard-wrapper.is-flipped .flashcard-inner{transform:rotateY(180deg);}
-        .card-front,.card-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:24px;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:25px;border:2px solid var(--primary);text-align:center;background:var(--card);}
+        .card-front,.card-back{position:absolute;top:0;left:0;width:100%;height:100%;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:24px;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:25px;border:2px solid var(--primary);text-align:center;background:var(--card);overflow:hidden;}
         .card-back{background:var(--primary);transform:rotateY(180deg);color:white;}
         .btn-hear{background:rgba(255,255,255,0.1);border:1px solid var(--primary);color:var(--primary);padding:8px 15px;border-radius:20px;font-size:0.7rem;font-weight:800;margin-top:15px;cursor:pointer;}
         .card-back .btn-hear{border-color:white;color:white;}
@@ -99,6 +100,32 @@
         .btn-retry{width:100%;padding:16px;background:var(--primary);color:white;border:none;border-radius:14px;font-weight:800;cursor:pointer;box-shadow:0 4px 0 var(--shadow);font-size:0.95rem;}
         .video-list{width:100%;display:grid;gap:10px;}
         .video-item{display:flex;align-items:center;background:var(--card);padding:15px;border-radius:12px;text-decoration:none;color:white;border:1px solid var(--border);font-weight:600;font-size:0.9rem;}
+
+        /* Card emoji */
+        .card-emoji{font-size:4.5rem;line-height:1;margin-bottom:8px;display:block;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.3));}
+        /* Example — front */
+        .card-example-front{margin-top:12px;padding:10px 14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;width:100%;text-align:center;}
+        .card-example-front .ex-sentence{font-size:0.82rem;font-weight:600;color:var(--text);line-height:1.5;}
+        /* Example — back */
+        .card-example-back{margin-top:12px;padding:10px 14px;background:rgba(0,0,0,0.2);border:1px solid rgba(0,0,0,0.15);border-radius:10px;width:100%;text-align:center;}
+        .card-example-back .ex-sentence-native{font-size:0.85rem;font-weight:700;color:white;line-height:1.5;}
+        .card-example-back .ex-sentence-en{font-size:0.78rem;font-weight:500;color:rgba(255,255,255,0.75);line-height:1.5;margin-top:5px;font-style:italic;}
+        /* Star */
+        .btn-star{position:absolute;top:14px;right:14px;background:none;border:none;font-size:1.5rem;cursor:pointer;line-height:1;padding:4px;opacity:0.5;transition:opacity 0.15s ease,transform 0.15s ease;z-index:2;}
+        .btn-star:active{transform:scale(1.3);}
+        .btn-star.starred{opacity:1;}
+        /* Confidence */
+        .conf-nav{display:flex;gap:8px;width:100%;margin-top:8px;}
+        .btn-conf{flex:1;padding:13px 4px;border:none;border-radius:14px;font-weight:800;font-size:0.72rem;cursor:pointer;letter-spacing:0.03em;}
+        .btn-conf:active{opacity:0.8;transform:scale(0.97);}
+        .btn-hard{background:#ef4444;color:white;box-shadow:0 4px 0 #b91c1c;}
+        .btn-good{background:var(--primary);color:white;box-shadow:0 4px 0 var(--shadow);}
+        .btn-easy{background:#6366f1;color:white;box-shadow:0 4px 0 #4338ca;}
+        .btn-prev-sm,.btn-next-sm{flex:0 0 46px;padding:13px 0;background:var(--card);color:var(--text-dim);border:1px solid var(--border);border-radius:14px;font-weight:800;font-size:0.85rem;cursor:pointer;}
+        .btn-prev-sm:active,.btn-next-sm:active{opacity:0.7;}
+        /* Faves empty */
+        .fav-empty{text-align:center;padding:40px 20px;color:var(--text-dim);font-size:0.9rem;line-height:1.6;}
+        .fav-empty .fav-empty-icon{font-size:2.5rem;display:block;margin-bottom:12px;}
         @keyframes fadeIn{from{opacity:0}to{opacity:1}}
     </style>
 </head>
@@ -120,21 +147,33 @@
         <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
             <div class="flashcard-inner">
                 <div class="card-front">
+                    <button class="btn-star" id="word-star" onclick="event.stopPropagation();toggleStar()" title="Star this word">☆</button>
+                    <span id="card-emoji" class="card-emoji" style="display:none"></span>
                     <h2 id="nl-text" style="font-size:2.2rem;margin:0">--</h2>
                     <div class="nl-ph-view pronunciation">--</div>
                     <button class="btn-hear" onclick="event.stopPropagation();speak('nl-text')">🔊 HEAR</button>
+                    <div class="card-example-front" id="card-example-front" style="display:none">
+                        <div class="ex-sentence" id="example-native"></div>
+                    </div>
                     <div class="card-counter" id="words-counter"></div>
                 </div>
                 <div class="card-back">
                     <h2 id="en-text" style="font-size:1.8rem;margin:0">--</h2>
                     <div class="nl-ph-view pronunciation">--</div>
                     <button class="btn-hear" onclick="event.stopPropagation();speak('nl-text')">🔊 HEAR</button>
+                    <div class="card-example-back" id="card-example-back" style="display:none">
+                        <div class="ex-sentence-native" id="example-back-native"></div>
+                        <div class="ex-sentence-en" id="example-en"></div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="card-nav">
-            <button class="btn-prev" onclick="prevCard()">← PREV</button>
-            <button class="btn-next" onclick="nextCard()">NEXT →</button>
+        <div class="conf-nav">
+            <button class="btn-prev-sm" onclick="prevCard()">←</button>
+            <button class="btn-conf btn-hard" onclick="rateCard('hard')">😓 Hard</button>
+            <button class="btn-conf btn-good" onclick="rateCard('good')">👍 Good</button>
+            <button class="btn-conf btn-easy" onclick="rateCard('easy')">⚡ Easy</button>
+            <button class="btn-next-sm" onclick="nextCard()">→</button>
         </div>
     </div>
 
@@ -255,109 +294,109 @@
 </div>
 
 <script>
-const CATEGORIES=[{id:'colours',label:'Colours',icon:'🎨'},{id:'numbers',label:'Numbers',icon:'🔢'},{id:'body',label:'Body',icon:'🫀'},{id:'food',label:'Food',icon:'🍽️'},{id:'animals',label:'Animals',icon:'🐾'},{id:'travel',label:'Travel',icon:'✈️'},{id:'family',label:'Family',icon:'👨‍👩‍👧'},{id:'time',label:'Time',icon:'⏰'}];
+const CATEGORIES=[{id:'colours',label:'Colours',icon:'🎨'},{id:'numbers',label:'Numbers',icon:'🔢'},{id:'body',label:'Body',icon:'🫀'},{id:'food',label:'Food',icon:'🍽️'},{id:'animals',label:'Animals',icon:'🐾'},{id:'travel',label:'Travel',icon:'✈️'},{id:'family',label:'Family',icon:'👨‍👩‍👧'},{id:'time',label:'Time',icon:'⏰'},{id:'favorites',label:'⭐ Faves',icon:'⭐'}];
 
 const WORD_LIBRARY={
     colours:[
-        {nl:'Rood',en:'Red',ph:'roht'},{nl:'Blauw',en:'Blue',ph:'blow'},
-        {nl:'Groen',en:'Green',ph:'khroohn'},{nl:'Geel',en:'Yellow',ph:'khayl'},
-        {nl:'Zwart',en:'Black',ph:'zvart'},{nl:'Wit',en:'White',ph:'vit'},
-        {nl:'Oranje',en:'Orange',ph:'oh-RAHN-yuh'},{nl:'Roze',en:'Pink',ph:'ROH-zuh'},
-        {nl:'Paars',en:'Purple',ph:'pahrs'},{nl:'Grijs',en:'Grey',ph:'khrayss'},
-        {nl:'Bruin',en:'Brown',ph:'brownn'},{nl:'Goud',en:'Gold',ph:'khowt'},
-        {nl:'Zilver',en:'Silver',ph:'ZIL-vur'},{nl:'Beige',en:'Beige',ph:'bezh'},
-        {nl:'Turquoise',en:'Turquoise',ph:'tur-KWAZ'},{nl:'Lila',en:'Lilac',ph:'LEE-lah'},
-        {nl:'Bordeaux',en:'Burgundy',ph:'bor-DOH'},{nl:'Crème',en:'Cream',ph:'krehm'},
-        {nl:'Magenta',en:'Magenta',ph:'mah-GHEN-tah'},{nl:'Koraal',en:'Coral',ph:'koh-RAHL'},
+        {nl:'Rood',en:'Red',ph:'roht',example:'Het stoplicht werd rood.',example_en:'The traffic light turned red.'},{nl:'Blauw',en:'Blue',ph:'blow',example:'De lucht is blauw vandaag.',example_en:'The sky is blue today.'},
+        {nl:'Groen',en:'Green',ph:'khroohn',example:'Het gras is heel groen.',example_en:'The grass is very green.'},{nl:'Geel',en:'Yellow',ph:'khayl',example:'De taxi is geel.',example_en:'The taxi is yellow.'},
+        {nl:'Zwart',en:'Black',ph:'zvart',example:'Hij draagt een zwarte jas.',example_en:'He wears a black coat.'},{nl:'Wit',en:'White',ph:'vit',example:'De muur is wit.',example_en:'The wall is white.'},
+        {nl:'Oranje',en:'Orange',ph:'oh-RAHN-yuh',example:'De Nederlandse vlag is oranje.',example_en:'The Dutch flag is orange.'},{nl:'Roze',en:'Pink',ph:'ROH-zuh',example:'Ze kocht roze bloemen.',example_en:'She bought pink flowers.'},
+        {nl:'Paars',en:'Purple',ph:'pahrs',example:'Paars is mijn lievelingskleur.',example_en:'Purple is my favourite colour.'},{nl:'Grijs',en:'Grey',ph:'khrayss',example:'De lucht is grijs vandaag.',example_en:'The sky is grey today.'},
+        {nl:'Bruin',en:'Brown',ph:'brownn',example:'De beer is bruin.',example_en:'The bear is brown.'},{nl:'Goud',en:'Gold',ph:'khowt',example:'Het trofee is goud.',example_en:'The trophy is golden.'},
+        {nl:'Zilver',en:'Silver',ph:'ZIL-vur',example:'Ze draagt een zilveren ketting.',example_en:'She wears a silver necklace.'},{nl:'Beige',en:'Beige',ph:'bezh',example:'De muren zijn beige.',example_en:'The walls are beige.'},
+        {nl:'Turquoise',en:'Turquoise',ph:'tur-KWAZ',example:'De zee is turquoise.',example_en:'The sea is turquoise.'},{nl:'Lila',en:'Lilac',ph:'LEE-lah',example:'Ze schilderde de kamer lila.',example_en:'She painted the room lilac.'},
+        {nl:'Bordeaux',en:'Burgundy',ph:'bor-DOH',example:'De wijn heeft een bordeauxrode kleur.',example_en:'The wine has a burgundy colour.'},{nl:'Crème',en:'Cream',ph:'krehm',example:'De soep heeft een crèmekleur.',example_en:'The soup is cream-coloured.'},
+        {nl:'Magenta',en:'Magenta',ph:'mah-GHEN-tah',example:'De bloem is magenta.',example_en:'The flower is magenta.'},{nl:'Koraal',en:'Coral',ph:'koh-RAHL',example:'Ze draagt koraallipstift.',example_en:'She wears coral lipstick.'},
     ],
     numbers:[
-        {nl:'Één',en:'One',ph:'ayn'},{nl:'Twee',en:'Two',ph:'tvay'},
-        {nl:'Drie',en:'Three',ph:'dree'},{nl:'Vier',en:'Four',ph:'veer'},
-        {nl:'Vijf',en:'Five',ph:'vayf'},{nl:'Zes',en:'Six',ph:'zes'},
-        {nl:'Zeven',en:'Seven',ph:'ZAY-vun'},{nl:'Acht',en:'Eight',ph:'akht'},
-        {nl:'Negen',en:'Nine',ph:'NAY-khun'},{nl:'Tien',en:'Ten',ph:'teen'},
-        {nl:'Elf',en:'Eleven',ph:'elf'},{nl:'Twaalf',en:'Twelve',ph:'twalf'},
-        {nl:'Dertien',en:'Thirteen',ph:'DER-teen'},{nl:'Veertien',en:'Fourteen',ph:'VAYR-teen'},
-        {nl:'Vijftien',en:'Fifteen',ph:'VAYF-teen'},{nl:'Zestien',en:'Sixteen',ph:'ZES-teen'},
-        {nl:'Zeventien',en:'Seventeen',ph:'ZAY-vun-teen'},{nl:'Achttien',en:'Eighteen',ph:'AKH-teen'},
-        {nl:'Negentien',en:'Nineteen',ph:'NAY-khun-teen'},{nl:'Twintig',en:'Twenty',ph:'TWIN-tukh'},
-        {nl:'Dertig',en:'Thirty',ph:'DER-tukh'},{nl:'Veertig',en:'Forty',ph:'VAYR-tukh'},
-        {nl:'Vijftig',en:'Fifty',ph:'VAYF-tukh'},{nl:'Honderd',en:'Hundred',ph:'HON-durt'},
-        {nl:'Duizend',en:'Thousand',ph:'DOW-zunt'},
+        {nl:'Één',en:'One',ph:'ayn',example:'Ik wil één koffie, alsjeblieft.',example_en:'I want one coffee, please.'},{nl:'Twee',en:'Two',ph:'tvay',example:'Ik heb twee broers.',example_en:'I have two brothers.'},
+        {nl:'Drie',en:'Three',ph:'dree',example:'Hij woont drie straten verderop.',example_en:'He lives three streets from here.'},{nl:'Vier',en:'Four',ph:'veer',example:'De tafel heeft vier stoelen.',example_en:'The table has four chairs.'},
+        {nl:'Vijf',en:'Five',ph:'vayf',example:'De trein komt over vijf minuten.',example_en:'The train arrives in five minutes.'},{nl:'Zes',en:'Six',ph:'zes',example:'Er zijn zes eieren in de koelkast.',example_en:'There are six eggs in the fridge.'},
+        {nl:'Zeven',en:'Seven',ph:'ZAY-vun',example:'De winkel opent om zeven uur.',example_en:'The shop opens at seven.'},{nl:'Acht',en:'Eight',ph:'akht',example:'Ik slaap acht uur per nacht.',example_en:'I sleep eight hours a night.'},
+        {nl:'Negen',en:'Nine',ph:'NAY-khun',example:'De vlucht vertrekt om negen uur.',example_en:'The flight departs at nine.'},{nl:'Tien',en:'Ten',ph:'teen',example:'Ik heb tien sinaasappelen gekocht.',example_en:'I bought ten oranges.'},
+        {nl:'Elf',en:'Eleven',ph:'elf',example:'De wedstrijd begint om elf uur.',example_en:'The match starts at eleven.'},{nl:'Twaalf',en:'Twelve',ph:'twalf',example:'Er zijn twaalf maanden in een jaar.',example_en:'There are twelve months in a year.'},
+        {nl:'Dertien',en:'Thirteen',ph:'DER-teen',example:'Ze is dertien jaar oud.',example_en:'She is thirteen years old.'},{nl:'Veertien',en:'Fourteen',ph:'VAYR-teen',example:'Er zijn nog veertien dagen.',example_en:'There are fourteen days left.'},
+        {nl:'Vijftien',en:'Fifteen',ph:'VAYF-teen',example:'De deadline is vijftien dagen.',example_en:'The deadline is fifteen days.'},{nl:'Zestien',en:'Sixteen',ph:'ZES-teen',example:'Hij is zestien jaar oud.',example_en:'He is sixteen years old.'},
+        {nl:'Zeventien',en:'Seventeen',ph:'ZAY-vun-teen',example:'Het is zeventien uur.',example_en:'It is seventeen hundred hours.'},{nl:'Achttien',en:'Eighteen',ph:'AKH-teen',example:'Ze wordt morgen achttien.',example_en:'She turns eighteen tomorrow.'},
+        {nl:'Negentien',en:'Nineteen',ph:'NAY-khun-teen',example:'Ik heb negentien boeken.',example_en:'I have nineteen books.'},{nl:'Twintig',en:'Twenty',ph:'TWIN-tukh',example:'Twintig mensen kwamen naar het feest.',example_en:'Twenty people came to the party.'},
+        {nl:'Dertig',en:'Thirty',ph:'DER-tukh',example:'Hij is dertig jaar oud.',example_en:'He is thirty years old.'},{nl:'Veertig',en:'Forty',ph:'VAYR-tukh',example:'De reis duurt veertig minuten.',example_en:'The journey takes forty minutes.'},
+        {nl:'Vijftig',en:'Fifty',ph:'VAYF-tukh',example:'Ik betaalde vijftig euro.',example_en:'I paid fifty euros.'},{nl:'Honderd',en:'Hundred',ph:'HON-durt',example:'Dat kost honderd euro.',example_en:'That costs one hundred euros.'},
+        {nl:'Duizend',en:'Thousand',ph:'DOW-zunt',example:'Het ticket kost duizend euro.',example_en:'The ticket costs one thousand euros.'},
     ],
     body:[
-        {nl:'Hoofd',en:'Head',ph:'hohft'},{nl:'Oog',en:'Eye',ph:'ohkh'},
-        {nl:'Neus',en:'Nose',ph:'nuhss'},{nl:'Mond',en:'Mouth',ph:'mont'},
-        {nl:'Oor',en:'Ear',ph:'ohr'},{nl:'Hand',en:'Hand',ph:'hant'},
-        {nl:'Voet',en:'Foot',ph:'voot'},{nl:'Arm',en:'Arm',ph:'arm'},
-        {nl:'Been',en:'Leg',ph:'bayn'},{nl:'Rug',en:'Back',ph:'rukh'},
-        {nl:'Hart',en:'Heart',ph:'hart'},{nl:'Tand',en:'Tooth',ph:'tant'},
-        {nl:'Nek',en:'Neck',ph:'nek'},{nl:'Schouder',en:'Shoulder',ph:'SHOW-dur'},
-        {nl:'Knie',en:'Knee',ph:'knee'},{nl:'Vinger',en:'Finger',ph:'VING-ur'},
-        {nl:'Buik',en:'Belly',ph:'bowk'},{nl:'Tong',en:'Tongue',ph:'tong'},
-        {nl:'Haar',en:'Hair',ph:'har'},{nl:'Gezicht',en:'Face',ph:'khuh-ZIKHT'},
+        {nl:'Hoofd',en:'Head',ph:'hohft',example:'Ik heb hoofdpijn.',example_en:'I have a headache.'},{nl:'Oog',en:'Eye',ph:'ohkh',example:'Ze heeft blauwe ogen.',example_en:'She has blue eyes.'},
+        {nl:'Neus',en:'Nose',ph:'nuhss',example:'Mijn neus loopt.',example_en:'My nose is running.'},{nl:'Mond',en:'Mouth',ph:'mont',example:'Doe je mond dicht als je kauwt.',example_en:'Close your mouth when you chew.'},
+        {nl:'Oor',en:'Ear',ph:'ohr',example:'Mijn linkeroor doet pijn.',example_en:'My left ear hurts.'},{nl:'Hand',en:'Hand',ph:'hant',example:'Geef me een hand om over te steken.',example_en:'Give me your hand to cross the street.'},
+        {nl:'Voet',en:'Foot',ph:'voot',example:'Mijn voet slaapt.',example_en:'My foot has gone to sleep.'},{nl:'Arm',en:'Arm',ph:'arm',example:'Hij heeft zijn arm gebroken.',example_en:'He broke his arm.'},
+        {nl:'Been',en:'Leg',ph:'bayn',example:'Ze heeft lange benen.',example_en:'She has long legs.'},{nl:'Rug',en:'Back',ph:'rukh',example:'Ik heb rugpijn.',example_en:'My back hurts.'},
+        {nl:'Hart',en:'Heart',ph:'hart',example:'Mijn hart klopt snel.',example_en:'My heart is beating fast.'},{nl:'Tand',en:'Tooth',ph:'tant',example:'Ik moet naar de tandarts.',example_en:'I have to go to the dentist.'},
+        {nl:'Nek',en:'Neck',ph:'nek',example:'Ik heb een stijve nek.',example_en:'I have a stiff neck.'},{nl:'Schouder',en:'Shoulder',ph:'SHOW-dur',example:'Ze masseerde zijn schouder.',example_en:'She massaged his shoulder.'},
+        {nl:'Knie',en:'Knee',ph:'knee',example:'Hij viel en bezeerde zijn knie.',example_en:'He fell and hurt his knee.'},{nl:'Vinger',en:'Finger',ph:'VING-ur',example:'Ik sneed mijn vinger met het mes.',example_en:'I cut my finger with the knife.'},
+        {nl:'Buik',en:'Belly',ph:'bowk',example:'Mijn buik is vol.',example_en:'My belly is full.'},{nl:'Tong',en:'Tongue',ph:'tong',example:'Nederlands is een mooie taal.',example_en:'Dutch is a beautiful language.'},
+        {nl:'Haar',en:'Hair',ph:'har',example:'Ze heeft haar haar geknipt.',example_en:'She got her hair cut.'},{nl:'Gezicht',en:'Face',ph:'khuh-ZIKHT',example:'Was je gezicht met koud water.',example_en:'Wash your face with cold water.'},
     ],
     food:[
-        {nl:'Rijst',en:'Rice',ph:'rayst'},{nl:'Brood',en:'Bread',ph:'broht'},
-        {nl:'Kip',en:'Chicken',ph:'kip'},{nl:'Vis',en:'Fish',ph:'viss'},
-        {nl:'Melk',en:'Milk',ph:'melk'},{nl:'Ei',en:'Egg',ph:'ay'},
-        {nl:'Kaas',en:'Cheese',ph:'kahs'},{nl:'Fruit',en:'Fruit',ph:'froyt'},
-        {nl:'Groente',en:'Vegetable',ph:'KHROON-tuh'},{nl:'Koffie',en:'Coffee',ph:'KOF-ee'},
-        {nl:'Sap',en:'Juice',ph:'sap'},{nl:'Water',en:'Water',ph:'VAH-ter'},
-        {nl:'Vlees',en:'Meat',ph:'vlays'},{nl:'Pasta',en:'Pasta',ph:'PAS-tah'},
-        {nl:'Salade',en:'Salad',ph:'sah-LAH-duh'},{nl:'Soep',en:'Soup',ph:'soop'},
-        {nl:'Taart',en:'Cake',ph:'tart'},{nl:'Ijs',en:'Ice cream',ph:'ayss'},
-        {nl:'Boter',en:'Butter',ph:'BOH-tur'},{nl:'Knoflook',en:'Garlic',ph:'KNOF-lohk'},
-        {nl:'Ui',en:'Onion',ph:'ow'},{nl:'Tomaat',en:'Tomato',ph:'toh-MAHT'},
-        {nl:'Aardappel',en:'Potato',ph:'AHR-dah-pul'},{nl:'Suiker',en:'Sugar',ph:'SOW-ker'},
+        {nl:'Rijst',en:'Rice',em:'🍚',ph:'rayst',example:'De rijst is gekookt.',example_en:'The rice is cooked.'},{nl:'Brood',en:'Bread',em:'🍞',ph:'broht',example:'Ik kocht vers brood bij de bakker.',example_en:'I bought fresh bread at the bakery.'},
+        {nl:'Kip',en:'Chicken',em:'🍗',ph:'kip',example:'De kip legt elke dag eieren.',example_en:'The hen lays eggs every day.'},{nl:'Vis',en:'Fish',em:'🐟',ph:'viss',example:'Hij eet graag gegrilde vis.',example_en:'He likes grilled fish.'},
+        {nl:'Melk',en:'Milk',em:'🥛',ph:'melk',example:'De baby drinkt elke ochtend melk.',example_en:'The baby drinks milk every morning.'},{nl:'Ei',en:'Egg',em:'🥚',ph:'ay',example:'Ik wil een roerei.',example_en:'I want a scrambled egg.'},
+        {nl:'Kaas',en:'Cheese',em:'🧀',ph:'kahs',example:'Gouda is een heerlijke kaas.',example_en:'Gouda is a delicious cheese.'},{nl:'Fruit',en:'Fruit',em:'🍓',ph:'froyt',example:'Eet elke dag fruit.',example_en:'Eat fruit every day.'},
+        {nl:'Groente',en:'Vegetable',em:'🥦',ph:'KHROON-tuh',example:'De groenten zijn vers.',example_en:'The vegetables are fresh.'},{nl:'Koffie',en:'Coffee',em:'☕',ph:'KOF-ee',example:'Ik drink elke ochtend koffie.',example_en:'I drink coffee every morning.'},
+        {nl:'Sap',en:'Juice',em:'🧃',ph:'sap',example:'Ik wil een sinaasappelsap.',example_en:'I want an orange juice.'},{nl:'Water',en:'Water',em:'💧',ph:'VAH-ter',example:'Drink veel water op een dag.',example_en:'Drink plenty of water each day.'},
+        {nl:'Vlees',en:'Meat',em:'🥩',ph:'vlays',example:'Het vlees is rauw.',example_en:'The meat is raw.'},{nl:'Pasta',en:'Pasta',em:'🍝',ph:'PAS-tah',example:'De pasta is al dente.',example_en:'The pasta is al dente.'},
+        {nl:'Salade',en:'Salad',em:'🥗',ph:'sah-LAH-duh',example:'Ik bestel een salade.',example_en:'I\'ll order a salad.'},{nl:'Soep',en:'Soup',em:'🍲',ph:'soop',example:'De soep is warm.',example_en:'The soup is warm.'},
+        {nl:'Taart',en:'Cake',em:'🎂',ph:'tart',example:'Ze maakte een chocoladetaart.',example_en:'She made a chocolate cake.'},{nl:'Ijs',en:'Ice cream',em:'🍦',ph:'ayss',example:'Ik wil aardbeienijs.',example_en:'I want strawberry ice cream.'},
+        {nl:'Boter',en:'Butter',em:'🧈',ph:'BOH-tur',example:'Smeer boter op het brood.',example_en:'Spread butter on the bread.'},{nl:'Knoflook',en:'Garlic',em:'🧄',ph:'KNOF-lohk',example:'Voeg knoflook toe aan het recept.',example_en:'Add garlic to the recipe.'},
+        {nl:'Ui',en:'Onion',em:'🧅',ph:'ow',example:'Van uien moet je huilen.',example_en:'Onions make you cry.'},{nl:'Tomaat',en:'Tomato',em:'🍅',ph:'toh-MAHT',example:'De tomaat is rijp.',example_en:'The tomato is ripe.'},
+        {nl:'Aardappel',en:'Potato',em:'🥔',ph:'AHR-dah-pul',example:'Ik hou van friet.',example_en:'I love fried potato.'},{nl:'Suiker',en:'Sugar',em:'🍬',ph:'SOW-ker',example:'Wil je suiker in je koffie?',example_en:'Do you want sugar in your coffee?'},
     ],
     animals:[
-        {nl:'Hond',en:'Dog',ph:'hont'},{nl:'Kat',en:'Cat',ph:'kat'},
-        {nl:'Vogel',en:'Bird',ph:'VOH-khul'},{nl:'Vis',en:'Fish',ph:'viss'},
-        {nl:'Paard',en:'Horse',ph:'pahrt'},{nl:'Koe',en:'Cow',ph:'koo'},
-        {nl:'Varken',en:'Pig',ph:'VAR-kun'},{nl:'Schaap',en:'Sheep',ph:'skhahp'},
-        {nl:'Aap',en:'Monkey',ph:'ahp'},{nl:'Leeuw',en:'Lion',ph:'lay-oo'},
-        {nl:'Olifant',en:'Elephant',ph:'OH-lee-fant'},{nl:'Slang',en:'Snake',ph:'slang'},
-        {nl:'Konijn',en:'Rabbit',ph:'koh-NAYN'},{nl:'Tijger',en:'Tiger',ph:'TAY-khur'},
-        {nl:'Beer',en:'Bear',ph:'bayr'},{nl:'Kikker',en:'Frog',ph:'KIK-ur'},
-        {nl:'Muis',en:'Mouse',ph:'mows'},{nl:'Kip',en:'Hen',ph:'kip'},
-        {nl:'Papegaai',en:'Parrot',ph:'PAH-puh-khay'},{nl:'Schildpad',en:'Turtle',ph:'SKHILT-pat'},
+        {nl:'Hond',en:'Dog',em:'🐶',ph:'hont',example:'De hond blaft.',example_en:'The dog is barking.'},{nl:'Kat',en:'Cat',em:'🐱',ph:'kat',example:'De kat slaapt op de bank.',example_en:'The cat is sleeping on the sofa.'},
+        {nl:'Vogel',en:'Bird',em:'🐦',ph:'VOH-khul',example:'De vogel zingt \'s ochtends.',example_en:'The bird sings in the morning.'},{nl:'Vis',en:'Fish',em:'🐟',ph:'viss',example:'Hij eet graag gegrilde vis.',example_en:'He likes grilled fish.'},
+        {nl:'Paard',en:'Horse',em:'🐴',ph:'pahrt',example:'Het paard rent heel snel.',example_en:'The horse runs very fast.'},{nl:'Koe',en:'Cow',em:'🐄',ph:'koo',example:'De koe staat in de wei.',example_en:'The cow is in the pasture.'},
+        {nl:'Varken',en:'Pig',em:'🐷',ph:'VAR-kun',example:'Het varken rolt in de modder.',example_en:'The pig rolls in the mud.'},{nl:'Schaap',en:'Sheep',em:'🐑',ph:'skhahp',example:'Het schaap heeft witte wol.',example_en:'The sheep has white wool.'},
+        {nl:'Aap',en:'Monkey',em:'🐒',ph:'ahp',example:'De aap springt van tak naar tak.',example_en:'The monkey jumps from branch to branch.'},{nl:'Leeuw',en:'Lion',em:'🦁',ph:'lay-oo',example:'De leeuw is de koning van de jungle.',example_en:'The lion is the king of the jungle.'},
+        {nl:'Olifant',en:'Elephant',em:'🐘',ph:'OH-lee-fant',example:'De olifant heeft een geweldig geheugen.',example_en:'The elephant has a wonderful memory.'},{nl:'Slang',en:'Snake',em:'🐍',ph:'slang',example:'Die slang is gevaarlijk.',example_en:'That snake is dangerous.'},
+        {nl:'Konijn',en:'Rabbit',em:'🐰',ph:'koh-NAYN',example:'Het konijn eet wortel.',example_en:'The rabbit eats carrot.'},{nl:'Tijger',en:'Tiger',em:'🐯',ph:'TAY-khur',example:'De tijger jaagt \'s nachts.',example_en:'The tiger hunts at night.'},
+        {nl:'Beer',en:'Bear',em:'🐻',ph:'bayr',example:'De beer hiberneert in de winter.',example_en:'The bear hibernates in winter.'},{nl:'Kikker',en:'Frog',em:'🐸',ph:'KIK-ur',example:'De kikker springt in de plas.',example_en:'The frog jumps into the puddle.'},
+        {nl:'Muis',en:'Mouse',em:'🐭',ph:'mows',example:'De muis ging de keuken in.',example_en:'The mouse got into the kitchen.'},{nl:'Kip',en:'Hen',em:'🐔',ph:'kip',example:'De kip legt elke dag eieren.',example_en:'The hen lays eggs every day.'},
+        {nl:'Papegaai',en:'Parrot',em:'🦜',ph:'PAH-puh-khay',example:'De papegaai herhaalt alles wat hij hoort.',example_en:'The parrot repeats everything it hears.'},{nl:'Schildpad',en:'Turtle',em:'🐢',ph:'SKHILT-pat',example:'De schildpad loopt langzaam.',example_en:'The turtle walks slowly.'},
     ],
     travel:[
-        {nl:'Luchthaven',en:'Airport',ph:'LUKHT-hah-vun'},{nl:'Hotel',en:'Hotel',ph:'hoh-TEL'},
-        {nl:'Trein',en:'Train',ph:'trayn'},{nl:'Bus',en:'Bus',ph:'bus'},
-        {nl:'Taxi',en:'Taxi',ph:'TAK-see'},{nl:'Paspoort',en:'Passport',ph:'PAS-pohrt'},
-        {nl:'Koffer',en:'Suitcase',ph:'KOF-ur'},{nl:'Kaart',en:'Map',ph:'kahrt'},
-        {nl:'Strand',en:'Beach',ph:'strant'},{nl:'Museum',en:'Museum',ph:'moo-ZAY-um'},
-        {nl:'Restaurant',en:'Restaurant',ph:'RES-toh-rant'},{nl:'Geld',en:'Money',ph:'khelt'},
-        {nl:'Metro',en:'Metro/Subway',ph:'MEH-troh'},{nl:'Vliegtuig',en:'Aeroplane',ph:'VLEEKH-towkh'},
-        {nl:'Kaartje',en:'Ticket',ph:'KAR-tyuh'},{nl:'Reservering',en:'Reservation',ph:'reh-zur-VEH-ring'},
-        {nl:'Motor',en:'Motorcycle',ph:'MOH-tor'},{nl:'Boot',en:'Boat',ph:'boht'},
-        {nl:'Wisselkantoor',en:'Exchange office',ph:'WIS-ul-kan-tohr'},{nl:'Bagage',en:'Luggage',ph:'bah-GAH-zhuh'},
+        {nl:'Luchthaven',en:'Airport',ph:'LUKHT-hah-vun',example:'We kwamen vroeg op de luchthaven.',example_en:'We arrived at the airport early.'},{nl:'Hotel',en:'Hotel',ph:'hoh-TEL',example:'Het hotel is in het centrum.',example_en:'The hotel is in the city centre.'},
+        {nl:'Trein',en:'Train',ph:'trayn',example:'De trein komt eraan.',example_en:'The train is coming.'},{nl:'Bus',en:'Bus',ph:'bus',example:'De bus heeft vertraging.',example_en:'The bus is running late.'},
+        {nl:'Taxi',en:'Taxi',ph:'TAK-see',example:'Ik ga een taxi bellen.',example_en:'I\'ll call a taxi.'},{nl:'Paspoort',en:'Passport',ph:'PAS-pohrt',example:'Vergeet je paspoort niet.',example_en:'Don\'t forget your passport.'},
+        {nl:'Koffer',en:'Suitcase',ph:'KOF-ur',example:'De koffer is zwaar.',example_en:'The suitcase is heavy.'},{nl:'Kaart',en:'Map',ph:'kahrt',example:'Ik heb een kaart van de stad nodig.',example_en:'I need a map of the city.'},
+        {nl:'Strand',en:'Beach',ph:'strant',example:'We gaan morgen naar het strand.',example_en:'We\'re going to the beach tomorrow.'},{nl:'Museum',en:'Museum',ph:'moo-ZAY-um',example:'Het museum opent om tien uur.',example_en:'The museum opens at ten.'},
+        {nl:'Restaurant',en:'Restaurant',ph:'RES-toh-rant',example:'Het restaurant is vol.',example_en:'The restaurant is full.'},{nl:'Geld',en:'Money',ph:'khelt',example:'Ik moet geld pinnen.',example_en:'I need to withdraw money.'},
+        {nl:'Metro',en:'Metro/Subway',ph:'MEH-troh',example:'De metro is sneller.',example_en:'The metro is faster.'},{nl:'Vliegtuig',en:'Aeroplane',ph:'VLEEKH-towkh',example:'Het vliegtuig stijgt op om acht.',example_en:'The plane takes off at eight.'},
+        {nl:'Kaartje',en:'Ticket',ph:'KAR-tyuh',example:'Ik kocht het kaartje online.',example_en:'I bought the ticket online.'},{nl:'Reservering',en:'Reservation',ph:'reh-zur-VEH-ring',example:'Ik maakte een reservering voor twee.',example_en:'I made a reservation for two.'},
+        {nl:'Motor',en:'Motorcycle',ph:'MOH-tor',example:'Hij kwam op de motor.',example_en:'He came by motorcycle.'},{nl:'Boot',en:'Boat',ph:'boht',example:'We staken de rivier over per boot.',example_en:'We crossed the river by boat.'},
+        {nl:'Wisselkantoor',en:'Exchange office',ph:'WIS-ul-kan-tohr',example:'Waar is het wisselkantoor?',example_en:'Where is the exchange office?'},{nl:'Bagage',en:'Luggage',ph:'bah-GAH-zhuh',example:'De bagage staat in de kofferbak.',example_en:'The luggage is in the boot.'},
     ],
     family:[
-        {nl:'Moeder',en:'Mother',ph:'MOO-dur'},{nl:'Vader',en:'Father',ph:'FAH-dur'},
-        {nl:'Broer',en:'Brother',ph:'broor'},{nl:'Zus',en:'Sister',ph:'zus'},
-        {nl:'Oma',en:'Grandmother',ph:'OH-mah'},{nl:'Opa',en:'Grandfather',ph:'OH-pah'},
-        {nl:'Zoon',en:'Son',ph:'zohn'},{nl:'Dochter',en:'Daughter',ph:'DOKH-tur'},
-        {nl:'Oom',en:'Uncle',ph:'ohm'},{nl:'Tante',en:'Aunt',ph:'TAN-tuh'},
-        {nl:'Neef',en:'Cousin (m)',ph:'nayf'},{nl:'Man',en:'Husband',ph:'man'},
-        {nl:'Vrouw',en:'Wife',ph:'vrow'},{nl:'Baby',en:'Baby',ph:'BAY-bee'},
-        {nl:'Neef',en:'Nephew',ph:'nayf'},{nl:'Nicht',en:'Niece',ph:'nikht'},
-        {nl:'Zwager',en:'Brother-in-law',ph:'ZVAH-khur'},{nl:'Schoonmoeder',en:'Mother-in-law',ph:'SKHOHN-moo-dur'},
-        {nl:'Schoonvader',en:'Father-in-law',ph:'SKHOHN-fah-dur'},{nl:'Peetoom',en:'Godfather',ph:'PAYT-ohm'},
+        {nl:'Moeder',en:'Mother',ph:'MOO-dur',example:'Mijn moeder kookt heel goed.',example_en:'My mother cooks very well.'},{nl:'Vader',en:'Father',ph:'FAH-dur',example:'Mijn vader werkt in Amsterdam.',example_en:'My father works in Amsterdam.'},
+        {nl:'Broer',en:'Brother',ph:'broor',example:'Mijn grote broer woont in Rotterdam.',example_en:'My older brother lives in Rotterdam.'},{nl:'Zus',en:'Sister',ph:'zus',example:'Mijn zus studeert geneeskunde.',example_en:'My sister is studying medicine.'},
+        {nl:'Oma',en:'Grandmother',ph:'OH-mah',example:'Oma bakt elke zondag een taart.',example_en:'Grandmother bakes a cake every Sunday.'},{nl:'Opa',en:'Grandfather',ph:'OH-pah',example:'Opa vertelt me verhalen.',example_en:'My grandfather tells me stories.'},
+        {nl:'Zoon',en:'Son',ph:'zohn',example:'Mijn zoon is vijf jaar oud.',example_en:'My son is five years old.'},{nl:'Dochter',en:'Daughter',ph:'DOKH-tur',example:'Haar dochter zit op school.',example_en:'Her daughter is at school.'},
+        {nl:'Oom',en:'Uncle',ph:'ohm',example:'Mijn oom woont in Utrecht.',example_en:'My uncle lives in Utrecht.'},{nl:'Tante',en:'Aunt',ph:'TAN-tuh',example:'Mijn tante gaf me een cadeau.',example_en:'My aunt gave me a present.'},
+        {nl:'Neef',en:'Cousin (m)',ph:'nayf',example:'Mijn neef kwam op bezoek.',example_en:'My cousin came to visit.'},{nl:'Man',en:'Husband',ph:'man',example:'Haar man is erg aardig.',example_en:'Her husband is very friendly.'},
+        {nl:'Vrouw',en:'Wife',ph:'vrow',example:'Zijn vrouw is lerares.',example_en:'His wife is a teacher.'},{nl:'Baby',en:'Baby',ph:'BAY-bee',example:'De baby huilt.',example_en:'The baby is crying.'},
+        {nl:'Neef',en:'Nephew',ph:'nayf',example:'Mijn neef kwam op bezoek.',example_en:'My cousin came to visit.'},{nl:'Nicht',en:'Niece',ph:'nikht',example:'Haar nicht is heel lief.',example_en:'Her niece is very sweet.'},
+        {nl:'Zwager',en:'Brother-in-law',ph:'ZVAH-khur',example:'Mijn zwager is dokter.',example_en:'My brother-in-law is a doctor.'},{nl:'Schoonmoeder',en:'Mother-in-law',ph:'SKHOHN-moo-dur',example:'De schoonmoeder kwam eten.',example_en:'My mother-in-law came for dinner.'},
+        {nl:'Schoonvader',en:'Father-in-law',ph:'SKHOHN-fah-dur',example:'De schoonvader is erg vrijgevig.',example_en:'My father-in-law is very generous.'},{nl:'Peetoom',en:'Godfather',ph:'PAYT-ohm',example:'De peetoom hield een toespraak.',example_en:'The godfather gave a speech.'},
     ],
     time:[
-        {nl:'Vandaag',en:'Today',ph:'van-DAHKH'},{nl:'Morgen',en:'Tomorrow',ph:'MOR-khun'},
-        {nl:'Gisteren',en:'Yesterday',ph:'KHIS-tur-un'},{nl:'Week',en:'Week',ph:'vayk'},
-        {nl:'Maand',en:'Month',ph:'mahnt'},{nl:'Jaar',en:'Year',ph:'yahr'},
-        {nl:'Uur',en:'Hour',ph:'oor'},{nl:'Minuut',en:'Minute',ph:'mee-NEWT'},
-        {nl:'Ochtend',en:'Morning',ph:'OKH-tunt'},{nl:'Middag',en:'Afternoon',ph:'MID-dakh'},
-        {nl:'Nacht',en:'Night',ph:'nakht'},{nl:'Nu',en:'Now',ph:'new'},
-        {nl:'Maandag',en:'Monday',ph:'MAHN-dakh'},{nl:'Dinsdag',en:'Tuesday',ph:'DINS-dakh'},
-        {nl:'Woensdag',en:'Wednesday',ph:'WOONS-dakh'},{nl:'Donderdag',en:'Thursday',ph:'DON-dur-dakh'},
-        {nl:'Vrijdag',en:'Friday',ph:'FRAY-dakh'},{nl:'Zaterdag',en:'Saturday',ph:'ZAH-tur-dakh'},
-        {nl:'Zondag',en:'Sunday',ph:'ZON-dakh'},{nl:'Seconde',en:'Second',ph:'seh-KON-duh'},
+        {nl:'Vandaag',en:'Today',ph:'van-DAHKH',example:'Wat ga je vandaag doen?',example_en:'What are you going to do today?'},{nl:'Morgen',en:'Tomorrow',ph:'MOR-khun',example:'Morgen is er een vroege vergadering.',example_en:'There\'s an early meeting tomorrow.'},
+        {nl:'Gisteren',en:'Yesterday',ph:'KHIS-tur-un',example:'Gisteren ging ik naar de bioscoop.',example_en:'Yesterday I went to the cinema.'},{nl:'Week',en:'Week',ph:'vayk',example:'Deze week gaat snel voorbij.',example_en:'This week is going by fast.'},
+        {nl:'Maand',en:'Month',ph:'mahnt',example:'Vorige maand ging ik naar Nederland.',example_en:'Last month I went to the Netherlands.'},{nl:'Jaar',en:'Year',ph:'yahr',example:'Het nieuwe jaar komt eraan.',example_en:'The new year is approaching.'},
+        {nl:'Uur',en:'Hour',ph:'oor',example:'Het is al tijd om te gaan.',example_en:'It\'s already time to leave.'},{nl:'Minuut',en:'Minute',ph:'mee-NEWT',example:'Wacht even een minuutje.',example_en:'Wait just a minute.'},
+        {nl:'Ochtend',en:'Morning',ph:'OKH-tunt',example:'\'s Ochtends drink ik koffie.',example_en:'In the morning I drink coffee.'},{nl:'Middag',en:'Afternoon',ph:'MID-dakh',example:'\'s Middags ga ik naar het park.',example_en:'In the afternoon I\'m going to the park.'},
+        {nl:'Nacht',en:'Night',ph:'nakht',example:'\'s Nachts kijk ik graag films.',example_en:'\'At night I like to watch films.'},{nl:'Nu',en:'Now',ph:'new',example:'Ik moet nu vertrekken.',example_en:'I need to leave now.'},
+        {nl:'Maandag',en:'Monday',ph:'MAHN-dakh',example:'Maandag is een werkdag.',example_en:'Monday is a work day.'},{nl:'Dinsdag',en:'Tuesday',ph:'DINS-dakh',example:'Op dinsdag heb ik Nederlandse les.',example_en:'On Tuesday I have a Dutch class.'},
+        {nl:'Woensdag',en:'Wednesday',ph:'WOONS-dakh',example:'Op woensdag is er een vergadering.',example_en:'On Wednesday there\'s a meeting.'},{nl:'Donderdag',en:'Thursday',ph:'DON-dur-dakh',example:'Donderdag is bijna weekend.',example_en:'Thursday is almost the weekend.'},
+        {nl:'Vrijdag',en:'Friday',ph:'FRAY-dakh',example:'Iedereen houdt van vrijdag.',example_en:'Everyone loves Friday.'},{nl:'Zaterdag',en:'Saturday',ph:'ZAH-tur-dakh',example:'Op zaterdag ga ik naar het strand.',example_en:'On Saturday I\'m going to the beach.'},
+        {nl:'Zondag',en:'Sunday',ph:'ZON-dakh',example:'Zondag is familiedag.',example_en:'Sunday is family day.'},{nl:'Seconde',en:'Second',ph:'seh-KON-duh',example:'Het duurt maar een seconde.',example_en:'It only takes a second.'},
     ],
 };
 
@@ -368,6 +407,41 @@ function getPhraseLib(diff){
 }
 
 let currentCat='colours',wordPool=[],wordIdx=0,wordHistory=[];
+
+const LS_STARS='tulp_starred_v1';
+const LS_EASY='tulp_easy_v1';
+function getStarred(){try{return JSON.parse(localStorage.getItem(LS_STARS)||'[]');}catch(e){return[];}}
+function saveStarred(arr){try{localStorage.setItem(LS_STARS,JSON.stringify(arr));}catch(e){}}
+function getEasyUntil(){try{return JSON.parse(localStorage.getItem(LS_EASY)||'{}');}catch(e){return{};}}
+function saveEasyUntil(obj){try{localStorage.setItem(LS_EASY,JSON.stringify(obj));}catch(e){}}
+function cardKey(card){return card.nl+'|'+card.en;}
+function isStarred(card){return getStarred().includes(cardKey(card));}
+function toggleStar(){
+    const card=wordPool[wordIdx];if(!card)return;
+    const key=cardKey(card);let starred=getStarred();
+    if(starred.includes(key)){starred=starred.filter(k=>k!==key);}else{starred.push(key);}
+    saveStarred(starred);updateStarUI(card);
+    if(currentCat==='favorites')loadWordCat('favorites');
+}
+function updateStarUI(card){
+    const btn=document.getElementById('word-star');if(!btn||!card)return;
+    const on=isStarred(card);btn.textContent=on?'★':'☆';btn.classList.toggle('starred',on);
+}
+function rateCard(rating){
+    const card=wordPool[wordIdx];if(!card){nextCard();return;}
+    if(rating==='easy'){
+        const eu=getEasyUntil();eu[cardKey(card)]=Date.now()+24*60*60*1000;saveEasyUntil(eu);
+        wordPool.splice(wordIdx,1);
+        if(wordPool.length===0){loadWordCat(currentCat);return;}
+        wordIdx=wordIdx%wordPool.length;showWordCard();
+    }else if(rating==='hard'){
+        wordPool.splice(wordIdx,1);
+        const ahead=Math.min(wordPool.length,2+Math.floor(Math.random()*3));
+        const insertAt=(wordIdx+ahead)%(wordPool.length+1);
+        wordPool.splice(insertAt,0,card);
+        wordIdx=wordIdx%wordPool.length;showWordCard();
+    }else{nextCard();}
+}
 let phraseDiff='easy',phrasePool=[],phraseIdx=0,phraseHistory=[];
 let listType='words',listCat='colours',listPhraseDiff='easy';
 let testType='words',testCat='colours',testDiff='easy';
@@ -386,7 +460,18 @@ function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Mat
 function buildCatButtons(containerId,activeCat,onClickFn){const wrap=document.getElementById(containerId);wrap.innerHTML='';CATEGORIES.forEach(cat=>{const btn=document.createElement('button');btn.className='cat-btn'+(cat.id===activeCat?' active':'');btn.innerHTML=`<span class="cat-icon">${cat.icon}</span>${cat.label}`;btn.onclick=()=>onClickFn(cat.id,btn,containerId);wrap.appendChild(btn);});}
 function setActiveCatBtn(containerId,catId){const btns=document.querySelectorAll(`#${containerId} .cat-btn`);const idx=CATEGORIES.findIndex(c=>c.id===catId);btns.forEach(b=>b.classList.remove('active'));if(btns[idx])btns[idx].classList.add('active');}
 
-function loadWordCat(catId){currentCat=catId;wordPool=shuffle(WORD_LIBRARY[catId]||[]);wordIdx=0;wordHistory=[0];showWordCard();setActiveCatBtn('words-cat-scroll',catId);}
+function loadWordCat(catId){
+    currentCat=catId;
+    let pool;
+    if(catId==='favorites'){
+        const starred=getStarred();
+        pool=Object.values(WORD_LIBRARY).flat().filter(w=>starred.includes(cardKey(w)));
+    }else{pool=WORD_LIBRARY[catId]||[];}
+    const eu=getEasyUntil(),now=Date.now();
+    pool=pool.filter(w=>{const u=eu[cardKey(w)];return !u||now>u;});
+    wordPool=shuffle(pool);wordIdx=0;wordHistory=[0];
+    showWordCard();setActiveCatBtn('words-cat-scroll',catId);
+}
 function showWordCard(){document.querySelectorAll('#words .flashcard-wrapper').forEach(w=>w.classList.remove('is-flipped'));const card=wordPool[wordIdx];if(!card)return;setTimeout(()=>{document.getElementById('nl-text').innerText=card.nl;document.getElementById('en-text').innerText=card.en;document.querySelectorAll('.nl-ph-view').forEach(el=>el.innerText=`[ ${card.ph} ]`);document.getElementById('words-counter').innerText=`${wordIdx+1} / ${wordPool.length}`;},150);}
 function nextCard(){wordIdx=(wordIdx+1)%wordPool.length;wordHistory.push(wordIdx);if(wordHistory.length>200)wordHistory.shift();showWordCard();}
 function prevCard(){if(wordHistory.length>1){wordHistory.pop();wordIdx=wordHistory[wordHistory.length-1];}else wordIdx=(wordIdx-1+wordPool.length)%wordPool.length;showWordCard();}

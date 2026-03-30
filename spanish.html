@@ -8,7 +8,7 @@
     <script src="spanish_vault.js"></script>
     <style>
         :root{--bg:#0f172a;--card:#1e293b;--primary:#f59e0b;--shadow:#b45309;--text:#f8fafc;--text-dim:#94a3b8;--border:#334155;}
-        *{box-sizing:border-box;transition:all 0.2s ease;-webkit-tap-highlight-color:transparent;}
+        *{box-sizing:border-box;transition:transform 0.2s ease,opacity 0.2s ease,border-color 0.2s ease,background-color 0.2s ease,color 0.2s ease;-webkit-tap-highlight-color:transparent;}
         body{font-family:'Inter',sans-serif;background-color:var(--bg);color:var(--text);margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding-top:env(safe-area-inset-top);}
         .top-nav{width:100%;display:flex;padding:12px 15px;background:rgba(15,23,42,0.95);backdrop-filter:blur(10px);position:sticky;top:0;z-index:100;border-bottom:1px solid var(--border);}
         .home-link{text-decoration:none;color:var(--text-dim);font-size:0.75rem;font-weight:800;border:1px solid var(--border);padding:6px 14px;border-radius:20px;background:var(--card);}
@@ -29,10 +29,11 @@
         .diff-toggle{display:flex;background:var(--bg);padding:4px;border-radius:10px;margin-bottom:15px;width:100%;gap:4px;border:1px solid var(--border);}
         .diff-btn{flex:1;padding:10px 2px;font-size:0.6rem;border:none;background:transparent;color:var(--text-dim);cursor:pointer;border-radius:6px;font-weight:800;}
         .diff-btn.active{background:var(--card);color:var(--primary);}
-        .flashcard-wrapper{perspective:1000px;width:100%;height:340px;cursor:pointer;margin:10px 0 15px 0;}
+        .flashcard-wrapper{perspective:1000px;width:100%;height:340px;cursor:pointer;margin:10px 0 15px 0;flex-shrink:0;}
+        .flashcard-wrapper,.flashcard-inner,.card-front,.card-back{transition-property:transform,opacity,border-color,background-color,color;}
         .flashcard-inner{position:relative;width:100%;height:100%;transition:transform 0.5s;transform-style:preserve-3d;}
         .flashcard-wrapper.is-flipped .flashcard-inner{transform:rotateY(180deg);}
-        .card-front,.card-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:24px;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:25px;border:2px solid var(--primary);text-align:center;background:var(--card);}
+        .card-front,.card-back{position:absolute;top:0;left:0;width:100%;height:100%;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:24px;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:25px;border:2px solid var(--primary);text-align:center;background:var(--card);overflow:hidden;}
         .card-back{background:var(--primary);transform:rotateY(180deg);color:white;}
         .btn-hear{background:rgba(255,255,255,0.1);border:1px solid var(--primary);color:var(--primary);padding:8px 15px;border-radius:20px;font-size:0.7rem;font-weight:800;margin-top:15px;cursor:pointer;}
         .card-back .btn-hear{border-color:white;color:white;}
@@ -99,6 +100,32 @@
         .btn-retry{width:100%;padding:16px;background:var(--primary);color:white;border:none;border-radius:14px;font-weight:800;cursor:pointer;box-shadow:0 4px 0 var(--shadow);font-size:0.95rem;}
         .video-list{width:100%;display:grid;gap:10px;}
         .video-item{display:flex;align-items:center;background:var(--card);padding:15px;border-radius:12px;text-decoration:none;color:white;border:1px solid var(--border);font-weight:600;font-size:0.9rem;}
+
+        /* Card emoji */
+        .card-emoji{font-size:4.5rem;line-height:1;margin-bottom:8px;display:block;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.3));}
+        /* Example — front */
+        .card-example-front{margin-top:12px;padding:10px 14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;width:100%;text-align:center;}
+        .card-example-front .ex-sentence{font-size:0.82rem;font-weight:600;color:var(--text);line-height:1.5;}
+        /* Example — back */
+        .card-example-back{margin-top:12px;padding:10px 14px;background:rgba(0,0,0,0.2);border:1px solid rgba(0,0,0,0.15);border-radius:10px;width:100%;text-align:center;}
+        .card-example-back .ex-sentence-native{font-size:0.85rem;font-weight:700;color:white;line-height:1.5;}
+        .card-example-back .ex-sentence-en{font-size:0.78rem;font-weight:500;color:rgba(255,255,255,0.75);line-height:1.5;margin-top:5px;font-style:italic;}
+        /* Star */
+        .btn-star{position:absolute;top:14px;right:14px;background:none;border:none;font-size:1.5rem;cursor:pointer;line-height:1;padding:4px;opacity:0.5;transition:opacity 0.15s ease,transform 0.15s ease;z-index:2;}
+        .btn-star:active{transform:scale(1.3);}
+        .btn-star.starred{opacity:1;}
+        /* Confidence */
+        .conf-nav{display:flex;gap:8px;width:100%;margin-top:8px;}
+        .btn-conf{flex:1;padding:13px 4px;border:none;border-radius:14px;font-weight:800;font-size:0.72rem;cursor:pointer;letter-spacing:0.03em;}
+        .btn-conf:active{opacity:0.8;transform:scale(0.97);}
+        .btn-hard{background:#ef4444;color:white;box-shadow:0 4px 0 #b91c1c;}
+        .btn-good{background:var(--primary);color:white;box-shadow:0 4px 0 var(--shadow);}
+        .btn-easy{background:#6366f1;color:white;box-shadow:0 4px 0 #4338ca;}
+        .btn-prev-sm,.btn-next-sm{flex:0 0 46px;padding:13px 0;background:var(--card);color:var(--text-dim);border:1px solid var(--border);border-radius:14px;font-weight:800;font-size:0.85rem;cursor:pointer;}
+        .btn-prev-sm:active,.btn-next-sm:active{opacity:0.7;}
+        /* Faves empty */
+        .fav-empty{text-align:center;padding:40px 20px;color:var(--text-dim);font-size:0.9rem;line-height:1.6;}
+        .fav-empty .fav-empty-icon{font-size:2.5rem;display:block;margin-bottom:12px;}
         @keyframes fadeIn{from{opacity:0}to{opacity:1}}
     </style>
 </head>
@@ -120,21 +147,33 @@
         <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
             <div class="flashcard-inner">
                 <div class="card-front">
+                    <button class="btn-star" id="word-star" onclick="event.stopPropagation();toggleStar()" title="Star this word">☆</button>
+                    <span id="card-emoji" class="card-emoji" style="display:none"></span>
                     <h2 id="sp-text" style="font-size:2.6rem;margin:0">--</h2>
                     <div class="sp-ph-view romaji">--</div>
                     <button class="btn-hear" onclick="event.stopPropagation();speak('sp-text')">🔊 HEAR</button>
+                    <div class="card-example-front" id="card-example-front" style="display:none">
+                        <div class="ex-sentence" id="example-native"></div>
+                    </div>
                     <div class="card-counter" id="words-counter"></div>
                 </div>
                 <div class="card-back">
                     <h2 id="en-text" style="font-size:2rem;margin:0">--</h2>
                     <div class="sp-ph-view romaji">--</div>
                     <button class="btn-hear" onclick="event.stopPropagation();speak('sp-text')">🔊 HEAR</button>
+                    <div class="card-example-back" id="card-example-back" style="display:none">
+                        <div class="ex-sentence-native" id="example-back-native"></div>
+                        <div class="ex-sentence-en" id="example-en"></div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="card-nav">
-            <button class="btn-prev" onclick="prevCard()">← PREV</button>
-            <button class="btn-next" onclick="nextCard()">NEXT →</button>
+        <div class="conf-nav">
+            <button class="btn-prev-sm" onclick="prevCard()">←</button>
+            <button class="btn-conf btn-hard" onclick="rateCard('hard')">😓 Hard</button>
+            <button class="btn-conf btn-good" onclick="rateCard('good')">👍 Good</button>
+            <button class="btn-conf btn-easy" onclick="rateCard('easy')">⚡ Easy</button>
+            <button class="btn-next-sm" onclick="nextCard()">→</button>
         </div>
     </div>
 
@@ -255,109 +294,109 @@
 </div>
 
 <script>
-const CATEGORIES=[{id:'colours',label:'Colours',icon:'🎨'},{id:'numbers',label:'Numbers',icon:'🔢'},{id:'body',label:'Body',icon:'🫀'},{id:'food',label:'Food',icon:'🍽️'},{id:'animals',label:'Animals',icon:'🐾'},{id:'travel',label:'Travel',icon:'✈️'},{id:'family',label:'Family',icon:'👨‍👩‍👧'},{id:'time',label:'Time',icon:'⏰'}];
+const CATEGORIES=[{id:'colours',label:'Colours',icon:'🎨'},{id:'numbers',label:'Numbers',icon:'🔢'},{id:'body',label:'Body',icon:'🫀'},{id:'food',label:'Food',icon:'🍽️'},{id:'animals',label:'Animals',icon:'🐾'},{id:'travel',label:'Travel',icon:'✈️'},{id:'family',label:'Family',icon:'👨‍👩‍👧'},{id:'time',label:'Time',icon:'⏰'},{id:'favorites',label:'⭐ Faves',icon:'⭐'}];
 
 const WORD_LIBRARY={
     colours:[
-        {sp:'Rojo',en:'Red',ph:'ROH-ho'},{sp:'Azul',en:'Blue',ph:'ah-SOOL'},
-        {sp:'Verde',en:'Green',ph:'BAIR-deh'},{sp:'Amarillo',en:'Yellow',ph:'ah-mah-REE-yo'},
-        {sp:'Negro',en:'Black',ph:'NEH-groh'},{sp:'Blanco',en:'White',ph:'BLAN-koh'},
-        {sp:'Naranja',en:'Orange',ph:'nah-RAN-hah'},{sp:'Rosa',en:'Pink',ph:'ROH-sah'},
-        {sp:'Morado',en:'Purple',ph:'moh-RAH-doh'},{sp:'Gris',en:'Grey',ph:'grees'},
-        {sp:'Marrón',en:'Brown',ph:'mah-ROHN'},{sp:'Dorado',en:'Gold',ph:'doh-RAH-doh'},
-        {sp:'Plateado',en:'Silver',ph:'plah-teh-AH-doh'},{sp:'Beige',en:'Beige',ph:'BEH-heh'},
-        {sp:'Turquesa',en:'Turquoise',ph:'toor-KEH-sah'},{sp:'Lila',en:'Lilac',ph:'LEE-lah'},
-        {sp:'Burdeos',en:'Burgundy',ph:'boor-DEH-os'},{sp:'Crema',en:'Cream',ph:'KREH-mah'},
-        {sp:'Magenta',en:'Magenta',ph:'mah-HEN-tah'},{sp:'Coral',en:'Coral',ph:'koh-RAHL'},
+        {sp:'Rojo',en:'Red',ph:'ROH-ho',example:'El semáforo se puso rojo.',example_en:'The traffic light turned red.'},{sp:'Azul',en:'Blue',ph:'ah-SOOL',example:'El cielo está azul hoy.',example_en:'The sky is blue today.'},
+        {sp:'Verde',en:'Green',ph:'BAIR-deh',example:'La hierba es muy verde.',example_en:'The grass is very green.'},{sp:'Amarillo',en:'Yellow',ph:'ah-mah-REE-yo',example:'El taxi es amarillo.',example_en:'The taxi is yellow.'},
+        {sp:'Negro',en:'Black',ph:'NEH-groh',example:'Lleva un abrigo negro.',example_en:'He wears a black coat.'},{sp:'Blanco',en:'White',ph:'BLAN-koh',example:'La pared es blanca.',example_en:'The wall is white.'},
+        {sp:'Naranja',en:'Orange',ph:'nah-RAN-hah',example:'La naranja es naranja.',example_en:'The orange is orange.'},{sp:'Rosa',en:'Pink',ph:'ROH-sah',example:'Compró flores rosas.',example_en:'She bought pink flowers.'},
+        {sp:'Morado',en:'Purple',ph:'moh-RAH-doh',example:'El morado es mi color favorito.',example_en:'Purple is my favourite colour.'},{sp:'Gris',en:'Grey',ph:'grees',example:'El cielo está gris hoy.',example_en:'The sky is grey today.'},
+        {sp:'Marrón',en:'Brown',ph:'mah-ROHN',example:'El oso es marrón.',example_en:'The bear is brown.'},{sp:'Dorado',en:'Gold',ph:'doh-RAH-doh',example:'El trofeo es dorado.',example_en:'The trophy is golden.'},
+        {sp:'Plateado',en:'Silver',ph:'plah-teh-AH-doh',example:'Lleva un collar plateado.',example_en:'She wears a silver necklace.'},{sp:'Beige',en:'Beige',ph:'BEH-heh',example:'Las paredes son beige.',example_en:'The walls are beige.'},
+        {sp:'Turquesa',en:'Turquoise',ph:'toor-KEH-sah',example:'El mar es turquesa.',example_en:'The sea is turquoise.'},{sp:'Lila',en:'Lilac',ph:'LEE-lah',example:'Pintó la habitación de lila.',example_en:'She painted the room lilac.'},
+        {sp:'Burdeos',en:'Burgundy',ph:'boor-DEH-os',example:'El vino tiene un color burdeos.',example_en:'The wine has a burgundy colour.'},{sp:'Crema',en:'Cream',ph:'KREH-mah',example:'La sopa tiene un color crema.',example_en:'The soup is cream-coloured.'},
+        {sp:'Magenta',en:'Magenta',ph:'mah-HEN-tah',example:'La flor es magenta.',example_en:'The flower is magenta.'},{sp:'Coral',en:'Coral',ph:'koh-RAHL',example:'Lleva un pintalabios coral.',example_en:'She wears coral lipstick.'},
     ],
     numbers:[
-        {sp:'Uno',en:'One',ph:'OO-noh'},{sp:'Dos',en:'Two',ph:'dohs'},
-        {sp:'Tres',en:'Three',ph:'trehs'},{sp:'Cuatro',en:'Four',ph:'KWAH-troh'},
-        {sp:'Cinco',en:'Five',ph:'SEEN-koh'},{sp:'Seis',en:'Six',ph:'sayss'},
-        {sp:'Siete',en:'Seven',ph:'SYEH-teh'},{sp:'Ocho',en:'Eight',ph:'OH-choh'},
-        {sp:'Nueve',en:'Nine',ph:'NWEH-beh'},{sp:'Diez',en:'Ten',ph:'dyehs'},
-        {sp:'Once',en:'Eleven',ph:'ON-seh'},{sp:'Doce',en:'Twelve',ph:'DOH-seh'},
-        {sp:'Trece',en:'Thirteen',ph:'TREH-seh'},{sp:'Catorce',en:'Fourteen',ph:'kah-TOR-seh'},
-        {sp:'Quince',en:'Fifteen',ph:'KEEN-seh'},{sp:'Dieciséis',en:'Sixteen',ph:'dyeh-see-SAYSS'},
-        {sp:'Diecisiete',en:'Seventeen',ph:'dyeh-see-SYEH-teh'},{sp:'Dieciocho',en:'Eighteen',ph:'dyeh-see-OH-choh'},
-        {sp:'Diecinueve',en:'Nineteen',ph:'dyeh-see-NWEH-beh'},{sp:'Veinte',en:'Twenty',ph:'BAYN-teh'},
-        {sp:'Treinta',en:'Thirty',ph:'TRAYN-tah'},{sp:'Cuarenta',en:'Forty',ph:'kwah-REN-tah'},
-        {sp:'Cincuenta',en:'Fifty',ph:'seen-KWEN-tah'},{sp:'Cien',en:'Hundred',ph:'syehn'},
-        {sp:'Mil',en:'Thousand',ph:'meel'},
+        {sp:'Uno',en:'One',ph:'OO-noh',example:'Quiero un café, por favor.',example_en:'I want one coffee, please.'},{sp:'Dos',en:'Two',ph:'dohs',example:'Tengo dos hermanos.',example_en:'I have two brothers.'},
+        {sp:'Tres',en:'Three',ph:'trehs',example:'Vive a tres calles de aquí.',example_en:'He lives three streets from here.'},{sp:'Cuatro',en:'Four',ph:'KWAH-troh',example:'La mesa tiene cuatro sillas.',example_en:'The table has four chairs.'},
+        {sp:'Cinco',en:'Five',ph:'SEEN-koh',example:'El tren llega en cinco minutos.',example_en:'The train arrives in five minutes.'},{sp:'Seis',en:'Six',ph:'sayss',example:'Tenemos seis huevos en la nevera.',example_en:'We have six eggs in the fridge.'},
+        {sp:'Siete',en:'Seven',ph:'SYEH-teh',example:'La tienda abre a las siete.',example_en:'The shop opens at seven.'},{sp:'Ocho',en:'Eight',ph:'OH-choh',example:'Duermo ocho horas por noche.',example_en:'I sleep eight hours a night.'},
+        {sp:'Nueve',en:'Nine',ph:'NWEH-beh',example:'El vuelo sale a las nueve.',example_en:'The flight leaves at nine.'},{sp:'Diez',en:'Ten',ph:'dyehs',example:'Compré diez naranjas.',example_en:'I bought ten oranges.'},
+        {sp:'Once',en:'Eleven',ph:'ON-seh',example:'El partido empieza a las once.',example_en:'The match starts at eleven.'},{sp:'Doce',en:'Twelve',ph:'DOH-seh',example:'Hay doce meses en el año.',example_en:'There are twelve months in a year.'},
+        {sp:'Trece',en:'Thirteen',ph:'TREH-seh',example:'Tiene trece años.',example_en:'She is thirteen years old.'},{sp:'Catorce',en:'Fourteen',ph:'kah-TOR-seh',example:'Faltan catorce días.',example_en:'There are fourteen days to go.'},
+        {sp:'Quince',en:'Fifteen',ph:'KEEN-seh',example:'El plazo es de quince días.',example_en:'The deadline is fifteen days.'},{sp:'Dieciséis',en:'Sixteen',ph:'dyeh-see-SAYSS',example:'Tiene dieciséis años.',example_en:'He is sixteen years old.'},
+        {sp:'Diecisiete',en:'Seventeen',ph:'dyeh-see-SYEH-teh',example:'Son las diecisiete horas.',example_en:'It is seventeen hundred hours.'},{sp:'Dieciocho',en:'Eighteen',ph:'dyeh-see-OH-choh',example:'Mañana cumple dieciocho años.',example_en:'She turns eighteen tomorrow.'},
+        {sp:'Diecinueve',en:'Nineteen',ph:'dyeh-see-NWEH-beh',example:'Tengo diecinueve libros.',example_en:'I have nineteen books.'},{sp:'Veinte',en:'Twenty',ph:'BAYN-teh',example:'Vinieron veinte personas a la fiesta.',example_en:'Twenty people came to the party.'},
+        {sp:'Treinta',en:'Thirty',ph:'TRAYN-tah',example:'Tiene treinta años.',example_en:'He is thirty years old.'},{sp:'Cuarenta',en:'Forty',ph:'kwah-REN-tah',example:'El viaje dura cuarenta minutos.',example_en:'The journey takes forty minutes.'},
+        {sp:'Cincuenta',en:'Fifty',ph:'seen-KWEN-tah',example:'Pagué cincuenta euros.',example_en:'I paid fifty euros.'},{sp:'Cien',en:'Hundred',ph:'syehn',example:'Eso cuesta cien euros.',example_en:'That costs one hundred euros.'},
+        {sp:'Mil',en:'Thousand',ph:'meel',example:'El billete cuesta mil euros.',example_en:'The ticket costs one thousand euros.'},
     ],
     body:[
-        {sp:'Cabeza',en:'Head',ph:'kah-BEH-sah'},{sp:'Ojo',en:'Eye',ph:'OH-hoh'},
-        {sp:'Nariz',en:'Nose',ph:'nah-REETH'},{sp:'Boca',en:'Mouth',ph:'BOH-kah'},
-        {sp:'Oreja',en:'Ear',ph:'oh-REH-hah'},{sp:'Mano',en:'Hand',ph:'MAH-noh'},
-        {sp:'Pie',en:'Foot',ph:'pyeh'},{sp:'Brazo',en:'Arm',ph:'BRAH-soh'},
-        {sp:'Pierna',en:'Leg',ph:'PYAIR-nah'},{sp:'Espalda',en:'Back',ph:'es-PAL-dah'},
-        {sp:'Corazón',en:'Heart',ph:'kor-ah-SOHN'},{sp:'Diente',en:'Tooth',ph:'DYEHN-teh'},
-        {sp:'Cuello',en:'Neck',ph:'KWEH-yoh'},{sp:'Hombro',en:'Shoulder',ph:'OM-broh'},
-        {sp:'Rodilla',en:'Knee',ph:'roh-DEE-yah'},{sp:'Dedo',en:'Finger',ph:'DEH-doh'},
-        {sp:'Barriga',en:'Belly',ph:'bah-REE-gah'},{sp:'Lengua',en:'Tongue',ph:'LEN-gwah'},
-        {sp:'Pelo',en:'Hair',ph:'PEH-loh'},{sp:'Cara',en:'Face',ph:'KAH-rah'},
+        {sp:'Cabeza',en:'Head',ph:'kah-BEH-sah',example:'Me duele la cabeza.',example_en:'I have a headache.'},{sp:'Ojo',en:'Eye',ph:'OH-hoh',example:'Ella tiene los ojos azules.',example_en:'She has blue eyes.'},
+        {sp:'Nariz',en:'Nose',ph:'nah-REETH',example:'Me está goteando la nariz.',example_en:'My nose is running.'},{sp:'Boca',en:'Mouth',ph:'BOH-kah',example:'Cierra la boca cuando masticas.',example_en:'Close your mouth when you chew.'},
+        {sp:'Oreja',en:'Ear',ph:'oh-REH-hah',example:'Me duele la oreja izquierda.',example_en:'My left ear hurts.'},{sp:'Mano',en:'Hand',ph:'MAH-noh',example:'Dame la mano para cruzar la calle.',example_en:'Give me your hand to cross the street.'},
+        {sp:'Pie',en:'Foot',ph:'pyeh',example:'Se me ha dormido el pie.',example_en:'My foot has gone to sleep.'},{sp:'Brazo',en:'Arm',ph:'BRAH-soh',example:'Se rompió el brazo.',example_en:'He broke his arm.'},
+        {sp:'Pierna',en:'Leg',ph:'PYAIR-nah',example:'Ella tiene las piernas largas.',example_en:'She has long legs.'},{sp:'Espalda',en:'Back',ph:'es-PAL-dah',example:'Me duele la espalda.',example_en:'My back hurts.'},
+        {sp:'Corazón',en:'Heart',ph:'kor-ah-SOHN',example:'Me late el corazón muy rápido.',example_en:'My heart is beating very fast.'},{sp:'Diente',en:'Tooth',ph:'DYEHN-teh',example:'Tengo que ir al dentista.',example_en:'I have to go to the dentist.'},
+        {sp:'Cuello',en:'Neck',ph:'KWEH-yoh',example:'Tengo tortícolis en el cuello.',example_en:'I have a stiff neck.'},{sp:'Hombro',en:'Shoulder',ph:'OM-broh',example:'Le masajeó el hombro.',example_en:'She massaged his shoulder.'},
+        {sp:'Rodilla',en:'Knee',ph:'roh-DEE-yah',example:'Se cayó y se lastimó la rodilla.',example_en:'He fell and hurt his knee.'},{sp:'Dedo',en:'Finger',ph:'DEH-doh',example:'Me corté el dedo con el cuchillo.',example_en:'I cut my finger with the knife.'},
+        {sp:'Barriga',en:'Belly',ph:'bah-REE-gah',example:'Tengo la barriga llena.',example_en:'My belly is full.'},{sp:'Lengua',en:'Tongue',ph:'LEN-gwah',example:'El español es una lengua hermosa.',example_en:'Spanish is a beautiful language.'},
+        {sp:'Pelo',en:'Hair',ph:'PEH-loh',example:'Se cortó el pelo hoy.',example_en:'She got her hair cut today.'},{sp:'Cara',en:'Face',ph:'KAH-rah',example:'Lávate la cara con agua fría.',example_en:'Wash your face with cold water.'},
     ],
     food:[
-        {sp:'Arroz',en:'Rice',ph:'ah-RROS'},{sp:'Frijoles',en:'Beans',ph:'free-HOH-lehs'},
-        {sp:'Pollo',en:'Chicken',ph:'POH-yoh'},{sp:'Pescado',en:'Fish',ph:'pes-KAH-doh'},
-        {sp:'Pan',en:'Bread',ph:'pahn'},{sp:'Leche',en:'Milk',ph:'LEH-cheh'},
-        {sp:'Huevo',en:'Egg',ph:'WEH-boh'},{sp:'Queso',en:'Cheese',ph:'KEH-soh'},
-        {sp:'Fruta',en:'Fruit',ph:'FROO-tah'},{sp:'Verduras',en:'Vegetables',ph:'bair-DOO-rahs'},
-        {sp:'Café',en:'Coffee',ph:'kah-FEH'},{sp:'Jugo',en:'Juice',ph:'HOO-goh'},
-        {sp:'Carne',en:'Meat',ph:'KAR-neh'},{sp:'Pasta',en:'Pasta',ph:'PAS-tah'},
-        {sp:'Ensalada',en:'Salad',ph:'en-sah-LAH-dah'},{sp:'Sopa',en:'Soup',ph:'SOH-pah'},
-        {sp:'Pastel',en:'Cake',ph:'pas-TEL'},{sp:'Helado',en:'Ice cream',ph:'eh-LAH-doh'},
-        {sp:'Mantequilla',en:'Butter',ph:'man-teh-KEE-yah'},{sp:'Ajo',en:'Garlic',ph:'AH-hoh'},
-        {sp:'Cebolla',en:'Onion',ph:'seh-BOH-yah'},{sp:'Tomate',en:'Tomato',ph:'toh-MAH-teh'},
-        {sp:'Patata',en:'Potato',ph:'pah-TAH-tah'},{sp:'Azúcar',en:'Sugar',ph:'ah-SOO-kar'},
+        {sp:'Arroz',en:'Rice',em:'🍚',ph:'ah-RROS',example:'El arroz está cocido.',example_en:'The rice is cooked.'},{sp:'Frijoles',en:'Beans',em:'🫘',ph:'free-HOH-lehs',example:'Los frijoles con arroz son deliciosos.',example_en:'Beans and rice are delicious.'},
+        {sp:'Pollo',en:'Chicken',em:'🍗',ph:'POH-yoh',example:'El pollo está asándose en el horno.',example_en:'The chicken is roasting in the oven.'},{sp:'Pescado',en:'Fish',em:'🐟',ph:'pes-KAH-doh',example:'Le gusta el pescado a la plancha.',example_en:'He likes grilled fish.'},
+        {sp:'Pan',en:'Bread',em:'🍞',ph:'pahn',example:'Compré pan fresco en la panadería.',example_en:'I bought fresh bread at the bakery.'},{sp:'Leche',en:'Milk',em:'🥛',ph:'LEH-cheh',example:'El bebé toma leche cada mañana.',example_en:'The baby drinks milk every morning.'},
+        {sp:'Huevo',en:'Egg',em:'🥚',ph:'WEH-boh',example:'Quiero un huevo revuelto.',example_en:'I want a scrambled egg.'},{sp:'Queso',en:'Cheese',em:'🧀',ph:'KEH-soh',example:'El queso manchego es delicioso.',example_en:'Manchego cheese is delicious.'},
+        {sp:'Fruta',en:'Fruit',em:'🍓',ph:'FROO-tah',example:'Come fruta todos los días.',example_en:'Eat fruit every day.'},{sp:'Verduras',en:'Vegetables',em:'🥦',ph:'bair-DOO-rahs',example:'Las verduras están frescas.',example_en:'The vegetables are fresh.'},
+        {sp:'Café',en:'Coffee',em:'☕',ph:'kah-FEH',example:'Tomo café todas las mañanas.',example_en:'I drink coffee every morning.'},{sp:'Jugo',en:'Juice',em:'🧃',ph:'HOO-goh',example:'Quiero un jugo de naranja.',example_en:'I want an orange juice.'},
+        {sp:'Carne',en:'Meat',em:'🥩',ph:'KAR-neh',example:'La carne está poco hecha.',example_en:'The meat is rare.'},{sp:'Pasta',en:'Pasta',em:'🍝',ph:'PAS-tah',example:'La pasta está al dente.',example_en:'The pasta is al dente.'},
+        {sp:'Ensalada',en:'Salad',em:'🥗',ph:'en-sah-LAH-dah',example:'Voy a pedir una ensalada.',example_en:'I\'ll order a salad.'},{sp:'Sopa',en:'Soup',em:'🍲',ph:'SOH-pah',example:'La sopa está caliente.',example_en:'The soup is hot.'},
+        {sp:'Pastel',en:'Cake',em:'🎂',ph:'pas-TEL',example:'Hizo un pastel de chocolate.',example_en:'She made a chocolate cake.'},{sp:'Helado',en:'Ice cream',em:'🍦',ph:'eh-LAH-doh',example:'Quiero helado de fresa.',example_en:'I want strawberry ice cream.'},
+        {sp:'Mantequilla',en:'Butter',em:'🧈',ph:'man-teh-KEE-yah',example:'Unta mantequilla en el pan.',example_en:'Spread butter on the bread.'},{sp:'Ajo',en:'Garlic',em:'🧄',ph:'AH-hoh',example:'Añade ajo a la receta.',example_en:'Add garlic to the recipe.'},
+        {sp:'Cebolla',en:'Onion',em:'🧅',ph:'seh-BOH-yah',example:'La cebolla hace llorar.',example_en:'Onion makes you cry.'},{sp:'Tomate',en:'Tomato',em:'🍅',ph:'toh-MAH-teh',example:'El tomate está maduro.',example_en:'The tomato is ripe.'},
+        {sp:'Patata',en:'Potato',em:'🥔',ph:'pah-TAH-tah',example:'Me encantan las patatas fritas.',example_en:'I love fried potatoes.'},{sp:'Azúcar',en:'Sugar',em:'🍬',ph:'ah-SOO-kar',example:'¿Quieres azúcar en el café?',example_en:'Do you want sugar in your coffee?'},
     ],
     animals:[
-        {sp:'Perro',en:'Dog',ph:'PEH-rroh'},{sp:'Gato',en:'Cat',ph:'GAH-toh'},
-        {sp:'Pájaro',en:'Bird',ph:'PAH-hah-roh'},{sp:'Pez',en:'Fish',ph:'pehth'},
-        {sp:'Caballo',en:'Horse',ph:'kah-BAH-yoh'},{sp:'Vaca',en:'Cow',ph:'BAH-kah'},
-        {sp:'Cerdo',en:'Pig',ph:'SAIR-doh'},{sp:'Oveja',en:'Sheep',ph:'oh-BEH-hah'},
-        {sp:'Mono',en:'Monkey',ph:'MOH-noh'},{sp:'León',en:'Lion',ph:'leh-OHN'},
-        {sp:'Elefante',en:'Elephant',ph:'eh-leh-FAN-teh'},{sp:'Serpiente',en:'Snake',ph:'sair-PYEHN-teh'},
-        {sp:'Conejo',en:'Rabbit',ph:'koh-NEH-hoh'},{sp:'Tigre',en:'Tiger',ph:'TEE-greh'},
-        {sp:'Oso',en:'Bear',ph:'OH-soh'},{sp:'Rana',en:'Frog',ph:'RAH-nah'},
-        {sp:'Ratón',en:'Mouse',ph:'rah-TOHN'},{sp:'Gallina',en:'Chicken (hen)',ph:'gah-YEE-nah'},
-        {sp:'Loro',en:'Parrot',ph:'LOH-roh'},{sp:'Tortuga',en:'Turtle',ph:'tor-TOO-gah'},
+        {sp:'Perro',en:'Dog',em:'🐶',ph:'PEH-rroh',example:'El perro está ladrando.',example_en:'The dog is barking.'},{sp:'Gato',en:'Cat',em:'🐱',ph:'GAH-toh',example:'El gato está durmiendo en el sofá.',example_en:'The cat is sleeping on the sofa.'},
+        {sp:'Pájaro',en:'Bird',em:'🐦',ph:'PAH-hah-roh',example:'El pájaro canta por la mañana.',example_en:'The bird sings in the morning.'},{sp:'Pez',en:'Fish',em:'🐟',ph:'pehth',example:'El pez nada en el río.',example_en:'The fish swims in the river.'},
+        {sp:'Caballo',en:'Horse',em:'🐴',ph:'kah-BAH-yoh',example:'El caballo corre muy rápido.',example_en:'The horse runs very fast.'},{sp:'Vaca',en:'Cow',em:'🐄',ph:'BAH-kah',example:'La vaca está en el pasto.',example_en:'The cow is in the pasture.'},
+        {sp:'Cerdo',en:'Pig',em:'🐷',ph:'SAIR-doh',example:'El cerdo se revuelca en el barro.',example_en:'The pig rolls in the mud.'},{sp:'Oveja',en:'Sheep',em:'🐑',ph:'oh-BEH-hah',example:'La oveja tiene lana blanca.',example_en:'The sheep has white wool.'},
+        {sp:'Mono',en:'Monkey',em:'🐒',ph:'MOH-noh',example:'El mono salta de rama en rama.',example_en:'The monkey jumps from branch to branch.'},{sp:'León',en:'Lion',em:'🦁',ph:'leh-OHN',example:'El león es el rey de la selva.',example_en:'The lion is the king of the jungle.'},
+        {sp:'Elefante',en:'Elephant',em:'🐘',ph:'eh-leh-FAN-teh',example:'El elefante tiene una memoria increíble.',example_en:'The elephant has an incredible memory.'},{sp:'Serpiente',en:'Snake',em:'🐍',ph:'sair-PYEHN-teh',example:'Esa serpiente es peligrosa.',example_en:'That snake is dangerous.'},
+        {sp:'Conejo',en:'Rabbit',em:'🐰',ph:'koh-NEH-hoh',example:'El conejo come zanahoria.',example_en:'The rabbit eats carrot.'},{sp:'Tigre',en:'Tiger',em:'🐯',ph:'TEE-greh',example:'El tigre caza de noche.',example_en:'The tiger hunts at night.'},
+        {sp:'Oso',en:'Bear',em:'🐻',ph:'OH-soh',example:'El oso hiberna en invierno.',example_en:'The bear hibernates in winter.'},{sp:'Rana',en:'Frog',em:'🐸',ph:'RAH-nah',example:'La rana salta al charco.',example_en:'The frog jumps into the puddle.'},
+        {sp:'Ratón',en:'Mouse',em:'🐭',ph:'rah-TOHN',example:'El ratón entró en la cocina.',example_en:'The mouse got into the kitchen.'},{sp:'Gallina',en:'Chicken (hen)',em:'🐔',ph:'gah-YEE-nah',example:'La gallina pone huevos cada día.',example_en:'The hen lays eggs every day.'},
+        {sp:'Loro',en:'Parrot',em:'🦜',ph:'LOH-roh',example:'El loro repite todo lo que oye.',example_en:'The parrot repeats everything it hears.'},{sp:'Tortuga',en:'Turtle',em:'🐢',ph:'tor-TOO-gah',example:'La tortuga camina despacio.',example_en:'The turtle walks slowly.'},
     ],
     travel:[
-        {sp:'Aeropuerto',en:'Airport',ph:'ah-eh-roh-PWAIR-toh'},{sp:'Hotel',en:'Hotel',ph:'oh-TEL'},
-        {sp:'Tren',en:'Train',ph:'trehn'},{sp:'Autobús',en:'Bus',ph:'ow-toh-BOOS'},
-        {sp:'Taxi',en:'Taxi',ph:'TAK-see'},{sp:'Pasaporte',en:'Passport',ph:'pah-sah-POR-teh'},
-        {sp:'Maleta',en:'Suitcase',ph:'mah-LEH-tah'},{sp:'Mapa',en:'Map',ph:'MAH-pah'},
-        {sp:'Playa',en:'Beach',ph:'PLAH-yah'},{sp:'Museo',en:'Museum',ph:'moo-SEH-oh'},
-        {sp:'Restaurante',en:'Restaurant',ph:'res-tow-RAN-teh'},{sp:'Dinero',en:'Money',ph:'dee-NEH-roh'},
-        {sp:'Metro',en:'Metro/Subway',ph:'MEH-troh'},{sp:'Avión',en:'Aeroplane',ph:'ah-BYOHN'},
-        {sp:'Billete',en:'Ticket',ph:'bee-YEH-teh'},{sp:'Reserva',en:'Reservation',ph:'reh-SAIR-bah'},
-        {sp:'Moto',en:'Motorcycle',ph:'MOH-toh'},{sp:'Barco',en:'Boat',ph:'BAR-koh'},
-        {sp:'Cambio',en:'Exchange office',ph:'KAM-byoh'},{sp:'Equipaje',en:'Luggage',ph:'eh-kee-PAH-heh'},
+        {sp:'Aeropuerto',en:'Airport',ph:'ah-eh-roh-PWAIR-toh',example:'Llegamos al aeropuerto temprano.',example_en:'We arrived at the airport early.'},{sp:'Hotel',en:'Hotel',ph:'oh-TEL',example:'El hotel está en el centro.',example_en:'The hotel is in the city centre.'},
+        {sp:'Tren',en:'Train',ph:'trehn',example:'El tren está llegando.',example_en:'The train is arriving.'},{sp:'Autobús',en:'Bus',ph:'ow-toh-BOOS',example:'El autobús lleva retraso.',example_en:'The bus is running late.'},
+        {sp:'Taxi',en:'Taxi',ph:'TAK-see',example:'Voy a pedir un taxi.',example_en:'I\'ll call a taxi.'},{sp:'Pasaporte',en:'Passport',ph:'pah-sah-POR-teh',example:'No olvides el pasaporte.',example_en:'Don\'t forget your passport.'},
+        {sp:'Maleta',en:'Suitcase',ph:'mah-LEH-tah',example:'La maleta pesa mucho.',example_en:'The suitcase is very heavy.'},{sp:'Mapa',en:'Map',ph:'MAH-pah',example:'Necesito un mapa de la ciudad.',example_en:'I need a map of the city.'},
+        {sp:'Playa',en:'Beach',ph:'PLAH-yah',example:'Vamos a la playa mañana.',example_en:'We\'re going to the beach tomorrow.'},{sp:'Museo',en:'Museum',ph:'moo-SEH-oh',example:'El museo abre a las diez.',example_en:'The museum opens at ten.'},
+        {sp:'Restaurante',en:'Restaurant',ph:'res-tow-RAN-teh',example:'El restaurante está lleno.',example_en:'The restaurant is full.'},{sp:'Dinero',en:'Money',ph:'dee-NEH-roh',example:'Necesito sacar dinero.',example_en:'I need to withdraw money.'},
+        {sp:'Metro',en:'Metro/Subway',ph:'MEH-troh',example:'El metro es más rápido.',example_en:'The metro is faster.'},{sp:'Avión',en:'Aeroplane',ph:'ah-BYOHN',example:'El avión despega a las ocho.',example_en:'The plane takes off at eight.'},
+        {sp:'Billete',en:'Ticket',ph:'bee-YEH-teh',example:'Compré el billete por internet.',example_en:'I bought the ticket online.'},{sp:'Reserva',en:'Reservation',ph:'reh-SAIR-bah',example:'Hice una reserva para dos.',example_en:'I made a reservation for two.'},
+        {sp:'Moto',en:'Motorcycle',ph:'MOH-toh',example:'Llegó en moto.',example_en:'He arrived by motorcycle.'},{sp:'Barco',en:'Boat',ph:'BAR-koh',example:'Cruzamos el río en barco.',example_en:'We crossed the river by boat.'},
+        {sp:'Cambio',en:'Exchange office',ph:'KAM-byoh',example:'¿Dónde está la oficina de cambio?',example_en:'Where is the exchange office?'},{sp:'Equipaje',en:'Luggage',ph:'eh-kee-PAH-heh',example:'El equipaje está en el maletero.',example_en:'The luggage is in the boot.'},
     ],
     family:[
-        {sp:'Madre',en:'Mother',ph:'MAH-dreh'},{sp:'Padre',en:'Father',ph:'PAH-dreh'},
-        {sp:'Hermano',en:'Brother',ph:'air-MAH-noh'},{sp:'Hermana',en:'Sister',ph:'air-MAH-nah'},
-        {sp:'Abuela',en:'Grandmother',ph:'ah-BWEH-lah'},{sp:'Abuelo',en:'Grandfather',ph:'ah-BWEH-loh'},
-        {sp:'Hijo',en:'Son',ph:'EE-hoh'},{sp:'Hija',en:'Daughter',ph:'EE-hah'},
-        {sp:'Tío',en:'Uncle',ph:'TEE-oh'},{sp:'Tía',en:'Aunt',ph:'TEE-ah'},
-        {sp:'Primo',en:'Cousin (m)',ph:'PREE-moh'},{sp:'Marido',en:'Husband',ph:'mah-REE-doh'},
-        {sp:'Esposa',en:'Wife',ph:'es-POH-sah'},{sp:'Bebé',en:'Baby',ph:'beh-BEH'},
-        {sp:'Sobrino',en:'Nephew',ph:'soh-BREE-noh'},{sp:'Sobrina',en:'Niece',ph:'soh-BREE-nah'},
-        {sp:'Cuñado',en:'Brother-in-law',ph:'koon-YAH-doh'},{sp:'Suegra',en:'Mother-in-law',ph:'SWEH-grah'},
-        {sp:'Suegro',en:'Father-in-law',ph:'SWEH-groh'},{sp:'Padrino',en:'Godfather',ph:'pah-DREE-noh'},
+        {sp:'Madre',en:'Mother',ph:'MAH-dreh',example:'Mi madre cocina muy bien.',example_en:'My mother cooks very well.'},{sp:'Padre',en:'Father',ph:'PAH-dreh',example:'Mi padre trabaja en Madrid.',example_en:'My father works in Madrid.'},
+        {sp:'Hermano',en:'Brother',ph:'air-MAH-noh',example:'Mi hermano mayor vive en Barcelona.',example_en:'My older brother lives in Barcelona.'},{sp:'Hermana',en:'Sister',ph:'air-MAH-nah',example:'Mi hermana está estudiando medicina.',example_en:'My sister is studying medicine.'},
+        {sp:'Abuela',en:'Grandmother',ph:'ah-BWEH-lah',example:'La abuela hace tarta todos los domingos.',example_en:'Grandmother makes cake every Sunday.'},{sp:'Abuelo',en:'Grandfather',ph:'ah-BWEH-loh',example:'El abuelo me cuenta historias.',example_en:'My grandfather tells me stories.'},
+        {sp:'Hijo',en:'Son',ph:'EE-hoh',example:'Mi hijo tiene cinco años.',example_en:'My son is five years old.'},{sp:'Hija',en:'Daughter',ph:'EE-hah',example:'Su hija está en el colegio.',example_en:'Her daughter is at school.'},
+        {sp:'Tío',en:'Uncle',ph:'TEE-oh',example:'Mi tío vive en Sevilla.',example_en:'My uncle lives in Seville.'},{sp:'Tía',en:'Aunt',ph:'TEE-ah',example:'Mi tía me dio un regalo.',example_en:'My aunt gave me a present.'},
+        {sp:'Primo',en:'Cousin (m)',ph:'PREE-moh',example:'Mi primo vino a visitarme.',example_en:'My cousin came to visit me.'},{sp:'Marido',en:'Husband',ph:'mah-REE-doh',example:'Su marido es muy simpático.',example_en:'Her husband is very friendly.'},
+        {sp:'Esposa',en:'Wife',ph:'es-POH-sah',example:'Su esposa es profesora.',example_en:'His wife is a teacher.'},{sp:'Bebé',en:'Baby',ph:'beh-BEH',example:'El bebé está llorando.',example_en:'The baby is crying.'},
+        {sp:'Sobrino',en:'Nephew',ph:'soh-BREE-noh',example:'Mi sobrino tiene dos años.',example_en:'My nephew is two years old.'},{sp:'Sobrina',en:'Niece',ph:'soh-BREE-nah',example:'Su sobrina es muy maja.',example_en:'Her niece is very sweet.'},
+        {sp:'Cuñado',en:'Brother-in-law',ph:'koon-YAH-doh',example:'Mi cuñado es médico.',example_en:'My brother-in-law is a doctor.'},{sp:'Suegra',en:'Mother-in-law',ph:'SWEH-grah',example:'La suegra vino a cenar.',example_en:'My mother-in-law came for dinner.'},
+        {sp:'Suegro',en:'Father-in-law',ph:'SWEH-groh',example:'El suegro es muy generoso.',example_en:'My father-in-law is very generous.'},{sp:'Padrino',en:'Godfather',ph:'pah-DREE-noh',example:'El padrino dio un discurso.',example_en:'The godfather gave a speech.'},
     ],
     time:[
-        {sp:'Hoy',en:'Today',ph:'oy'},{sp:'Mañana',en:'Tomorrow',ph:'mah-NYAH-nah'},
-        {sp:'Ayer',en:'Yesterday',ph:'ah-YAIR'},{sp:'Semana',en:'Week',ph:'seh-MAH-nah'},
-        {sp:'Mes',en:'Month',ph:'mehs'},{sp:'Año',en:'Year',ph:'AH-nyoh'},
-        {sp:'Hora',en:'Hour',ph:'OH-rah'},{sp:'Minuto',en:'Minute',ph:'mee-NOO-toh'},
-        {sp:'Mañana',en:'Morning',ph:'mah-NYAH-nah'},{sp:'Tarde',en:'Afternoon',ph:'TAR-deh'},
-        {sp:'Noche',en:'Night',ph:'NOH-cheh'},{sp:'Ahora',en:'Now',ph:'ah-OH-rah'},
-        {sp:'Lunes',en:'Monday',ph:'LOO-nehs'},{sp:'Martes',en:'Tuesday',ph:'MAR-tehs'},
-        {sp:'Miércoles',en:'Wednesday',ph:'MYAIR-koh-lehs'},{sp:'Jueves',en:'Thursday',ph:'HWEH-behs'},
-        {sp:'Viernes',en:'Friday',ph:'BYAIR-nehs'},{sp:'Sábado',en:'Saturday',ph:'SAH-bah-doh'},
-        {sp:'Domingo',en:'Sunday',ph:'doh-MEEN-goh'},{sp:'Segundo',en:'Second',ph:'seh-GOON-doh'},
+        {sp:'Hoy',en:'Today',ph:'oy',example:'¿Qué vas a hacer hoy?',example_en:'What are you going to do today?'},{sp:'Mañana',en:'Tomorrow',ph:'mah-NYAH-nah',example:'Mañana hay una reunión temprana.',example_en:'There\'s an early meeting tomorrow.'},
+        {sp:'Ayer',en:'Yesterday',ph:'ah-YAIR',example:'Ayer fui al cine.',example_en:'Yesterday I went to the cinema.'},{sp:'Semana',en:'Week',ph:'seh-MAH-nah',example:'Esta semana está pasando rápido.',example_en:'This week is going by fast.'},
+        {sp:'Mes',en:'Month',ph:'mehs',example:'El mes pasado fui a España.',example_en:'Last month I went to Spain.'},{sp:'Año',en:'Year',ph:'AH-nyoh',example:'El año nuevo se acerca.',example_en:'The new year is approaching.'},
+        {sp:'Hora',en:'Hour',ph:'OH-rah',example:'Ya es hora de irse.',example_en:'It\'s already time to leave.'},{sp:'Minuto',en:'Minute',ph:'mee-NOO-toh',example:'Espera un minuto, por favor.',example_en:'Wait a minute, please.'},
+        {sp:'Mañana',en:'Morning',ph:'mah-NYAH-nah',example:'Mañana hay una reunión temprana.',example_en:'There\'s an early meeting tomorrow.'},{sp:'Tarde',en:'Afternoon',ph:'TAR-deh',example:'Por la tarde voy al parque.',example_en:'In the afternoon I\'m going to the park.'},
+        {sp:'Noche',en:'Night',ph:'NOH-cheh',example:'Por la noche me gusta ver películas.',example_en:'At night I like to watch films.'},{sp:'Ahora',en:'Now',ph:'ah-OH-rah',example:'Tengo que salir ahora.',example_en:'I need to leave now.'},
+        {sp:'Lunes',en:'Monday',ph:'LOO-nehs',example:'El lunes es día de trabajo.',example_en:'Monday is a work day.'},{sp:'Martes',en:'Tuesday',ph:'MAR-tehs',example:'El martes tengo clase de español.',example_en:'On Tuesday I have a Spanish class.'},
+        {sp:'Miércoles',en:'Wednesday',ph:'MYAIR-koh-lehs',example:'El miércoles hay reunión.',example_en:'On Wednesday there\'s a meeting.'},{sp:'Jueves',en:'Thursday',ph:'HWEH-behs',example:'El jueves es casi fin de semana.',example_en:'Thursday is almost the weekend.'},
+        {sp:'Viernes',en:'Friday',ph:'BYAIR-nehs',example:'Todo el mundo ama el viernes.',example_en:'Everyone loves Friday.'},{sp:'Sábado',en:'Saturday',ph:'SAH-bah-doh',example:'El sábado voy a la playa.',example_en:'On Saturday I\'m going to the beach.'},
+        {sp:'Domingo',en:'Sunday',ph:'doh-MEEN-goh',example:'El domingo es día de familia.',example_en:'Sunday is family day.'},{sp:'Segundo',en:'Second',ph:'seh-GOON-doh',example:'Solo tardará un segundo.',example_en:'It\'ll only take a second.'},
     ],
 };
 
@@ -368,6 +407,41 @@ function getPhraseLib(diff){
 }
 
 let currentCat='colours',wordPool=[],wordIdx=0,wordHistory=[];
+
+const LS_STARS='sol_starred_v1';
+const LS_EASY='sol_easy_v1';
+function getStarred(){try{return JSON.parse(localStorage.getItem(LS_STARS)||'[]');}catch(e){return[];}}
+function saveStarred(arr){try{localStorage.setItem(LS_STARS,JSON.stringify(arr));}catch(e){}}
+function getEasyUntil(){try{return JSON.parse(localStorage.getItem(LS_EASY)||'{}');}catch(e){return{};}}
+function saveEasyUntil(obj){try{localStorage.setItem(LS_EASY,JSON.stringify(obj));}catch(e){}}
+function cardKey(card){return card.sp+'|'+card.en;}
+function isStarred(card){return getStarred().includes(cardKey(card));}
+function toggleStar(){
+    const card=wordPool[wordIdx];if(!card)return;
+    const key=cardKey(card);let starred=getStarred();
+    if(starred.includes(key)){starred=starred.filter(k=>k!==key);}else{starred.push(key);}
+    saveStarred(starred);updateStarUI(card);
+    if(currentCat==='favorites')loadWordCat('favorites');
+}
+function updateStarUI(card){
+    const btn=document.getElementById('word-star');if(!btn||!card)return;
+    const on=isStarred(card);btn.textContent=on?'★':'☆';btn.classList.toggle('starred',on);
+}
+function rateCard(rating){
+    const card=wordPool[wordIdx];if(!card){nextCard();return;}
+    if(rating==='easy'){
+        const eu=getEasyUntil();eu[cardKey(card)]=Date.now()+24*60*60*1000;saveEasyUntil(eu);
+        wordPool.splice(wordIdx,1);
+        if(wordPool.length===0){loadWordCat(currentCat);return;}
+        wordIdx=wordIdx%wordPool.length;showWordCard();
+    }else if(rating==='hard'){
+        wordPool.splice(wordIdx,1);
+        const ahead=Math.min(wordPool.length,2+Math.floor(Math.random()*3));
+        const insertAt=(wordIdx+ahead)%(wordPool.length+1);
+        wordPool.splice(insertAt,0,card);
+        wordIdx=wordIdx%wordPool.length;showWordCard();
+    }else{nextCard();}
+}
 let phraseDiff='easy',phrasePool=[],phraseIdx=0,phraseHistory=[];
 let listType='words',listCat='colours',listPhraseDiff='easy';
 let testType='words',testCat='colours',testDiff='easy';
@@ -387,7 +461,18 @@ function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Mat
 function buildCatButtons(containerId,activeCat,onClickFn){const wrap=document.getElementById(containerId);wrap.innerHTML='';CATEGORIES.forEach(cat=>{const btn=document.createElement('button');btn.className='cat-btn'+(cat.id===activeCat?' active':'');btn.innerHTML=`<span class="cat-icon">${cat.icon}</span>${cat.label}`;btn.onclick=()=>onClickFn(cat.id,btn,containerId);wrap.appendChild(btn);});}
 function setActiveCatBtn(containerId,catId){const btns=document.querySelectorAll(`#${containerId} .cat-btn`);const idx=CATEGORIES.findIndex(c=>c.id===catId);btns.forEach(b=>b.classList.remove('active'));if(btns[idx])btns[idx].classList.add('active');}
 
-function loadWordCat(catId){currentCat=catId;wordPool=shuffle(WORD_LIBRARY[catId]||[]);wordIdx=0;wordHistory=[0];showWordCard();setActiveCatBtn('words-cat-scroll',catId);}
+function loadWordCat(catId){
+    currentCat=catId;
+    let pool;
+    if(catId==='favorites'){
+        const starred=getStarred();
+        pool=Object.values(WORD_LIBRARY).flat().filter(w=>starred.includes(cardKey(w)));
+    }else{pool=WORD_LIBRARY[catId]||[];}
+    const eu=getEasyUntil(),now=Date.now();
+    pool=pool.filter(w=>{const u=eu[cardKey(w)];return !u||now>u;});
+    wordPool=shuffle(pool);wordIdx=0;wordHistory=[0];
+    showWordCard();setActiveCatBtn('words-cat-scroll',catId);
+}
 function showWordCard(){document.querySelectorAll('#words .flashcard-wrapper').forEach(w=>w.classList.remove('is-flipped'));const card=wordPool[wordIdx];if(!card)return;setTimeout(()=>{document.getElementById('sp-text').innerText=card.sp;document.getElementById('en-text').innerText=card.en;document.querySelectorAll('.sp-ph-view').forEach(el=>el.innerText=`[ ${card.ph} ]`);document.getElementById('words-counter').innerText=`${wordIdx+1} / ${wordPool.length}`;},150);}
 function nextCard(){wordIdx=(wordIdx+1)%wordPool.length;wordHistory.push(wordIdx);if(wordHistory.length>200)wordHistory.shift();showWordCard();}
 function prevCard(){if(wordHistory.length>1){wordHistory.pop();wordIdx=wordHistory[wordHistory.length-1];}else wordIdx=(wordIdx-1+wordPool.length)%wordPool.length;showWordCard();}
