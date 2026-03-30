@@ -146,10 +146,12 @@
         /* Card emoji visual */
         .card-emoji{font-size:4.5rem;line-height:1;margin-bottom:8px;display:block;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.3));}
 
-        /* Example sentence */
-        .card-example{margin-top:14px;padding:10px 14px;background:rgba(0,0,0,0.15);border-radius:10px;width:100%;text-align:center;}
-        .card-example-pt{font-size:0.85rem;font-weight:700;color:white;line-height:1.4;}
-        .card-example-en{font-size:0.72rem;color:rgba(255,255,255,0.7);margin-top:4px;font-style:italic;line-height:1.4;}
+        /* Example sentence — front (dark card) */
+        .card-example-front{margin-top:12px;padding:10px 14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;width:100%;text-align:center;}
+        .card-example-front .ex-sentence{font-size:0.82rem;font-weight:600;color:var(--text);line-height:1.5;}
+        /* Example sentence — back (green card) */
+        .card-example-back{margin-top:12px;padding:10px 14px;background:rgba(0,0,0,0.2);border:1px solid rgba(0,0,0,0.15);border-radius:10px;width:100%;text-align:center;}
+        .card-example-back .ex-sentence{font-size:0.82rem;font-weight:600;color:white;line-height:1.5;}
         /* Star button */
         .btn-star{position:absolute;top:14px;right:14px;background:none;border:none;font-size:1.5rem;cursor:pointer;line-height:1;padding:4px;opacity:0.5;transition:opacity 0.15s ease,transform 0.15s ease;z-index:2;}
         .btn-star:active{transform:scale(1.3);}
@@ -197,15 +199,17 @@
                     <h2 id="pt-text" style="font-size:2.2rem;margin:0">--</h2>
                     <div class="pt-ph-view pronunciation">--</div>
                     <button class="btn-hear" onclick="event.stopPropagation();speak('pt-text')">🔊 HEAR</button>
+                    <div class="card-example-front" id="card-example-front" style="display:none">
+                        <div class="ex-sentence" id="example-pt"></div>
+                    </div>
                     <div class="card-counter" id="words-counter"></div>
                 </div>
                 <div class="card-back">
                     <h2 id="en-text" style="font-size:1.8rem;margin:0">--</h2>
                     <div class="pt-ph-view pronunciation">--</div>
                     <button class="btn-hear" onclick="event.stopPropagation();speak('pt-text')">🔊 HEAR</button>
-                    <div class="card-example" id="card-example" style="display:none">
-                        <div class="card-example-pt" id="example-pt"></div>
-                        <div class="card-example-en" id="example-en"></div>
+                    <div class="card-example-back" id="card-example-back" style="display:none">
+                        <div class="ex-sentence" id="example-en"></div>
                     </div>
                 </div>
             </div>
@@ -707,14 +711,17 @@ function showWordCard(){
             emojiEl.textContent = '';
             emojiEl.style.display = 'none';
         }
-        // Example sentence
-        const exBox = document.getElementById('card-example');
+        // Example sentence — Portuguese on front, English on back
+        const exFront = document.getElementById('card-example-front');
+        const exBack  = document.getElementById('card-example-back');
         if(card.example){
             document.getElementById('example-pt').textContent = card.example;
             document.getElementById('example-en').textContent = card.example_en || '';
-            exBox.style.display = 'block';
+            exFront.style.display = 'block';
+            exBack.style.display  = 'block';
         } else {
-            exBox.style.display = 'none';
+            exFront.style.display = 'none';
+            exBack.style.display  = 'none';
         }
     },150);
 }
