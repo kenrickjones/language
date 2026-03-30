@@ -151,7 +151,8 @@
         .card-example-front .ex-sentence{font-size:0.82rem;font-weight:600;color:var(--text);line-height:1.5;}
         /* Example sentence — back (green card) */
         .card-example-back{margin-top:12px;padding:10px 14px;background:rgba(0,0,0,0.2);border:1px solid rgba(0,0,0,0.15);border-radius:10px;width:100%;text-align:center;}
-        .card-example-back .ex-sentence{font-size:0.82rem;font-weight:600;color:white;line-height:1.5;}
+        .card-example-back .ex-sentence-pt{font-size:0.85rem;font-weight:700;color:white;line-height:1.5;}
+        .card-example-back .ex-sentence-en{font-size:0.78rem;font-weight:500;color:rgba(255,255,255,0.75);line-height:1.5;margin-top:5px;font-style:italic;}
         /* Star button */
         .btn-star{position:absolute;top:14px;right:14px;background:none;border:none;font-size:1.5rem;cursor:pointer;line-height:1;padding:4px;opacity:0.5;transition:opacity 0.15s ease,transform 0.15s ease;z-index:2;}
         .btn-star:active{transform:scale(1.3);}
@@ -209,7 +210,8 @@
                     <div class="pt-ph-view pronunciation">--</div>
                     <button class="btn-hear" onclick="event.stopPropagation();speak('pt-text')">🔊 HEAR</button>
                     <div class="card-example-back" id="card-example-back" style="display:none">
-                        <div class="ex-sentence" id="example-en"></div>
+                        <div class="ex-sentence-pt" id="example-back-pt"></div>
+                        <div class="ex-sentence-en" id="example-en"></div>
                     </div>
                 </div>
             </div>
@@ -716,6 +718,7 @@ function showWordCard(){
         const exBack  = document.getElementById('card-example-back');
         if(card.example){
             document.getElementById('example-pt').textContent = card.example;
+            document.getElementById('example-back-pt').textContent = card.example;
             document.getElementById('example-en').textContent = card.example_en || '';
             exFront.style.display = 'block';
             exBack.style.display  = 'block';
