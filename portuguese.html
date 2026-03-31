@@ -153,6 +153,11 @@
         .card-example-back{margin-top:12px;padding:10px 14px;background:rgba(0,0,0,0.2);border:1px solid rgba(0,0,0,0.15);border-radius:10px;width:100%;text-align:center;}
         .card-example-back .ex-sentence-pt{font-size:0.85rem;font-weight:700;color:white;line-height:1.5;}
         .card-example-back .ex-sentence-en{font-size:0.78rem;font-weight:500;color:rgba(255,255,255,0.75);line-height:1.5;margin-top:5px;font-style:italic;}
+
+        /* False friend trap warning */
+        .ff-trap{margin-top:10px;padding:8px 14px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);border-radius:10px;width:100%;text-align:center;}
+        .ff-trap-text{font-size:0.78rem;font-weight:700;color:#fca5a5;line-height:1.4;}
+        .ff-trap-back .ff-trap-text{color:#fecaca;}
         /* Star button */
         .btn-star{position:absolute;top:14px;right:14px;background:none;border:none;font-size:1.5rem;cursor:pointer;line-height:1;padding:4px;opacity:0.5;transition:opacity 0.15s ease,transform 0.15s ease;z-index:2;}
         .btn-star:active{transform:scale(1.3);}
@@ -203,6 +208,9 @@
                     <div class="card-example-front" id="card-example-front" style="display:none">
                         <div class="ex-sentence" id="example-pt"></div>
                     </div>
+                    <div class="ff-trap" id="ff-trap-front" style="display:none">
+                        <div class="ff-trap-text" id="ff-trap-text-front"></div>
+                    </div>
                     <div class="card-counter" id="words-counter"></div>
                 </div>
                 <div class="card-back">
@@ -212,6 +220,9 @@
                     <div class="card-example-back" id="card-example-back" style="display:none">
                         <div class="ex-sentence-pt" id="example-back-pt"></div>
                         <div class="ex-sentence-en" id="example-en"></div>
+                    </div>
+                    <div class="ff-trap ff-trap-back" id="ff-trap-back" style="display:none">
+                        <div class="ff-trap-text" id="ff-trap-text-back"></div>
                     </div>
                 </div>
             </div>
@@ -377,6 +388,7 @@ const CATEGORIES = [
     { id:'family',   label:'Family',     icon:'👨‍👩‍👧' },
     { id:'time',     label:'Time',       icon:'⏰' },
     { id:'favorites',label:'⭐ Faves',    icon:'⭐' },
+    { id:'falsefriends',label:'False Friends',icon:'🪤' },
 ];
 
 const WORD_LIBRARY = {
@@ -612,6 +624,35 @@ const WORD_LIBRARY = {
         {pt:'Nada',en:'Nothing',ph:'NAH-dah',example:'De nada! Não foi nada.',example_en:'You\'re welcome! It was nothing.'},
         {pt:'Gente',en:'People / Folks',ph:'ZHEN-chee',example:'A gente se vê amanhã.',example_en:'We\'ll see each other tomorrow.'}
     ],
+    falsefriends:[
+        {pt:'Pretender',en:'To intend / plan',ph:'preh-ten-DEHR',trap:'Pretend',example:'Pretendo viajar para o Brasil no verão.',example_en:'I intend to travel to Brazil in the summer.'},
+        {pt:'Lanche',en:'Snack',ph:'LAN-shee',trap:'Lunch',example:'Vou tomar um lanche antes do jantar.',example_en:'I\'m going to have a snack before dinner.'},
+        {pt:'Novela',en:'Soap opera',ph:'noh-VEH-lah',trap:'Novel',example:'Minha mãe adora assistir novela.',example_en:'My mother loves watching soap operas.'},
+        {pt:'Borracha',en:'Rubber / Eraser',ph:'boh-HA-shah',trap:'Borracha → Drunk (in Spanish — different language trap!)',example:'Preciso de uma borracha para apagar isso.',example_en:'I need an eraser to rub that out.'},
+        {pt:'Polvo',en:'Octopus',ph:'POL-voo',trap:'Powder',example:'O polvo tem oito tentáculos.',example_en:'The octopus has eight tentacles.'},
+        {pt:'Acordar',en:'To wake up',ph:'ah-kor-DAR',trap:'Accord / Agree',example:'Acordo às sete horas toda manhã.',example_en:'I wake up at seven every morning.'},
+        {pt:'Assistir',en:'To watch',ph:'ah-sees-TEER',trap:'Assist',example:'Vou assistir um filme hoje à noite.',example_en:'I\'m going to watch a film tonight.'},
+        {pt:'Bordar',en:'To embroider',ph:'bor-DAR',trap:'Board',example:'Ela adora bordar toalhas de mesa.',example_en:'She loves to embroider tablecloths.'},
+        {pt:'Pasta',en:'Folder / Briefcase / Toothpaste',ph:'PAS-tah',trap:'Pasta (food)',example:'Coloquei os documentos na pasta.',example_en:'I put the documents in the folder.'},
+        {pt:'Policial',en:'Police officer / Detective',ph:'poh-lee-see-AL',trap:'Political',example:'O policial pediu minha carteira de identidade.',example_en:'The police officer asked for my ID.'},
+        {pt:'Parentes',en:'Relatives / Family',ph:'pah-REN-chees',trap:'Parents',example:'Meus parentes moram em Minas Gerais.',example_en:'My relatives live in Minas Gerais.'},
+        {pt:'Gravidez',en:'Pregnancy',ph:'grah-vee-DEZ',trap:'Gravity',example:'A gravidez dura nove meses.',example_en:'Pregnancy lasts nine months.'},
+        {pt:'Exquisito',en:'Refined / Exquisite',ph:'es-kee-ZEE-too',trap:'Exquisite (same meaning — but English speakers get it backwards with Spanish \'extraño\')',example:'Esse restaurante serve comida exquisita.',example_en:'This restaurant serves exquisite food.'},
+        {pt:'Borboleta',en:'Butterfly',ph:'bor-boh-LEH-tah',trap:'Bobble / Bobblehead',example:'Uma borboleta colorida pousou na flor.',example_en:'A colourful butterfly landed on the flower.'},
+        {pt:'Esquisito',en:'Weird / Strange',ph:'es-kee-ZEE-too',trap:'Exquisite',example:'Que situação esquisita!',example_en:'What a weird situation!'},
+        {pt:'Pegar',en:'To grab / catch / take',ph:'peh-GAR',trap:'Peg',example:'Posso pegar o seu telefone emprestado?',example_en:'Can I borrow your phone?'},
+        {pt:'Intoxicado',en:'Food-poisoned',ph:'in-tok-see-KAH-doo',trap:'Intoxicated (drunk)',example:'Fiquei intoxicado depois do restaurante.',example_en:'I got food poisoning after the restaurant.'},
+        {pt:'Sensível',en:'Sensitive',ph:'sen-SEE-vel',trap:'Sensible',example:'Ela é muito sensível a críticas.',example_en:'She is very sensitive to criticism.'},
+        {pt:'Libraria',en:'Bookshop',ph:'lee-vrah-REE-ah',trap:'Library',example:'Comprei esse livro numa livraria.',example_en:'I bought this book in a bookshop.'},
+        {pt:'Jornal',en:'Newspaper',ph:'zhor-NAL',trap:'Journal',example:'Leio o jornal toda manhã.',example_en:'I read the newspaper every morning.'},
+        {pt:'Actual',en:'Current / Present',ph:'ah-too-AL',trap:'Actual (= real in English)',example:'Qual é a situação actual?',example_en:'What is the current situation?'},
+        {pt:'Engraçado',en:'Funny',ph:'en-grah-SAH-doo',trap:'Engraved / Gracious',example:'Ele é muito engraçado!',example_en:'He is very funny!'},
+        {pt:'Terrível',en:'Terrible / Awful',ph:'teh-HEE-vel',trap:'Terrific (means great in English!)',example:'O trânsito estava terrível hoje.',example_en:'The traffic was terrible today.'},
+        {pt:'Marcar',en:'To schedule / book / score',ph:'mar-KAR',trap:'Mark',example:'Preciso marcar uma consulta.',example_en:'I need to book an appointment.'},
+        {pt:'Largo',en:'Wide / Broad',ph:'LAR-goo',trap:'Large',example:'A avenida é muito larga.',example_en:'The avenue is very wide.'},
+        {pt:'Agenda',en:'Diary / Schedule',ph:'ah-ZHEN-dah',trap:'Agenda (meeting agenda)',example:'Anotei o compromisso na agenda.',example_en:'I noted the appointment in my diary.'},
+        {pt:'Pretensão',en:'Claim / Ambition',ph:'preh-ten-SOWM',trap:'Pretension (arrogance in English)',example:'Ele tem grandes pretensões na carreira.',example_en:'He has great ambitions in his career.'}
+    ],
 };
 
 // ════════════════════════════════════════════════════
@@ -829,6 +870,18 @@ function showWordCard(){
         } else {
             exFront.style.display = 'none';
             exBack.style.display  = 'none';
+        }
+        // False friend trap warning
+        const trapFront = document.getElementById('ff-trap-front');
+        const trapBack  = document.getElementById('ff-trap-back');
+        if(card.trap){
+            document.getElementById('ff-trap-text-front').textContent = '⚠️ Looks like: "' + card.trap + '"';
+            document.getElementById('ff-trap-text-back').textContent  = '⚠️ NOT "' + card.trap + '" — false friend!';
+            if(trapFront) trapFront.style.display = 'block';
+            if(trapBack)  trapBack.style.display  = 'block';
+        } else {
+            if(trapFront) trapFront.style.display = 'none';
+            if(trapBack)  trapBack.style.display  = 'none';
         }
     },150);
 }
