@@ -367,6 +367,7 @@
 // WORD LIBRARY — categories, each item: {pt, en, ph}
 // ════════════════════════════════════════════════════
 const CATEGORIES = [
+    { id:'power100', label:'Power 100',  icon:'⚡' },
     { id:'colours',  label:'Colours',    icon:'🎨' },
     { id:'numbers',  label:'Numbers',    icon:'🔢' },
     { id:'body',     label:'Body',       icon:'🫀' },
@@ -376,7 +377,6 @@ const CATEGORIES = [
     { id:'family',   label:'Family',     icon:'👨‍👩‍👧' },
     { id:'time',     label:'Time',       icon:'⏰' },
     { id:'favorites',label:'⭐ Faves',    icon:'⭐' },
-    { id:'power100', label:'Power 100',  icon:'⚡' },
 ];
 
 const WORD_LIBRARY = {
@@ -626,7 +626,7 @@ function getPhraseLib(diff){
 // ════════════════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════════════════
-let currentCat = 'colours';
+let currentCat = 'power100';
 let wordPool = [], wordIdx = 0, wordHistory = [];
 
 // ════════════════════════════════════════════════════
@@ -704,8 +704,8 @@ function rateCard(rating){
     }
 }
 let phraseDiff = 'easy', phrasePool = [], phraseIdx = 0, phraseHistory = [];
-let listType = 'words', listCat = 'colours', listPhraseDiff = 'easy';
-let testType = 'words', testCat = 'colours', testDiff = 'easy';
+let listType = 'words', listCat = 'power100', listPhraseDiff = 'easy';
+let testType = 'words', testCat = 'power100', testDiff = 'easy';
 let quizQs = [], quizIdx = 0, quizScore = 0, quizLog = [];
 let currentQuizItem = null;
 let voices = [];
