@@ -158,6 +158,13 @@
         .ff-trap{margin-top:10px;padding:8px 14px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);border-radius:10px;width:100%;text-align:center;}
         .ff-trap-text{font-size:0.78rem;font-weight:700;color:#fca5a5;line-height:1.4;}
         .ff-trap-back .ff-trap-text{color:#fecaca;}
+
+        /* Gender indicator */
+        .card-front.gender-m{border-color:#3b82f6;box-shadow:0 0 20px rgba(59,130,246,0.25);}
+        .card-front.gender-f{border-color:#ec4899;box-shadow:0 0 20px rgba(236,72,153,0.25);}
+        .gender-badge{position:absolute;top:14px;left:14px;font-size:0.6rem;font-weight:800;letter-spacing:0.06em;padding:4px 8px;border-radius:20px;text-transform:uppercase;}
+        .gender-badge.m{background:rgba(59,130,246,0.15);color:#93c5fd;border:1px solid rgba(59,130,246,0.35);}
+        .gender-badge.f{background:rgba(236,72,153,0.15);color:#f9a8d4;border:1px solid rgba(236,72,153,0.35);}
         /* Star button */
         .btn-star{position:absolute;top:14px;right:14px;background:none;border:none;font-size:1.5rem;cursor:pointer;line-height:1;padding:4px;opacity:0.5;transition:opacity 0.15s ease,transform 0.15s ease;z-index:2;}
         .btn-star:active{transform:scale(1.3);}
@@ -200,6 +207,7 @@
         <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
             <div class="flashcard-inner">
                 <div class="card-front">
+                    <span id="gender-badge" class="gender-badge" style="display:none"></span>
                     <button class="btn-star" id="word-star" onclick="event.stopPropagation();toggleStar()" title="Star this word">☆</button>
                     <span id="card-emoji" class="card-emoji" style="display:none"></span>
                     <h2 id="pt-text" style="font-size:2.2rem;margin:0">--</h2>
@@ -396,7 +404,7 @@ const WORD_LIBRARY = {
         {pt:'Vermelho',en:'Red',ph:'vair-MEL-yoo',example:'O semáforo ficou vermelho.',example_en:'The traffic light turned red.'},{pt:'Azul',en:'Blue',ph:'ah-ZOOL',example:'O céu está azul hoje.',example_en:'The sky is blue today.'},
         {pt:'Verde',en:'Green',ph:'VAIR-jee',example:'A grama é muito verde.',example_en:'The grass is very green.'},{pt:'Amarelo',en:'Yellow',ph:'ah-mah-REL-oo',example:'O táxi é amarelo.',example_en:'The taxi is yellow.'},
         {pt:'Preto',en:'Black',ph:'PRAY-too',example:'Ele usa um casaco preto.',example_en:'He wears a black coat.'},{pt:'Branco',en:'White',ph:'BRAN-koo',example:'A parede é branca.',example_en:'The wall is white.'},
-        {pt:'Laranja',en:'Orange',ph:'lah-RAN-zhah',example:'A laranja é rica em vitamina C.',example_en:'Orange is rich in vitamin C.'},{pt:'Rosa',en:'Pink',ph:'HOH-zah',example:'Ela comprou flores rosas.',example_en:'She bought pink flowers.'},
+        {pt:'Laranja',en:'Orange',gender:'f',ph:'lah-RAN-zhah',example:'A laranja é rica em vitamina C.',example_en:'Orange is rich in vitamin C.'},{pt:'Rosa',en:'Pink',ph:'HOH-zah',example:'Ela comprou flores rosas.',example_en:'She bought pink flowers.'},
         {pt:'Roxo',en:'Purple',ph:'HOH-shoo',example:'O roxo é minha cor favorita.',example_en:'Purple is my favourite colour.'},{pt:'Cinza',en:'Grey',ph:'SIN-zah',example:'O céu está cinza hoje.',example_en:'The sky is grey today.'},
         {pt:'Marrom',en:'Brown',ph:'mah-HOWN',example:'O urso é marrom.',example_en:'The bear is brown.'},{pt:'Dourado',en:'Gold',ph:'doh-RAH-doo',example:'O troféu é dourado.',example_en:'The trophy is golden.'},
         {pt:'Prateado',en:'Silver',ph:'prah-chee-AH-doo',example:'Ela usa um colar prateado.',example_en:'She wears a silver necklace.'},{pt:'Bege',en:'Beige',ph:'BEH-zhee',example:'As paredes são bege.',example_en:'The walls are beige.'},
@@ -423,104 +431,104 @@ const WORD_LIBRARY = {
         {pt:'Mil',en:'One thousand',ph:'meel',example:'A passagem custa mil reais.',example_en:'The ticket costs one thousand reais.'},{pt:'Um milhão',en:'One million',ph:'oong meel-YOWNG',example:'Sonho em ganhar um milhão!',example_en:'I dream of winning one million!'},
     ],
     body:[
-        {pt:'Cabeça',en:'Head',ph:'kah-BAY-sah',example:'Estou com dor de cabeça.',example_en:'I have a headache.'},{pt:'Olho',en:'Eye',ph:'OL-yoo',example:'Ela tem olhos azuis.',example_en:'She has blue eyes.'},
-        {pt:'Nariz',en:'Nose',ph:'nah-REEZ',example:'Meu nariz está escorrendo.',example_en:'My nose is running.'},{pt:'Boca',en:'Mouth',ph:'BOH-kah',example:'Feche a boca quando mastigar.',example_en:'Close your mouth when you chew.'},
-        {pt:'Orelha',en:'Ear',ph:'oh-REL-yah',example:'A orelha esquerda está doendo.',example_en:'My left ear hurts.'},{pt:'Mão',en:'Hand',ph:'mowng',example:'Dê a mão para atravessar a rua.',example_en:'Hold my hand to cross the street.'},
-        {pt:'Pé',en:'Foot',ph:'peh',example:'Meu pé está dormindo.',example_en:'My foot has gone to sleep.'},{pt:'Braço',en:'Arm',ph:'BRAH-soo',example:'Ele quebrou o braço.',example_en:'He broke his arm.'},
-        {pt:'Perna',en:'Leg',ph:'PAIR-nah',example:'Ela tem uma perna comprida.',example_en:'She has a long leg.'},{pt:'Costas',en:'Back',ph:'KOS-tahs',example:'Tenho dor nas costas.',example_en:'I have back pain.'},
-        {pt:'Coração',en:'Heart',ph:'kor-ah-SOWNG',example:'Meu coração está acelerado.',example_en:'My heart is racing.'},{pt:'Dente',en:'Tooth',ph:'DEN-chee',example:'Preciso ir ao dentista.',example_en:'I need to go to the dentist.'},
-        {pt:'Pescoço',en:'Neck',ph:'pes-KOH-soo',example:'Estou com torcicolo no pescoço.',example_en:'I have a stiff neck.'},{pt:'Ombro',en:'Shoulder',ph:'OM-broo',example:'Ela massageou o ombro dele.',example_en:'She massaged his shoulder.'},
-        {pt:'Joelho',en:'Knee',ph:'zhoo-EL-yoo',example:'Ele caiu e machucou o joelho.',example_en:'He fell and hurt his knee.'},{pt:'Dedo',en:'Finger',ph:'DEH-doo',example:'Cortei o dedo na faca.',example_en:'I cut my finger on the knife.'},
-        {pt:'Barriga',en:'Belly',ph:'bah-HEE-gah',example:'Estou com a barriga cheia.',example_en:'My belly is full.'},{pt:'Língua',en:'Tongue',ph:'LIN-gwah',example:'A língua portuguesa é bonita.',example_en:'The Portuguese language is beautiful.'},
-        {pt:'Cabelo',en:'Hair',ph:'kah-BEH-loo',example:'Ela cortou o cabelo hoje.',example_en:'She cut her hair today.'},{pt:'Rosto',en:'Face',ph:'HOS-too',example:'Lave o rosto com água fria.',example_en:'Wash your face with cold water.'},
+        {pt:'Cabeça',en:'Head',gender:'f',ph:'kah-BAY-sah',example:'Estou com dor de cabeça.',example_en:'I have a headache.'},{pt:'Olho',en:'Eye',gender:'m',ph:'OL-yoo',example:'Ela tem olhos azuis.',example_en:'She has blue eyes.'},
+        {pt:'Nariz',en:'Nose',gender:'m',ph:'nah-REEZ',example:'Meu nariz está escorrendo.',example_en:'My nose is running.'},{pt:'Boca',en:'Mouth',gender:'f',ph:'BOH-kah',example:'Feche a boca quando mastigar.',example_en:'Close your mouth when you chew.'},
+        {pt:'Orelha',en:'Ear',gender:'f',ph:'oh-REL-yah',example:'A orelha esquerda está doendo.',example_en:'My left ear hurts.'},{pt:'Mão',en:'Hand',gender:'f',ph:'mowng',example:'Dê a mão para atravessar a rua.',example_en:'Hold my hand to cross the street.'},
+        {pt:'Pé',en:'Foot',gender:'m',ph:'peh',example:'Meu pé está dormindo.',example_en:'My foot has gone to sleep.'},{pt:'Braço',en:'Arm',gender:'m',ph:'BRAH-soo',example:'Ele quebrou o braço.',example_en:'He broke his arm.'},
+        {pt:'Perna',en:'Leg',gender:'f',ph:'PAIR-nah',example:'Ela tem uma perna comprida.',example_en:'She has a long leg.'},{pt:'Costas',en:'Back',gender:'f',ph:'KOS-tahs',example:'Tenho dor nas costas.',example_en:'I have back pain.'},
+        {pt:'Coração',en:'Heart',gender:'m',ph:'kor-ah-SOWNG',example:'Meu coração está acelerado.',example_en:'My heart is racing.'},{pt:'Dente',en:'Tooth',gender:'m',ph:'DEN-chee',example:'Preciso ir ao dentista.',example_en:'I need to go to the dentist.'},
+        {pt:'Pescoço',en:'Neck',gender:'m',ph:'pes-KOH-soo',example:'Estou com torcicolo no pescoço.',example_en:'I have a stiff neck.'},{pt:'Ombro',en:'Shoulder',gender:'m',ph:'OM-broo',example:'Ela massageou o ombro dele.',example_en:'She massaged his shoulder.'},
+        {pt:'Joelho',en:'Knee',gender:'m',ph:'zhoo-EL-yoo',example:'Ele caiu e machucou o joelho.',example_en:'He fell and hurt his knee.'},{pt:'Dedo',en:'Finger',gender:'m',ph:'DEH-doo',example:'Cortei o dedo na faca.',example_en:'I cut my finger on the knife.'},
+        {pt:'Barriga',en:'Belly',gender:'f',ph:'bah-HEE-gah',example:'Estou com a barriga cheia.',example_en:'My belly is full.'},{pt:'Língua',en:'Tongue',gender:'f',ph:'LIN-gwah',example:'A língua portuguesa é bonita.',example_en:'The Portuguese language is beautiful.'},
+        {pt:'Cabelo',en:'Hair',gender:'m',ph:'kah-BEH-loo',example:'Ela cortou o cabelo hoje.',example_en:'She cut her hair today.'},{pt:'Rosto',en:'Face',gender:'m',ph:'HOS-too',example:'Lave o rosto com água fria.',example_en:'Wash your face with cold water.'},
     ],
     food:[
-        {pt:'Arroz',en:'Rice',em:'🍚',ph:'ah-HOSS',example:'O arroz está cozido.',example_en:'The rice is cooked.'},{pt:'Feijão',en:'Beans',em:'🫘',ph:'fay-ZHOWNG',example:'Arroz com feijão é uma delícia.',example_en:'Rice and beans is a delight.'},
-        {pt:'Frango',en:'Chicken',em:'🍗',ph:'FRAN-goo',example:'O frango está assado no forno.',example_en:'The chicken is roasting in the oven.'},{pt:'Peixe',en:'Fish',em:'🐟',ph:'PAY-shee',example:'O peixe nada no rio.',example_en:'The fish swims in the river.'},
-        {pt:'Pão',en:'Bread',em:'🍞',ph:'powng',example:'Comprei pão fresco na padaria.',example_en:'I bought fresh bread at the bakery.'},{pt:'Leite',en:'Milk',em:'🥛',ph:'LAY-chee',example:'O bebê toma leite toda manhã.',example_en:'The baby drinks milk every morning.'},
-        {pt:'Ovo',en:'Egg',em:'🥚',ph:'OH-voo',example:'Quero um ovo mexido.',example_en:'I want a scrambled egg.'},{pt:'Queijo',en:'Cheese',em:'🧀',ph:'KAY-zhoo',example:'O queijo mineiro é delicioso.',example_en:'Minas cheese is delicious.'},
-        {pt:'Fruta',en:'Fruit',em:'🍓',ph:'FROO-tah',example:'Coma fruta todos os dias.',example_en:'Eat fruit every day.'},{pt:'Legumes',en:'Vegetables',em:'🥦',ph:'leh-GOO-mees',example:'Os legumes estão frescos.',example_en:'The vegetables are fresh.'},
-        {pt:'Café',en:'Coffee',em:'☕',ph:'kah-FEH',example:'Tomo café todas as manhãs.',example_en:'I drink coffee every morning.'},{pt:'Suco',en:'Juice',em:'🧃',ph:'SOO-koo',example:'Quero um suco de laranja.',example_en:'I want an orange juice.'},
-        {pt:'Carne',en:'Meat',em:'🥩',ph:'KAR-nee',example:'A carne está mal passada.',example_en:'The meat is rare.'},{pt:'Macarrão',en:'Pasta',em:'🍝',ph:'mah-kah-HOWNG',example:'O macarrão está al dente.',example_en:'The pasta is al dente.'},
-        {pt:'Salada',en:'Salad',em:'🥗',ph:'sah-LAH-dah',example:'Vou pedir uma salada.',example_en:'I\'ll order a salad.'},{pt:'Sopa',en:'Soup',em:'🍲',ph:'SOH-pah',example:'A sopa está quente.',example_en:'The soup is hot.'},
-        {pt:'Bolo',en:'Cake',em:'🎂',ph:'BOH-loo',example:'Ela fez um bolo de chocolate.',example_en:'She made a chocolate cake.'},{pt:'Sorvete',en:'Ice cream',em:'🍦',ph:'sor-VEH-chee',example:'Quero sorvete de morango.',example_en:'I want strawberry ice cream.'},
-        {pt:'Manteiga',en:'Butter',em:'🧈',ph:'man-TAY-gah',example:'Passe manteiga no pão.',example_en:'Spread butter on the bread.'},{pt:'Alho',en:'Garlic',em:'🧄',ph:'AHL-yoo',example:'Adicione alho à receita.',example_en:'Add garlic to the recipe.'},
-        {pt:'Cebola',en:'Onion',em:'🧅',ph:'seh-BOH-lah',example:'A cebola faz chorar.',example_en:'Onion makes you cry.'},{pt:'Tomate',en:'Tomato',em:'🍅',ph:'toh-MAH-chee',example:'O tomate está maduro.',example_en:'The tomato is ripe.'},
-        {pt:'Batata',en:'Potato',em:'🥔',ph:'bah-TAH-tah',example:'Adoro batata frita.',example_en:'I love fried potato.'},{pt:'Açúcar',en:'Sugar',em:'🍬',ph:'ah-SOO-kar',example:'Quer açúcar no café?',example_en:'Do you want sugar in your coffee?'},
+        {pt:'Arroz',en:'Rice',gender:'m',em:'🍚',ph:'ah-HOSS',example:'O arroz está cozido.',example_en:'The rice is cooked.'},{pt:'Feijão',en:'Beans',gender:'m',em:'🫘',ph:'fay-ZHOWNG',example:'Arroz com feijão é uma delícia.',example_en:'Rice and beans is a delight.'},
+        {pt:'Frango',en:'Chicken',gender:'m',em:'🍗',ph:'FRAN-goo',example:'O frango está assado no forno.',example_en:'The chicken is roasting in the oven.'},{pt:'Peixe',en:'Fish',gender:'m',em:'🐟',ph:'PAY-shee',example:'O peixe nada no rio.',example_en:'The fish swims in the river.'},
+        {pt:'Pão',en:'Bread',gender:'m',em:'🍞',ph:'powng',example:'Comprei pão fresco na padaria.',example_en:'I bought fresh bread at the bakery.'},{pt:'Leite',en:'Milk',gender:'m',em:'🥛',ph:'LAY-chee',example:'O bebê toma leite toda manhã.',example_en:'The baby drinks milk every morning.'},
+        {pt:'Ovo',en:'Egg',gender:'m',em:'🥚',ph:'OH-voo',example:'Quero um ovo mexido.',example_en:'I want a scrambled egg.'},{pt:'Queijo',en:'Cheese',gender:'m',em:'🧀',ph:'KAY-zhoo',example:'O queijo mineiro é delicioso.',example_en:'Minas cheese is delicious.'},
+        {pt:'Fruta',en:'Fruit',gender:'f',em:'🍓',ph:'FROO-tah',example:'Coma fruta todos os dias.',example_en:'Eat fruit every day.'},{pt:'Legumes',en:'Vegetables',gender:'m',em:'🥦',ph:'leh-GOO-mees',example:'Os legumes estão frescos.',example_en:'The vegetables are fresh.'},
+        {pt:'Café',en:'Coffee',gender:'m',em:'☕',ph:'kah-FEH',example:'Tomo café todas as manhãs.',example_en:'I drink coffee every morning.'},{pt:'Suco',en:'Juice',gender:'m',em:'🧃',ph:'SOO-koo',example:'Quero um suco de laranja.',example_en:'I want an orange juice.'},
+        {pt:'Carne',en:'Meat',gender:'f',em:'🥩',ph:'KAR-nee',example:'A carne está mal passada.',example_en:'The meat is rare.'},{pt:'Macarrão',en:'Pasta',gender:'m',em:'🍝',ph:'mah-kah-HOWNG',example:'O macarrão está al dente.',example_en:'The pasta is al dente.'},
+        {pt:'Salada',en:'Salad',gender:'f',em:'🥗',ph:'sah-LAH-dah',example:'Vou pedir uma salada.',example_en:'I\'ll order a salad.'},{pt:'Sopa',en:'Soup',gender:'f',em:'🍲',ph:'SOH-pah',example:'A sopa está quente.',example_en:'The soup is hot.'},
+        {pt:'Bolo',en:'Cake',gender:'m',em:'🎂',ph:'BOH-loo',example:'Ela fez um bolo de chocolate.',example_en:'She made a chocolate cake.'},{pt:'Sorvete',en:'Ice cream',gender:'m',em:'🍦',ph:'sor-VEH-chee',example:'Quero sorvete de morango.',example_en:'I want strawberry ice cream.'},
+        {pt:'Manteiga',en:'Butter',gender:'f',em:'🧈',ph:'man-TAY-gah',example:'Passe manteiga no pão.',example_en:'Spread butter on the bread.'},{pt:'Alho',en:'Garlic',gender:'m',em:'🧄',ph:'AHL-yoo',example:'Adicione alho à receita.',example_en:'Add garlic to the recipe.'},
+        {pt:'Cebola',en:'Onion',gender:'f',em:'🧅',ph:'seh-BOH-lah',example:'A cebola faz chorar.',example_en:'Onion makes you cry.'},{pt:'Tomate',en:'Tomato',gender:'m',em:'🍅',ph:'toh-MAH-chee',example:'O tomate está maduro.',example_en:'The tomato is ripe.'},
+        {pt:'Batata',en:'Potato',gender:'f',em:'🥔',ph:'bah-TAH-tah',example:'Adoro batata frita.',example_en:'I love fried potato.'},{pt:'Açúcar',en:'Sugar',gender:'m',em:'🍬',ph:'ah-SOO-kar',example:'Quer açúcar no café?',example_en:'Do you want sugar in your coffee?'},
         // Fruits
-        {pt:'Maçã',en:'Apple',em:'🍎',ph:'mah-SAH',example:'Uma maçã por dia faz bem.',example_en:'An apple a day does you good.'},{pt:'Banana',en:'Banana',em:'🍌',ph:'bah-NAH-nah',example:'A banana está madura.',example_en:'The banana is ripe.'},
-        {pt:'Laranja',en:'Orange',em:'🍊',ph:'lah-RAN-zhah',example:'A laranja é rica em vitamina C.',example_en:'Orange is rich in vitamin C.'},{pt:'Uva',en:'Grape',em:'🍇',ph:'OO-vah',example:'Esse vinho é feito de uva.',example_en:'This wine is made from grapes.'},
-        {pt:'Melancia',en:'Watermelon',em:'🍉',ph:'meh-lan-SEE-ah',example:'A melancia é perfeita no verão.',example_en:'Watermelon is perfect in summer.'},{pt:'Manga',en:'Mango',em:'🥭',ph:'MAN-gah',example:'Adoro manga com limão.',example_en:'I love mango with lime.'},
-        {pt:'Abacaxi',en:'Pineapple',em:'🍍',ph:'ah-bah-kah-SHEE',example:'O abacaxi é doce e ácido.',example_en:'Pineapple is sweet and sour.'},{pt:'Morango',en:'Strawberry',em:'🍓',ph:'moh-RAN-goo',example:'O morango está vermelho e maduro.',example_en:'The strawberry is red and ripe.'},
-        {pt:'Limão',en:'Lemon/Lime',em:'🍋',ph:'lee-MOWNG',example:'Esprema limão na água.',example_en:'Squeeze lime into the water.'},{pt:'Melão',en:'Melon',em:'🍈',ph:'meh-LOWNG',example:'O melão está gelado.',example_en:'The melon is chilled.'},
-        {pt:'Pera',en:'Pear',em:'🍐',ph:'PEH-rah',example:'A pera caiu da árvore.',example_en:'The pear fell from the tree.'},{pt:'Mamão',en:'Papaya',em:'🪷',ph:'mah-MOWNG',example:'O mamão é bom para a digestão.',example_en:'Papaya is good for digestion.'},
+        {pt:'Maçã',en:'Apple',gender:'f',em:'🍎',ph:'mah-SAH',example:'Uma maçã por dia faz bem.',example_en:'An apple a day does you good.'},{pt:'Banana',en:'Banana',gender:'f',em:'🍌',ph:'bah-NAH-nah',example:'A banana está madura.',example_en:'The banana is ripe.'},
+        {pt:'Laranja',en:'Orange',gender:'f',em:'🍊',ph:'lah-RAN-zhah',example:'A laranja é rica em vitamina C.',example_en:'Orange is rich in vitamin C.'},{pt:'Uva',en:'Grape',gender:'f',em:'🍇',ph:'OO-vah',example:'Esse vinho é feito de uva.',example_en:'This wine is made from grapes.'},
+        {pt:'Melancia',en:'Watermelon',gender:'f',em:'🍉',ph:'meh-lan-SEE-ah',example:'A melancia é perfeita no verão.',example_en:'Watermelon is perfect in summer.'},{pt:'Manga',en:'Mango',gender:'f',em:'🥭',ph:'MAN-gah',example:'Adoro manga com limão.',example_en:'I love mango with lime.'},
+        {pt:'Abacaxi',en:'Pineapple',gender:'m',em:'🍍',ph:'ah-bah-kah-SHEE',example:'O abacaxi é doce e ácido.',example_en:'Pineapple is sweet and sour.'},{pt:'Morango',en:'Strawberry',gender:'m',em:'🍓',ph:'moh-RAN-goo',example:'O morango está vermelho e maduro.',example_en:'The strawberry is red and ripe.'},
+        {pt:'Limão',en:'Lemon/Lime',gender:'m',em:'🍋',ph:'lee-MOWNG',example:'Esprema limão na água.',example_en:'Squeeze lime into the water.'},{pt:'Melão',en:'Melon',gender:'m',em:'🍈',ph:'meh-LOWNG',example:'O melão está gelado.',example_en:'The melon is chilled.'},
+        {pt:'Pera',en:'Pear',gender:'f',em:'🍐',ph:'PEH-rah',example:'A pera caiu da árvore.',example_en:'The pear fell from the tree.'},{pt:'Mamão',en:'Papaya',gender:'m',em:'🪷',ph:'mah-MOWNG',example:'O mamão é bom para a digestão.',example_en:'Papaya is good for digestion.'},
         // Vegetables
-        {pt:'Cenoura',en:'Carrot',em:'🥕',ph:'seh-NOH-rah',example:'A cenoura está no caldo.',example_en:'The carrot is in the broth.'},{pt:'Alface',en:'Lettuce',em:'🥬',ph:'al-FAH-see',example:'Coloque alface na salada.',example_en:'Put lettuce in the salad.'},
-        {pt:'Pepino',en:'Cucumber',em:'🥒',ph:'peh-PEE-noo',example:'O pepino está fatiado.',example_en:'The cucumber is sliced.'},{pt:'Pimentão',en:'Bell pepper',em:'🫑',ph:'pee-men-TOWNG',example:'O pimentão vermelho é doce.',example_en:'Red bell pepper is sweet.'},
-        {pt:'Brócolis',en:'Broccoli',em:'🥦',ph:'BROH-koh-lees',example:'O brócolis é cheio de nutrientes.',example_en:'Broccoli is full of nutrients.'},{pt:'Milho',en:'Corn',em:'🌽',ph:'MEEL-yoo',example:'O milho está na espiga.',example_en:'The corn is on the cob.'},
-        {pt:'Abobrinha',en:'Courgette',em:'🥒',ph:'ah-boh-BREEN-yah',example:'Ela grelhei a abobrinha.',example_en:'She grilled the courgette.'},{pt:'Espinafre',en:'Spinach',em:'🥬',ph:'es-pee-NAH-free',example:'O espinafre é rico em ferro.',example_en:'Spinach is rich in iron.'},
+        {pt:'Cenoura',en:'Carrot',gender:'f',em:'🥕',ph:'seh-NOH-rah',example:'A cenoura está no caldo.',example_en:'The carrot is in the broth.'},{pt:'Alface',en:'Lettuce',gender:'f',em:'🥬',ph:'al-FAH-see',example:'Coloque alface na salada.',example_en:'Put lettuce in the salad.'},
+        {pt:'Pepino',en:'Cucumber',gender:'m',em:'🥒',ph:'peh-PEE-noo',example:'O pepino está fatiado.',example_en:'The cucumber is sliced.'},{pt:'Pimentão',en:'Bell pepper',gender:'m',em:'🫑',ph:'pee-men-TOWNG',example:'O pimentão vermelho é doce.',example_en:'Red bell pepper is sweet.'},
+        {pt:'Brócolis',en:'Broccoli',gender:'m',em:'🥦',ph:'BROH-koh-lees',example:'O brócolis é cheio de nutrientes.',example_en:'Broccoli is full of nutrients.'},{pt:'Milho',en:'Corn',gender:'m',em:'🌽',ph:'MEEL-yoo',example:'O milho está na espiga.',example_en:'The corn is on the cob.'},
+        {pt:'Abobrinha',en:'Courgette',gender:'f',em:'🥒',ph:'ah-boh-BREEN-yah',example:'Ela grelhei a abobrinha.',example_en:'She grilled the courgette.'},{pt:'Espinafre',en:'Spinach',gender:'m',em:'🥬',ph:'es-pee-NAH-free',example:'O espinafre é rico em ferro.',example_en:'Spinach is rich in iron.'},
         // Drinks
-        {pt:'Água',en:'Water',em:'💧',ph:'AH-gwah',example:'Beba água durante o dia.',example_en:'Drink water throughout the day.'},{pt:'Chá',en:'Tea',em:'🍵',ph:'shah',example:'Vou tomar um chá quente.',example_en:'I\'ll have a hot tea.'},
-        {pt:'Cerveja',en:'Beer',em:'🍺',ph:'ser-VAY-zhah',example:'Ele pediu uma cerveja gelada.',example_en:'He ordered a cold beer.'},{pt:'Vinho',en:'Wine',em:'🍷',ph:'VEEN-yoo',example:'Esse vinho é muito bom.',example_en:'This wine is very good.'},
-        {pt:'Refrigerante',en:'Soft drink',em:'🥤',ph:'heh-free-zheh-RAN-chee',example:'A criança quer refrigerante.',example_en:'The child wants a soft drink.'},{pt:'Vitamina',en:'Smoothie/Milkshake',em:'🥤',ph:'vee-tah-MEE-nah',example:'Fiz uma vitamina de banana.',example_en:'I made a banana smoothie.'},
+        {pt:'Água',en:'Water',gender:'f',em:'💧',ph:'AH-gwah',example:'Beba água durante o dia.',example_en:'Drink water throughout the day.'},{pt:'Chá',en:'Tea',gender:'m',em:'🍵',ph:'shah',example:'Vou tomar um chá quente.',example_en:'I\'ll have a hot tea.'},
+        {pt:'Cerveja',en:'Beer',gender:'f',em:'🍺',ph:'ser-VAY-zhah',example:'Ele pediu uma cerveja gelada.',example_en:'He ordered a cold beer.'},{pt:'Vinho',en:'Wine',gender:'m',em:'🍷',ph:'VEEN-yoo',example:'Esse vinho é muito bom.',example_en:'This wine is very good.'},
+        {pt:'Refrigerante',en:'Soft drink',gender:'m',em:'🥤',ph:'heh-free-zheh-RAN-chee',example:'A criança quer refrigerante.',example_en:'The child wants a soft drink.'},{pt:'Vitamina',en:'Smoothie/Milkshake',gender:'f',em:'🥤',ph:'vee-tah-MEE-nah',example:'Fiz uma vitamina de banana.',example_en:'I made a banana smoothie.'},
         // Proteins & Staples
-        {pt:'Camarão',en:'Prawn/Shrimp',em:'🦐',ph:'kah-mah-ROWNG',example:'O camarão está no molho.',example_en:'The prawn is in the sauce.'},{pt:'Bacon',en:'Bacon',em:'🥓',ph:'BAY-kon',example:'O bacon está crocante.',example_en:'The bacon is crispy.'},
-        {pt:'Linguiça',en:'Sausage',em:'🌭',ph:'lin-GWEE-sah',example:'A linguiça está na churrasqueira.',example_en:'The sausage is on the grill.'},{pt:'Atum',en:'Tuna',em:'🐟',ph:'ah-TOONG',example:'O sanduíche é de atum.',example_en:'The sandwich is tuna.'},
+        {pt:'Camarão',en:'Prawn/Shrimp',gender:'m',em:'🦐',ph:'kah-mah-ROWNG',example:'O camarão está no molho.',example_en:'The prawn is in the sauce.'},{pt:'Bacon',en:'Bacon',gender:'m',em:'🥓',ph:'BAY-kon',example:'O bacon está crocante.',example_en:'The bacon is crispy.'},
+        {pt:'Linguiça',en:'Sausage',gender:'f',em:'🌭',ph:'lin-GWEE-sah',example:'A linguiça está na churrasqueira.',example_en:'The sausage is on the grill.'},{pt:'Atum',en:'Tuna',gender:'m',em:'🐟',ph:'ah-TOONG',example:'O sanduíche é de atum.',example_en:'The sandwich is tuna.'},
         // Brazilian favourites
-        {pt:'Feijoada',en:'Black bean stew',em:'🫕',ph:'fay-ZHWAH-dah',example:'A feijoada é o prato nacional.',example_en:'Feijoada is the national dish.'},{pt:'Pão de queijo',en:'Cheese bread',em:'🧀',ph:'powng jee KAY-zhoo',example:'Pão de queijo é típico de Minas.',example_en:'Cheese bread is typical of Minas Gerais.'},
-        {pt:'Brigadeiro',en:'Chocolate truffle',em:'🍫',ph:'bree-gah-DAY-roo',example:'O brigadeiro é feito de chocolate.',example_en:'Brigadeiro is made from chocolate.'},{pt:'Coxinha',en:'Chicken croquette',em:'🍢',ph:'koh-SHEEN-yah',example:'A coxinha é recheada de frango.',example_en:'The croquette is filled with chicken.'},
+        {pt:'Feijoada',en:'Black bean stew',gender:'f',em:'🫕',ph:'fay-ZHWAH-dah',example:'A feijoada é o prato nacional.',example_en:'Feijoada is the national dish.'},{pt:'Pão de queijo',en:'Cheese bread',gender:'m',em:'🧀',ph:'powng jee KAY-zhoo',example:'Pão de queijo é típico de Minas.',example_en:'Cheese bread is typical of Minas Gerais.'},
+        {pt:'Brigadeiro',en:'Chocolate truffle',gender:'m',em:'🍫',ph:'bree-gah-DAY-roo',example:'O brigadeiro é feito de chocolate.',example_en:'Brigadeiro is made from chocolate.'},{pt:'Coxinha',en:'Chicken croquette',gender:'f',em:'🍢',ph:'koh-SHEEN-yah',example:'A coxinha é recheada de frango.',example_en:'The croquette is filled with chicken.'},
         // Condiments & other
-        {pt:'Azeite',en:'Olive oil',em:'🫒',ph:'ah-ZAY-chee',example:'Regue a salada com azeite.',example_en:'Drizzle the salad with olive oil.'},{pt:'Mel',en:'Honey',em:'🍯',ph:'mel',example:'O mel é natural e doce.',example_en:'Honey is natural and sweet.'},
-        {pt:'Pimenta',en:'Pepper/Chilli',em:'🌶️',ph:'pee-MEN-tah',example:'A pimenta está ardendo.',example_en:'The chilli is burning hot.'},{pt:'Sal',en:'Salt',em:'🧂',ph:'sal',example:'Não coloque sal demais.',example_en:'Don\'t add too much salt.'},
-        {pt:'Arroz integral',en:'Brown rice',em:'🍚',ph:'ah-HOSS in-teh-GRAL',example:'Arroz integral é mais saudável.',example_en:'Brown rice is healthier.'},{pt:'Tapioca',en:'Tapioca',em:'🫓',ph:'tah-pee-OH-kah',example:'A tapioca é feita de mandioca.',example_en:'Tapioca is made from cassava.'},
+        {pt:'Azeite',en:'Olive oil',gender:'m',em:'🫒',ph:'ah-ZAY-chee',example:'Regue a salada com azeite.',example_en:'Drizzle the salad with olive oil.'},{pt:'Mel',en:'Honey',gender:'m',em:'🍯',ph:'mel',example:'O mel é natural e doce.',example_en:'Honey is natural and sweet.'},
+        {pt:'Pimenta',en:'Pepper/Chilli',gender:'f',em:'🌶️',ph:'pee-MEN-tah',example:'A pimenta está ardendo.',example_en:'The chilli is burning hot.'},{pt:'Sal',en:'Salt',gender:'m',em:'🧂',ph:'sal',example:'Não coloque sal demais.',example_en:'Don\'t add too much salt.'},
+        {pt:'Arroz integral',en:'Brown rice',gender:'m',em:'🍚',ph:'ah-HOSS in-teh-GRAL',example:'Arroz integral é mais saudável.',example_en:'Brown rice is healthier.'},{pt:'Tapioca',en:'Tapioca',gender:'f',em:'🫓',ph:'tah-pee-OH-kah',example:'A tapioca é feita de mandioca.',example_en:'Tapioca is made from cassava.'},
     ],
     animals:[
-        {pt:'Cachorro',en:'Dog',em:'🐶',ph:'kah-SHOH-hoo',example:'O cachorro está latindo.',example_en:'The dog is barking.'},{pt:'Gato',en:'Cat',em:'🐱',ph:'GAH-too',example:'O gato está dormindo no sofá.',example_en:'The cat is sleeping on the sofa.'},
-        {pt:'Pássaro',en:'Bird',em:'🐦',ph:'PAH-sah-roo',example:'O pássaro canta de manhã.',example_en:'The bird sings in the morning.'},{pt:'Peixe',en:'Fish',em:'🐟',ph:'PAY-shee',example:'O peixe nada no rio.',example_en:'The fish swims in the river.'},
-        {pt:'Cavalo',en:'Horse',em:'🐴',ph:'kah-VAH-loo',example:'O cavalo corre muito rápido.',example_en:'The horse runs very fast.'},{pt:'Vaca',en:'Cow',em:'🐄',ph:'VAH-kah',example:'A vaca está no pasto.',example_en:'The cow is in the pasture.'},
-        {pt:'Porco',en:'Pig',em:'🐷',ph:'POR-koo',example:'O porco rola na lama.',example_en:'The pig rolls in the mud.'},{pt:'Ovelha',en:'Sheep',em:'🐑',ph:'oh-VEL-yah',example:'A ovelha tem lã branca.',example_en:'The sheep has white wool.'},
-        {pt:'Macaco',en:'Monkey',em:'🐒',ph:'mah-KAH-koo',example:'O macaco pula de galho em galho.',example_en:'The monkey jumps from branch to branch.'},{pt:'Leão',en:'Lion',em:'🦁',ph:'leh-OWNG',example:'O leão é o rei da selva.',example_en:'The lion is the king of the jungle.'},
-        {pt:'Elefante',en:'Elephant',em:'🐘',ph:'el-eh-FAN-chee',example:'O elefante tem uma memória incrível.',example_en:'The elephant has an incredible memory.'},{pt:'Cobra',en:'Snake',em:'🐍',ph:'KOH-brah',example:'A cobra é perigosa.',example_en:'The snake is dangerous.'},
-        {pt:'Coelho',en:'Rabbit',em:'🐰',ph:'koo-EL-yoo',example:'O coelho come cenoura.',example_en:'The rabbit eats carrot.'},{pt:'Tigre',en:'Tiger',em:'🐯',ph:'CHEE-gree',example:'O tigre caça à noite.',example_en:'The tiger hunts at night.'},
-        {pt:'Urso',en:'Bear',em:'🐻',ph:'OOR-soo',example:'O urso hiberna no inverno.',example_en:'The bear hibernates in winter.'},{pt:'Sapo',en:'Frog',em:'🐸',ph:'SAH-poo',example:'O sapo pula na poça.',example_en:'The frog jumps in the puddle.'},
-        {pt:'Rato',en:'Mouse',em:'🐭',ph:'HAH-too',example:'O rato entrou na cozinha.',example_en:'The mouse got into the kitchen.'},{pt:'Galinha',en:'Chicken',em:'🐔',ph:'gah-LEEN-yah',example:'A galinha bota ovos todo dia.',example_en:'The hen lays eggs every day.'},
-        {pt:'Papagaio',en:'Parrot',em:'🦜',ph:'pah-pah-GYE-oo',example:'O papagaio repete tudo que ouve.',example_en:'The parrot repeats everything it hears.'},{pt:'Tartaruga',en:'Turtle',em:'🐢',ph:'tar-tah-ROO-gah',example:'A tartaruga anda devagar.',example_en:'The turtle walks slowly.'},
+        {pt:'Cachorro',en:'Dog',gender:'m',em:'🐶',ph:'kah-SHOH-hoo',example:'O cachorro está latindo.',example_en:'The dog is barking.'},{pt:'Gato',en:'Cat',gender:'m',em:'🐱',ph:'GAH-too',example:'O gato está dormindo no sofá.',example_en:'The cat is sleeping on the sofa.'},
+        {pt:'Pássaro',en:'Bird',gender:'m',em:'🐦',ph:'PAH-sah-roo',example:'O pássaro canta de manhã.',example_en:'The bird sings in the morning.'},{pt:'Peixe',en:'Fish',gender:'m',em:'🐟',ph:'PAY-shee',example:'O peixe nada no rio.',example_en:'The fish swims in the river.'},
+        {pt:'Cavalo',en:'Horse',gender:'m',em:'🐴',ph:'kah-VAH-loo',example:'O cavalo corre muito rápido.',example_en:'The horse runs very fast.'},{pt:'Vaca',en:'Cow',gender:'f',em:'🐄',ph:'VAH-kah',example:'A vaca está no pasto.',example_en:'The cow is in the pasture.'},
+        {pt:'Porco',en:'Pig',gender:'m',em:'🐷',ph:'POR-koo',example:'O porco rola na lama.',example_en:'The pig rolls in the mud.'},{pt:'Ovelha',en:'Sheep',gender:'f',em:'🐑',ph:'oh-VEL-yah',example:'A ovelha tem lã branca.',example_en:'The sheep has white wool.'},
+        {pt:'Macaco',en:'Monkey',gender:'m',em:'🐒',ph:'mah-KAH-koo',example:'O macaco pula de galho em galho.',example_en:'The monkey jumps from branch to branch.'},{pt:'Leão',en:'Lion',gender:'m',em:'🦁',ph:'leh-OWNG',example:'O leão é o rei da selva.',example_en:'The lion is the king of the jungle.'},
+        {pt:'Elefante',en:'Elephant',gender:'m',em:'🐘',ph:'el-eh-FAN-chee',example:'O elefante tem uma memória incrível.',example_en:'The elephant has an incredible memory.'},{pt:'Cobra',en:'Snake',gender:'f',em:'🐍',ph:'KOH-brah',example:'A cobra é perigosa.',example_en:'The snake is dangerous.'},
+        {pt:'Coelho',en:'Rabbit',gender:'m',em:'🐰',ph:'koo-EL-yoo',example:'O coelho come cenoura.',example_en:'The rabbit eats carrot.'},{pt:'Tigre',en:'Tiger',gender:'m',em:'🐯',ph:'CHEE-gree',example:'O tigre caça à noite.',example_en:'The tiger hunts at night.'},
+        {pt:'Urso',en:'Bear',gender:'m',em:'🐻',ph:'OOR-soo',example:'O urso hiberna no inverno.',example_en:'The bear hibernates in winter.'},{pt:'Sapo',en:'Frog',gender:'m',em:'🐸',ph:'SAH-poo',example:'O sapo pula na poça.',example_en:'The frog jumps in the puddle.'},
+        {pt:'Rato',en:'Mouse',gender:'m',em:'🐭',ph:'HAH-too',example:'O rato entrou na cozinha.',example_en:'The mouse got into the kitchen.'},{pt:'Galinha',en:'Chicken',gender:'f',em:'🐔',ph:'gah-LEEN-yah',example:'A galinha bota ovos todo dia.',example_en:'The hen lays eggs every day.'},
+        {pt:'Papagaio',en:'Parrot',gender:'m',em:'🦜',ph:'pah-pah-GYE-oo',example:'O papagaio repete tudo que ouve.',example_en:'The parrot repeats everything it hears.'},{pt:'Tartaruga',en:'Turtle',gender:'f',em:'🐢',ph:'tar-tah-ROO-gah',example:'A tartaruga anda devagar.',example_en:'The turtle walks slowly.'},
     ],
     travel:[
-        {pt:'Aeroporto',en:'Airport',ph:'ah-eh-roh-POR-too',example:'Chegamos ao aeroporto cedo.',example_en:'We arrived at the airport early.'},{pt:'Hotel',en:'Hotel',ph:'oh-TEL',example:'O hotel fica no centro.',example_en:'The hotel is in the city centre.'},
-        {pt:'Trem',en:'Train',ph:'treng',example:'O trem está chegando.',example_en:'The train is arriving.'},{pt:'Ônibus',en:'Bus',ph:'OH-nee-boos',example:'O ônibus está atrasado.',example_en:'The bus is late.'},
-        {pt:'Táxi',en:'Taxi',ph:'TAK-see',example:'Vou pedir um táxi.',example_en:'I\'ll call a taxi.'},{pt:'Passaporte',en:'Passport',ph:'pah-sah-POR-chee',example:'Não esqueça o passaporte.',example_en:'Don\'t forget your passport.'},
-        {pt:'Mala',en:'Suitcase',ph:'MAH-lah',example:'A mala está pesada.',example_en:'The suitcase is heavy.'},{pt:'Mapa',en:'Map',ph:'MAH-pah',example:'Preciso de um mapa da cidade.',example_en:'I need a map of the city.'},
-        {pt:'Praia',en:'Beach',ph:'PRAH-yah',example:'Vamos à praia amanhã.',example_en:'We\'re going to the beach tomorrow.'},{pt:'Museu',en:'Museum',ph:'moo-ZEH-oo',example:'O museu abre às dez.',example_en:'The museum opens at ten.'},
-        {pt:'Restaurante',en:'Restaurant',ph:'hes-tah-oo-RAN-chee',example:'O restaurante está cheio.',example_en:'The restaurant is full.'},{pt:'Dinheiro',en:'Money',ph:'jin-YAY-roo',example:'Preciso sacar dinheiro.',example_en:'I need to withdraw money.'},
-        {pt:'Metrô',en:'Metro/Subway',ph:'meh-TROH',example:'O metrô é mais rápido.',example_en:'The metro is faster.'},{pt:'Avião',en:'Aeroplane',ph:'ah-vee-OWN',example:'O avião decola às oito.',example_en:'The plane takes off at eight.'},
-        {pt:'Bilhete',en:'Ticket',ph:'beel-YEH-chee',example:'Comprei o bilhete online.',example_en:'I bought the ticket online.'},{pt:'Reserva',en:'Reservation',ph:'heh-ZAIR-vah',example:'Fiz uma reserva para dois.',example_en:'I made a reservation for two.'},
-        {pt:'Moto',en:'Motorcycle',ph:'MOH-too',example:'Ele veio de moto.',example_en:'He came by motorcycle.'},{pt:'Barco',en:'Boat',ph:'BAR-koo',example:'Cruzamos o rio de barco.',example_en:'We crossed the river by boat.'},
-        {pt:'Câmbio',en:'Exchange office',ph:'KAM-byoo',example:'Onde fica o câmbio?',example_en:'Where is the exchange office?'},{pt:'Bagagem',en:'Luggage',ph:'bah-GAH-zheng',example:'A bagagem está no bagageiro.',example_en:'The luggage is in the boot.'},
+        {pt:'Aeroporto',en:'Airport',gender:'m',ph:'ah-eh-roh-POR-too',example:'Chegamos ao aeroporto cedo.',example_en:'We arrived at the airport early.'},{pt:'Hotel',en:'Hotel',gender:'m',ph:'oh-TEL',example:'O hotel fica no centro.',example_en:'The hotel is in the city centre.'},
+        {pt:'Trem',en:'Train',gender:'m',ph:'treng',example:'O trem está chegando.',example_en:'The train is arriving.'},{pt:'Ônibus',en:'Bus',gender:'m',ph:'OH-nee-boos',example:'O ônibus está atrasado.',example_en:'The bus is late.'},
+        {pt:'Táxi',en:'Taxi',gender:'m',ph:'TAK-see',example:'Vou pedir um táxi.',example_en:'I\'ll call a taxi.'},{pt:'Passaporte',en:'Passport',gender:'m',ph:'pah-sah-POR-chee',example:'Não esqueça o passaporte.',example_en:'Don\'t forget your passport.'},
+        {pt:'Mala',en:'Suitcase',gender:'f',ph:'MAH-lah',example:'A mala está pesada.',example_en:'The suitcase is heavy.'},{pt:'Mapa',en:'Map',gender:'m',ph:'MAH-pah',example:'Preciso de um mapa da cidade.',example_en:'I need a map of the city.'},
+        {pt:'Praia',en:'Beach',gender:'f',ph:'PRAH-yah',example:'Vamos à praia amanhã.',example_en:'We\'re going to the beach tomorrow.'},{pt:'Museu',en:'Museum',gender:'m',ph:'moo-ZEH-oo',example:'O museu abre às dez.',example_en:'The museum opens at ten.'},
+        {pt:'Restaurante',en:'Restaurant',gender:'m',ph:'hes-tah-oo-RAN-chee',example:'O restaurante está cheio.',example_en:'The restaurant is full.'},{pt:'Dinheiro',en:'Money',gender:'m',ph:'jin-YAY-roo',example:'Preciso sacar dinheiro.',example_en:'I need to withdraw money.'},
+        {pt:'Metrô',en:'Metro/Subway',gender:'m',ph:'meh-TROH',example:'O metrô é mais rápido.',example_en:'The metro is faster.'},{pt:'Avião',en:'Aeroplane',gender:'m',ph:'ah-vee-OWN',example:'O avião decola às oito.',example_en:'The plane takes off at eight.'},
+        {pt:'Bilhete',en:'Ticket',gender:'m',ph:'beel-YEH-chee',example:'Comprei o bilhete online.',example_en:'I bought the ticket online.'},{pt:'Reserva',en:'Reservation',gender:'f',ph:'heh-ZAIR-vah',example:'Fiz uma reserva para dois.',example_en:'I made a reservation for two.'},
+        {pt:'Moto',en:'Motorcycle',gender:'f',ph:'MOH-too',example:'Ele veio de moto.',example_en:'He came by motorcycle.'},{pt:'Barco',en:'Boat',gender:'m',ph:'BAR-koo',example:'Cruzamos o rio de barco.',example_en:'We crossed the river by boat.'},
+        {pt:'Câmbio',en:'Exchange office',gender:'m',ph:'KAM-byoo',example:'Onde fica o câmbio?',example_en:'Where is the exchange office?'},{pt:'Bagagem',en:'Luggage',gender:'f',ph:'bah-GAH-zheng',example:'A bagagem está no bagageiro.',example_en:'The luggage is in the boot.'},
     ],
     family:[
-        {pt:'Mãe',en:'Mother',ph:'mowng',example:'Minha mãe cozinha muito bem.',example_en:'My mother cooks very well.'},{pt:'Pai',en:'Father',ph:'pye',example:'Meu pai trabalha em São Paulo.',example_en:'My father works in São Paulo.'},
-        {pt:'Irmão',en:'Brother',ph:'eer-MOWNG',example:'Meu irmão mais velho mora no Rio.',example_en:'My older brother lives in Rio.'},{pt:'Irmã',en:'Sister',ph:'eer-MAH',example:'Minha irmã está estudando medicina.',example_en:'My sister is studying medicine.'},
-        {pt:'Avó',en:'Grandmother',ph:'ah-VOH',example:'A avó faz bolo toda domingo.',example_en:'Grandmother makes cake every Sunday.'},{pt:'Avô',en:'Grandfather',ph:'ah-VOH',example:'O avô me conta histórias.',example_en:'My grandfather tells me stories.'},
-        {pt:'Filho',en:'Son',ph:'FEE-lyoo',example:'Meu filho tem cinco anos.',example_en:'My son is five years old.'},{pt:'Filha',en:'Daughter',ph:'FEE-lyah',example:'A filha dela está na escola.',example_en:'Her daughter is at school.'},
-        {pt:'Tio',en:'Uncle',ph:'CHEE-oo',example:'Meu tio mora em Lisboa.',example_en:'My uncle lives in Lisbon.'},{pt:'Tia',en:'Aunt',ph:'CHEE-ah',example:'A tia me deu um presente.',example_en:'My aunt gave me a present.'},
-        {pt:'Primo',en:'Cousin (m)',ph:'PREE-moo',example:'Meu primo veio me visitar.',example_en:'My cousin came to visit me.'},{pt:'Marido',en:'Husband',ph:'mah-HEE-doo',example:'O marido dela é muito simpático.',example_en:'Her husband is very friendly.'},
-        {pt:'Esposa',en:'Wife',ph:'es-POH-zah',example:'A esposa dele é professora.',example_en:'His wife is a teacher.'},{pt:'Bebê',en:'Baby',ph:'beh-BEH',example:'O bebê está chorando.',example_en:'The baby is crying.'},
-        {pt:'Sobrinho',en:'Nephew',ph:'soh-BREEN-yoo',example:'Meu sobrinho tem dois anos.',example_en:'My nephew is two years old.'},{pt:'Sobrinha',en:'Niece',ph:'soh-BREEN-yah',example:'A sobrinha dela é muito fofa.',example_en:'Her niece is very cute.'},
-        {pt:'Cunhado',en:'Brother-in-law',ph:'koon-YAH-doo',example:'Meu cunhado é médico.',example_en:'My brother-in-law is a doctor.'},{pt:'Sogra',en:'Mother-in-law',ph:'SOH-grah',example:'A sogra veio jantar conosco.',example_en:'My mother-in-law came for dinner.'},
-        {pt:'Sogro',en:'Father-in-law',ph:'SOH-groo',example:'O sogro é muito generoso.',example_en:'My father-in-law is very generous.'},{pt:'Padrinho',en:'Godfather',ph:'pah-DREEN-yoo',example:'O padrinho fez um discurso.',example_en:'The godfather gave a speech.'},
+        {pt:'Mãe',en:'Mother',gender:'f',ph:'mowng',example:'Minha mãe cozinha muito bem.',example_en:'My mother cooks very well.'},{pt:'Pai',en:'Father',gender:'m',ph:'pye',example:'Meu pai trabalha em São Paulo.',example_en:'My father works in São Paulo.'},
+        {pt:'Irmão',en:'Brother',gender:'m',ph:'eer-MOWNG',example:'Meu irmão mais velho mora no Rio.',example_en:'My older brother lives in Rio.'},{pt:'Irmã',en:'Sister',gender:'f',ph:'eer-MAH',example:'Minha irmã está estudando medicina.',example_en:'My sister is studying medicine.'},
+        {pt:'Avó',en:'Grandmother',gender:'f',ph:'ah-VOH',example:'A avó faz bolo toda domingo.',example_en:'Grandmother makes cake every Sunday.'},{pt:'Avô',en:'Grandfather',gender:'m',ph:'ah-VOH',example:'O avô me conta histórias.',example_en:'My grandfather tells me stories.'},
+        {pt:'Filho',en:'Son',gender:'m',ph:'FEE-lyoo',example:'Meu filho tem cinco anos.',example_en:'My son is five years old.'},{pt:'Filha',en:'Daughter',gender:'f',ph:'FEE-lyah',example:'A filha dela está na escola.',example_en:'Her daughter is at school.'},
+        {pt:'Tio',en:'Uncle',gender:'m',ph:'CHEE-oo',example:'Meu tio mora em Lisboa.',example_en:'My uncle lives in Lisbon.'},{pt:'Tia',en:'Aunt',gender:'f',ph:'CHEE-ah',example:'A tia me deu um presente.',example_en:'My aunt gave me a present.'},
+        {pt:'Primo',en:'Cousin (m)',gender:'m',ph:'PREE-moo',example:'Meu primo veio me visitar.',example_en:'My cousin came to visit me.'},{pt:'Marido',en:'Husband',gender:'m',ph:'mah-HEE-doo',example:'O marido dela é muito simpático.',example_en:'Her husband is very friendly.'},
+        {pt:'Esposa',en:'Wife',gender:'f',ph:'es-POH-zah',example:'A esposa dele é professora.',example_en:'His wife is a teacher.'},{pt:'Bebê',en:'Baby',gender:'m',ph:'beh-BEH',example:'O bebê está chorando.',example_en:'The baby is crying.'},
+        {pt:'Sobrinho',en:'Nephew',gender:'m',ph:'soh-BREEN-yoo',example:'Meu sobrinho tem dois anos.',example_en:'My nephew is two years old.'},{pt:'Sobrinha',en:'Niece',gender:'f',ph:'soh-BREEN-yah',example:'A sobrinha dela é muito fofa.',example_en:'Her niece is very cute.'},
+        {pt:'Cunhado',en:'Brother-in-law',gender:'m',ph:'koon-YAH-doo',example:'Meu cunhado é médico.',example_en:'My brother-in-law is a doctor.'},{pt:'Sogra',en:'Mother-in-law',gender:'f',ph:'SOH-grah',example:'A sogra veio jantar conosco.',example_en:'My mother-in-law came for dinner.'},
+        {pt:'Sogro',en:'Father-in-law',gender:'m',ph:'SOH-groo',example:'O sogro é muito generoso.',example_en:'My father-in-law is very generous.'},{pt:'Padrinho',en:'Godfather',gender:'m',ph:'pah-DREEN-yoo',example:'O padrinho fez um discurso.',example_en:'The godfather gave a speech.'},
     ],
     time:[
         {pt:'Hoje',en:'Today',ph:'OH-zhee',example:'O que você vai fazer hoje?',example_en:'What are you going to do today?'},{pt:'Amanhã',en:'Tomorrow',ph:'ah-mah-NYAH',example:'Amanhã tem reunião cedo.',example_en:'There\'s an early meeting tomorrow.'},
-        {pt:'Ontem',en:'Yesterday',ph:'ON-teng',example:'Ontem eu fui ao cinema.',example_en:'Yesterday I went to the cinema.'},{pt:'Semana',en:'Week',ph:'seh-MAH-nah',example:'Essa semana está passando rápido.',example_en:'This week is going by fast.'},
-        {pt:'Mês',en:'Month',ph:'mess',example:'No mês passado fui ao Brasil.',example_en:'Last month I went to Brazil.'},{pt:'Ano',en:'Year',ph:'AH-noo',example:'O ano novo está chegando.',example_en:'The new year is approaching.'},
-        {pt:'Hora',en:'Hour',ph:'OH-rah',example:'Já é hora de ir embora.',example_en:'It\'s already time to leave.'},{pt:'Minuto',en:'Minute',ph:'mee-NOO-too',example:'Espera um minuto, por favor.',example_en:'Wait a minute, please.'},
-        {pt:'Manhã',en:'Morning',ph:'mah-NYAH',example:'De manhã tomo café e leio.',example_en:'In the morning I have coffee and read.'},{pt:'Tarde',en:'Afternoon',ph:'TAR-jee',example:'À tarde vou ao parque.',example_en:'In the afternoon I\'m going to the park.'},
-        {pt:'Noite',en:'Night',ph:'NOY-chee',example:'À noite gosto de assistir filmes.',example_en:'At night I like to watch films.'},{pt:'Agora',en:'Now',ph:'ah-GOH-rah',example:'Preciso sair agora.',example_en:'I need to leave now.'},
-        {pt:'Segunda',en:'Monday',ph:'seh-GOON-dah',example:'Segunda é dia de trabalho.',example_en:'Monday is a work day.'},{pt:'Terça',en:'Tuesday',ph:'TER-sah',example:'Na terça tenho aula de português.',example_en:'On Tuesday I have a Portuguese class.'},
-        {pt:'Quarta',en:'Wednesday',ph:'KWAR-tah',example:'Na quarta tem reunião.',example_en:'On Wednesday there\'s a meeting.'},{pt:'Quinta',en:'Thursday',ph:'KEEN-tah',example:'Quinta é quase fim de semana.',example_en:'Thursday is almost the weekend.'},
-        {pt:'Sexta',en:'Friday',ph:'SEHS-tah',example:'Todo mundo ama sexta-feira.',example_en:'Everyone loves Friday.'},{pt:'Sábado',en:'Saturday',ph:'SAH-bah-doo',example:'No sábado vou à praia.',example_en:'On Saturday I\'m going to the beach.'},
-        {pt:'Domingo',en:'Sunday',ph:'doh-MEEN-goo',example:'Domingo é dia de família.',example_en:'Sunday is family day.'},{pt:'Segundo',en:'Second',ph:'seh-GOON-doo',example:'Só vai demorar um segundo.',example_en:'It\'ll only take a second.'},
+        {pt:'Ontem',en:'Yesterday',ph:'ON-teng',example:'Ontem eu fui ao cinema.',example_en:'Yesterday I went to the cinema.'},{pt:'Semana',en:'Week',gender:'f',ph:'seh-MAH-nah',example:'Essa semana está passando rápido.',example_en:'This week is going by fast.'},
+        {pt:'Mês',en:'Month',gender:'m',ph:'mess',example:'No mês passado fui ao Brasil.',example_en:'Last month I went to Brazil.'},{pt:'Ano',en:'Year',gender:'m',ph:'AH-noo',example:'O ano novo está chegando.',example_en:'The new year is approaching.'},
+        {pt:'Hora',en:'Hour',gender:'f',ph:'OH-rah',example:'Já é hora de ir embora.',example_en:'It\'s already time to leave.'},{pt:'Minuto',en:'Minute',gender:'m',ph:'mee-NOO-too',example:'Espera um minuto, por favor.',example_en:'Wait a minute, please.'},
+        {pt:'Manhã',en:'Morning',gender:'f',ph:'mah-NYAH',example:'De manhã tomo café e leio.',example_en:'In the morning I have coffee and read.'},{pt:'Tarde',en:'Afternoon',gender:'f',ph:'TAR-jee',example:'À tarde vou ao parque.',example_en:'In the afternoon I\'m going to the park.'},
+        {pt:'Noite',en:'Night',gender:'f',ph:'NOY-chee',example:'À noite gosto de assistir filmes.',example_en:'At night I like to watch films.'},{pt:'Agora',en:'Now',ph:'ah-GOH-rah',example:'Preciso sair agora.',example_en:'I need to leave now.'},
+        {pt:'Segunda',en:'Monday',gender:'f',ph:'seh-GOON-dah',example:'Segunda é dia de trabalho.',example_en:'Monday is a work day.'},{pt:'Terça',en:'Tuesday',gender:'f',ph:'TER-sah',example:'Na terça tenho aula de português.',example_en:'On Tuesday I have a Portuguese class.'},
+        {pt:'Quarta',en:'Wednesday',gender:'f',ph:'KWAR-tah',example:'Na quarta tem reunião.',example_en:'On Wednesday there\'s a meeting.'},{pt:'Quinta',en:'Thursday',gender:'f',ph:'KEEN-tah',example:'Quinta é quase fim de semana.',example_en:'Thursday is almost the weekend.'},
+        {pt:'Sexta',en:'Friday',gender:'f',ph:'SEHS-tah',example:'Todo mundo ama sexta-feira.',example_en:'Everyone loves Friday.'},{pt:'Sábado',en:'Saturday',gender:'m',ph:'SAH-bah-doo',example:'No sábado vou à praia.',example_en:'On Saturday I\'m going to the beach.'},
+        {pt:'Domingo',en:'Sunday',gender:'m',ph:'doh-MEEN-goo',example:'Domingo é dia de família.',example_en:'Sunday is family day.'},{pt:'Segundo',en:'Second',gender:'m',ph:'seh-GOON-doo',example:'Só vai demorar um segundo.',example_en:'It\'ll only take a second.'},
     ],
     power100:[
         {pt:'Ser',en:'To be (permanent)',ph:'sehr',example:'Eu sou brasileira.',example_en:'I am Brazilian.'},
@@ -608,50 +616,50 @@ const WORD_LIBRARY = {
         {pt:'Aqui',en:'Here',ph:'ah-KEE',example:'Pode vir aqui, por favor?',example_en:'Can you come here, please?'},
         {pt:'Perto',en:'Near / Close',ph:'PEHR-too',example:'O hotel é perto daqui.',example_en:'The hotel is close to here.'},
         {pt:'Longe',en:'Far',ph:'LON-zhee',example:'Fica longe do centro?',example_en:'Is it far from the centre?'},
-        {pt:'Dia',en:'Day',ph:'JEE-ah',example:'Bom dia! Como vai?',example_en:'Good morning! How are you?'},
-        {pt:'Vez',en:'Time / Turn',ph:'vez',example:'Pode repetir mais uma vez?',example_en:'Can you repeat one more time?'},
-        {pt:'Coisa',en:'Thing',ph:'KOY-zah',example:'Tem uma coisa que preciso te falar.',example_en:'There\'s something I need to tell you.'},
-        {pt:'Pessoa',en:'Person',ph:'peh-SOH-ah',example:'É uma pessoa muito simpática.',example_en:'She is a very friendly person.'},
-        {pt:'Lugar',en:'Place',ph:'loo-GAR',example:'Qual é o melhor lugar para jantar?',example_en:'What\'s the best place for dinner?'},
-        {pt:'Hora',en:'Hour / Time',ph:'OH-rah',example:'A que hora começa?',example_en:'What time does it start?'},
-        {pt:'Nome',en:'Name',ph:'NOH-mee',example:'Qual é o seu nome completo?',example_en:'What is your full name?'},
-        {pt:'Número',en:'Number',ph:'NOO-meh-roo',example:'Qual é o número do seu quarto?',example_en:'What is your room number?'},
+        {pt:'Dia',en:'Day',gender:'m',ph:'JEE-ah',example:'Bom dia! Como vai?',example_en:'Good morning! How are you?'},
+        {pt:'Vez',en:'Time / Turn',gender:'f',ph:'vez',example:'Pode repetir mais uma vez?',example_en:'Can you repeat one more time?'},
+        {pt:'Coisa',en:'Thing',gender:'f',ph:'KOY-zah',example:'Tem uma coisa que preciso te falar.',example_en:'There\'s something I need to tell you.'},
+        {pt:'Pessoa',en:'Person',gender:'f',ph:'peh-SOH-ah',example:'É uma pessoa muito simpática.',example_en:'She is a very friendly person.'},
+        {pt:'Lugar',en:'Place',gender:'m',ph:'loo-GAR',example:'Qual é o melhor lugar para jantar?',example_en:'What\'s the best place for dinner?'},
+        {pt:'Hora',en:'Hour / Time',gender:'f',ph:'OH-rah',example:'A que hora começa?',example_en:'What time does it start?'},
+        {pt:'Nome',en:'Name',gender:'m',ph:'NOH-mee',example:'Qual é o seu nome completo?',example_en:'What is your full name?'},
+        {pt:'Número',en:'Number',gender:'m',ph:'NOO-meh-roo',example:'Qual é o número do seu quarto?',example_en:'What is your room number?'},
         {pt:'Obrigado',en:'Thank you (m)',ph:'oh-bree-GAH-doo',example:'Muito obrigado pela ajuda!',example_en:'Thank you very much for the help!'},
         {pt:'Por favor',en:'Please',ph:'por fah-VOR',example:'Um café, por favor.',example_en:'A coffee, please.'},
         {pt:'Sim',en:'Yes',ph:'sing',example:'Sim, com certeza!',example_en:'Yes, of course!'},
         {pt:'Não',en:'No / Not',ph:'nowm',example:'Não, obrigado.',example_en:'No, thank you.'},
         {pt:'Tudo',en:'Everything / All',ph:'TOO-doo',example:'Tudo bem com você?',example_en:'Is everything okay with you?'},
         {pt:'Nada',en:'Nothing',ph:'NAH-dah',example:'De nada! Não foi nada.',example_en:'You\'re welcome! It was nothing.'},
-        {pt:'Gente',en:'People / Folks',ph:'ZHEN-chee',example:'A gente se vê amanhã.',example_en:'We\'ll see each other tomorrow.'}
+        {pt:'Gente',en:'People / Folks',gender:'f',ph:'ZHEN-chee',example:'A gente se vê amanhã.',example_en:'We\'ll see each other tomorrow.'}
     ],
     falsefriends:[
         {pt:'Pretender',en:'To intend / plan',ph:'preh-ten-DEHR',trap:'Pretend',example:'Pretendo viajar para o Brasil no verão.',example_en:'I intend to travel to Brazil in the summer.'},
-        {pt:'Lanche',en:'Snack',ph:'LAN-shee',trap:'Lunch',example:'Vou tomar um lanche antes do jantar.',example_en:'I\'m going to have a snack before dinner.'},
-        {pt:'Novela',en:'Soap opera',ph:'noh-VEH-lah',trap:'Novel',example:'Minha mãe adora assistir novela.',example_en:'My mother loves watching soap operas.'},
-        {pt:'Borracha',en:'Rubber / Eraser',ph:'boh-HA-shah',trap:'Borracha → Drunk (in Spanish — different language trap!)',example:'Preciso de uma borracha para apagar isso.',example_en:'I need an eraser to rub that out.'},
-        {pt:'Polvo',en:'Octopus',ph:'POL-voo',trap:'Powder',example:'O polvo tem oito tentáculos.',example_en:'The octopus has eight tentacles.'},
+        {pt:'Lanche',en:'Snack',gender:'m',ph:'LAN-shee',trap:'Lunch',example:'Vou tomar um lanche antes do jantar.',example_en:'I\'m going to have a snack before dinner.'},
+        {pt:'Novela',en:'Soap opera',gender:'f',ph:'noh-VEH-lah',trap:'Novel',example:'Minha mãe adora assistir novela.',example_en:'My mother loves watching soap operas.'},
+        {pt:'Borracha',en:'Rubber / Eraser',gender:'f',ph:'boh-HA-shah',trap:'Borracha → Drunk (in Spanish — different language trap!)',example:'Preciso de uma borracha para apagar isso.',example_en:'I need an eraser to rub that out.'},
+        {pt:'Polvo',en:'Octopus',gender:'m',ph:'POL-voo',trap:'Powder',example:'O polvo tem oito tentáculos.',example_en:'The octopus has eight tentacles.'},
         {pt:'Acordar',en:'To wake up',ph:'ah-kor-DAR',trap:'Accord / Agree',example:'Acordo às sete horas toda manhã.',example_en:'I wake up at seven every morning.'},
         {pt:'Assistir',en:'To watch',ph:'ah-sees-TEER',trap:'Assist',example:'Vou assistir um filme hoje à noite.',example_en:'I\'m going to watch a film tonight.'},
         {pt:'Bordar',en:'To embroider',ph:'bor-DAR',trap:'Board',example:'Ela adora bordar toalhas de mesa.',example_en:'She loves to embroider tablecloths.'},
-        {pt:'Pasta',en:'Folder / Briefcase / Toothpaste',ph:'PAS-tah',trap:'Pasta (food)',example:'Coloquei os documentos na pasta.',example_en:'I put the documents in the folder.'},
-        {pt:'Policial',en:'Police officer / Detective',ph:'poh-lee-see-AL',trap:'Political',example:'O policial pediu minha carteira de identidade.',example_en:'The police officer asked for my ID.'},
-        {pt:'Parentes',en:'Relatives / Family',ph:'pah-REN-chees',trap:'Parents',example:'Meus parentes moram em Minas Gerais.',example_en:'My relatives live in Minas Gerais.'},
-        {pt:'Gravidez',en:'Pregnancy',ph:'grah-vee-DEZ',trap:'Gravity',example:'A gravidez dura nove meses.',example_en:'Pregnancy lasts nine months.'},
+        {pt:'Pasta',en:'Folder / Briefcase / Toothpaste',gender:'f',ph:'PAS-tah',trap:'Pasta (food)',example:'Coloquei os documentos na pasta.',example_en:'I put the documents in the folder.'},
+        {pt:'Policial',en:'Police officer / Detective',gender:'m',ph:'poh-lee-see-AL',trap:'Political',example:'O policial pediu minha carteira de identidade.',example_en:'The police officer asked for my ID.'},
+        {pt:'Parentes',en:'Relatives / Family',gender:'m',ph:'pah-REN-chees',trap:'Parents',example:'Meus parentes moram em Minas Gerais.',example_en:'My relatives live in Minas Gerais.'},
+        {pt:'Gravidez',en:'Pregnancy',gender:'f',ph:'grah-vee-DEZ',trap:'Gravity',example:'A gravidez dura nove meses.',example_en:'Pregnancy lasts nine months.'},
         {pt:'Exquisito',en:'Refined / Exquisite',ph:'es-kee-ZEE-too',trap:'Exquisite (same meaning — but English speakers get it backwards with Spanish \'extraño\')',example:'Esse restaurante serve comida exquisita.',example_en:'This restaurant serves exquisite food.'},
-        {pt:'Borboleta',en:'Butterfly',ph:'bor-boh-LEH-tah',trap:'Bobble / Bobblehead',example:'Uma borboleta colorida pousou na flor.',example_en:'A colourful butterfly landed on the flower.'},
+        {pt:'Borboleta',en:'Butterfly',gender:'f',ph:'bor-boh-LEH-tah',trap:'Bobble / Bobblehead',example:'Uma borboleta colorida pousou na flor.',example_en:'A colourful butterfly landed on the flower.'},
         {pt:'Esquisito',en:'Weird / Strange',ph:'es-kee-ZEE-too',trap:'Exquisite',example:'Que situação esquisita!',example_en:'What a weird situation!'},
         {pt:'Pegar',en:'To grab / catch / take',ph:'peh-GAR',trap:'Peg',example:'Posso pegar o seu telefone emprestado?',example_en:'Can I borrow your phone?'},
         {pt:'Intoxicado',en:'Food-poisoned',ph:'in-tok-see-KAH-doo',trap:'Intoxicated (drunk)',example:'Fiquei intoxicado depois do restaurante.',example_en:'I got food poisoning after the restaurant.'},
         {pt:'Sensível',en:'Sensitive',ph:'sen-SEE-vel',trap:'Sensible',example:'Ela é muito sensível a críticas.',example_en:'She is very sensitive to criticism.'},
-        {pt:'Libraria',en:'Bookshop',ph:'lee-vrah-REE-ah',trap:'Library',example:'Comprei esse livro numa livraria.',example_en:'I bought this book in a bookshop.'},
-        {pt:'Jornal',en:'Newspaper',ph:'zhor-NAL',trap:'Journal',example:'Leio o jornal toda manhã.',example_en:'I read the newspaper every morning.'},
+        {pt:'Libraria',en:'Bookshop',gender:'f',ph:'lee-vrah-REE-ah',trap:'Library',example:'Comprei esse livro numa livraria.',example_en:'I bought this book in a bookshop.'},
+        {pt:'Jornal',en:'Newspaper',gender:'m',ph:'zhor-NAL',trap:'Journal',example:'Leio o jornal toda manhã.',example_en:'I read the newspaper every morning.'},
         {pt:'Actual',en:'Current / Present',ph:'ah-too-AL',trap:'Actual (= real in English)',example:'Qual é a situação actual?',example_en:'What is the current situation?'},
         {pt:'Engraçado',en:'Funny',ph:'en-grah-SAH-doo',trap:'Engraved / Gracious',example:'Ele é muito engraçado!',example_en:'He is very funny!'},
         {pt:'Terrível',en:'Terrible / Awful',ph:'teh-HEE-vel',trap:'Terrific (means great in English!)',example:'O trânsito estava terrível hoje.',example_en:'The traffic was terrible today.'},
         {pt:'Marcar',en:'To schedule / book / score',ph:'mar-KAR',trap:'Mark',example:'Preciso marcar uma consulta.',example_en:'I need to book an appointment.'},
         {pt:'Largo',en:'Wide / Broad',ph:'LAR-goo',trap:'Large',example:'A avenida é muito larga.',example_en:'The avenue is very wide.'},
-        {pt:'Agenda',en:'Diary / Schedule',ph:'ah-ZHEN-dah',trap:'Agenda (meeting agenda)',example:'Anotei o compromisso na agenda.',example_en:'I noted the appointment in my diary.'},
-        {pt:'Pretensão',en:'Claim / Ambition',ph:'preh-ten-SOWM',trap:'Pretension (arrogance in English)',example:'Ele tem grandes pretensões na carreira.',example_en:'He has great ambitions in his career.'}
+        {pt:'Agenda',en:'Diary / Schedule',gender:'f',ph:'ah-ZHEN-dah',trap:'Agenda (meeting agenda)',example:'Anotei o compromisso na agenda.',example_en:'I noted the appointment in my diary.'},
+        {pt:'Pretensão',en:'Claim / Ambition',gender:'f',ph:'preh-ten-SOWM',trap:'Pretension (arrogance in English)',example:'Ele tem grandes pretensões na carreira.',example_en:'He has great ambitions in his career.'}
     ],
 };
 
@@ -849,6 +857,23 @@ function showWordCard(){
         document.querySelectorAll('.pt-ph-view').forEach(el=>el.innerText=`[ ${card.ph} ]`);
         document.getElementById('words-counter').innerText = `${wordIdx+1} / ${wordPool.length}`;
         updateStarUI(card);
+        // Gender indicator
+        const cardFront = document.querySelector('#words .card-front');
+        const gBadge    = document.getElementById('gender-badge');
+        cardFront.classList.remove('gender-m','gender-f');
+        if(card.gender === 'm'){
+            cardFront.classList.add('gender-m');
+            gBadge.textContent = 'o · masc';
+            gBadge.className   = 'gender-badge m';
+            gBadge.style.display = 'block';
+        } else if(card.gender === 'f'){
+            cardFront.classList.add('gender-f');
+            gBadge.textContent = 'a · fem';
+            gBadge.className   = 'gender-badge f';
+            gBadge.style.display = 'block';
+        } else {
+            gBadge.style.display = 'none';
+        }
         // Emoji visual
         const emojiEl = document.getElementById('card-emoji');
         if(card.em){
