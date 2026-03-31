@@ -1,478 +1,1326 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projeto Samba - Learn Portuguese</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
+    <title>Projeto Samba | Portuguese</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="portuguese_vault.js"></script>
     <style>
-        :root {
-            --primary: #009739; /* Brazil Green */
-            --secondary: #fedd00; /* Brazil Yellow */
-            --accent: #012169; /* Brazil Blue */
-            --bg: #0f172a;
-            --card-bg: #1e293b;
-            --text: #f8fafc;
-            --text-muted: #94a3b8;
-            /* Gender Colors */
-            --masculine: #3498db;
-            --feminine: #e91e63;
-        }
+        :root{--bg:#0f172a;--card:#1e293b;--primary:#22c55e;--shadow:#166534;--text:#f8fafc;--text-dim:#94a3b8;--border:#334155;}
+        *{box-sizing:border-box;transition:transform 0.2s ease, opacity 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;-webkit-tap-highlight-color:transparent;}
+        body{font-family:'Inter',sans-serif;background-color:var(--bg);color:var(--text);margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding-top:env(safe-area-inset-top);}
+        .top-nav{width:100%;display:flex;padding:12px 15px;background:rgba(15,23,42,0.95);backdrop-filter:blur(10px);position:sticky;top:0;z-index:100;border-bottom:1px solid var(--border);}
+        .home-link{text-decoration:none;color:var(--text-dim);font-size:0.75rem;font-weight:800;border:1px solid var(--border);padding:6px 14px;border-radius:20px;background:var(--card);}
+        .app-container{max-width:600px;width:92%;display:flex;flex-direction:column;align-items:center;padding-bottom:50px;}
+        header{width:100%;text-align:center;padding:25px 0;}
+        nav{display:flex;background:var(--card);padding:4px;border-radius:12px;gap:4px;margin-bottom:20px;width:100%;border:1px solid var(--border);}
+        .nav-btn{flex:1;padding:10px 2px;border:none;background:transparent;color:var(--text-dim);cursor:pointer;border-radius:8px;font-weight:700;font-size:0.65rem;}
+        .nav-btn.active{background:var(--primary);color:white;}
+        .content-section{display:none;width:100%;flex-direction:column;align-items:center;}
+        .content-section.active{display:flex;animation:fadeIn 0.3s ease;}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+        /* Category Scroller */
+        .cat-scroll-wrap{width:100%;overflow-x:auto;overflow-y:visible;margin-bottom:15px;-webkit-overflow-scrolling:touch;scrollbar-width:none;min-width:0;}
+        .cat-scroll-wrap::-webkit-scrollbar{display:none;}
+        .cat-scroll{display:flex;gap:8px;padding:4px 2px;width:max-content;}
+        #list-words-controls{width:100%;overflow:hidden;min-width:0;} #test-cat-section{width:100%;overflow:hidden;min-width:0;}
+        .cat-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 14px;background:var(--card);border:2px solid var(--border);border-radius:14px;cursor:pointer;color:var(--text-dim);font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;white-space:nowrap;}
+        .cat-btn .cat-icon{font-size:1.4rem;line-height:1;}
+        .cat-btn.active{border-color:var(--primary);color:var(--primary);background:rgba(34,197,94,0.08);}
 
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+        /* Difficulty Toggle (phrases/test) */
+        .diff-toggle{display:flex;background:var(--bg);padding:4px;border-radius:10px;margin-bottom:15px;width:100%;gap:4px;border:1px solid var(--border);}
+        .diff-btn{flex:1;padding:10px 2px;font-size:0.6rem;border:none;background:transparent;color:var(--text-dim);cursor:pointer;border-radius:6px;font-weight:800;}
+        .diff-btn.active{background:var(--card);color:var(--primary);}
 
-        header {
-            background: linear-gradient(135deg, var(--primary), #007a2e);
-            padding: 2rem;
-            text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        }
+        /* Flashcards */
+        .flashcard-wrapper{perspective:1000px;width:100%;height:340px;cursor:pointer;margin:10px 0 15px 0;flex-shrink:0;}
+        .flashcard-wrapper,.flashcard-inner,.card-front,.card-back{transition-property:transform,opacity,border-color,background-color,color;}
+        .flashcard-inner{position:relative;width:100%;height:100%;transition:transform 0.5s;transform-style:preserve-3d;}
+        .flashcard-wrapper.is-flipped .flashcard-inner{transform:rotateY(180deg);}
+        .card-front,.card-back{position:absolute;top:0;left:0;width:100%;height:100%;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:24px;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:25px;border:2px solid var(--primary);text-align:center;background:var(--card);overflow:hidden;}
+        .card-back{background:var(--primary);transform:rotateY(180deg);color:white;}
+        .btn-hear{background:rgba(255,255,255,0.1);border:1px solid var(--primary);color:var(--primary);padding:8px 15px;border-radius:20px;font-size:0.7rem;font-weight:800;margin-top:15px;cursor:pointer;}
+        .card-back .btn-hear{border-color:white;color:white;}
+        .pronunciation{font-size:0.9rem;font-style:italic;color:#dcfce7;margin-top:8px;}
+        .card-counter{font-size:0.7rem;font-weight:800;color:var(--text-dim);margin-top:10px;}
+        .card-nav{display:flex;gap:10px;width:100%;margin-top:8px;}
+        .btn-prev{flex:1;padding:14px;background:var(--card);color:var(--text-dim);border:1px solid var(--border);border-radius:14px;font-weight:800;cursor:pointer;font-size:0.85rem;}
+        .btn-next{flex:2;padding:14px;background:var(--primary);color:white;border:none;border-radius:14px;font-weight:800;cursor:pointer;box-shadow:0 4px 0 var(--shadow);font-size:0.85rem;}
+        .btn-prev:active{opacity:0.7;}.btn-next:active{opacity:0.85;}
 
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        }
+        /* List */
+        .list-type-toggle{display:flex;background:var(--bg);padding:4px;border-radius:10px;margin-bottom:15px;width:100%;gap:4px;border:1px solid var(--border);}
+        .list-type-btn{flex:1;padding:10px 2px;font-size:0.7rem;border:none;background:transparent;color:var(--text-dim);cursor:pointer;border-radius:6px;font-weight:800;}
+        .list-type-btn.active{background:var(--card);color:var(--primary);}
+        .list-count{font-size:0.72rem;color:var(--text-dim);font-weight:700;margin-bottom:10px;width:100%;text-align:right;letter-spacing:0.03em;}
+        .list-scroll{width:100%;background:var(--card);border-radius:16px;border:1px solid var(--border);overflow:hidden;}
+        .list-table{width:100%;border-collapse:collapse;}
+        .list-table thead th{font-size:0.65rem;font-weight:800;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em;padding:8px 10px;border-bottom:1px solid var(--border);text-align:left;}
+        .list-table tbody tr{border-bottom:1px solid var(--border);cursor:pointer;}
+        .list-table tbody tr:last-child{border-bottom:none;}
+        .list-table tbody tr:hover{background:rgba(255,255,255,0.04);}
+        .list-table tbody td{padding:13px 10px;vertical-align:middle;}
+        .list-native{font-size:1.1rem;font-weight:700;color:var(--text);}
+        .list-ph{font-size:0.7rem;font-style:italic;color:var(--text-dim);margin-top:3px;}
+        .list-en{font-size:0.88rem;color:var(--text-dim);font-weight:600;}
+        .list-hear{background:none;border:1px solid var(--border);color:var(--text-dim);border-radius:20px;padding:5px 10px;font-size:0.65rem;font-weight:800;cursor:pointer;white-space:nowrap;}
+        .list-hear:hover{border-color:var(--primary);color:var(--primary);}
 
-        .subtitle {
-            color: var(--secondary);
-            font-weight: 600;
-            letter-spacing: 1px;
-        }
+        /* Test Setup */
+        .test-setup{width:100%;display:flex;flex-direction:column;gap:20px;}
+        .setup-label{font-size:0.68rem;font-weight:800;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;}
+        .setup-row{display:flex;gap:8px;width:100%;flex-wrap:wrap;}
+        .setup-opt{flex:1;min-width:70px;padding:14px 6px;background:var(--card);border:2px solid var(--border);border-radius:12px;color:var(--text-dim);font-weight:800;font-size:0.78rem;cursor:pointer;text-align:center;}
+        .setup-opt.active{border-color:var(--primary);color:var(--primary);background:rgba(34,197,94,0.08);}
+        .btn-start-test{width:100%;padding:18px;background:var(--primary);color:white;border:none;border-radius:14px;font-weight:800;font-size:1rem;cursor:pointer;box-shadow:0 4px 0 var(--shadow);margin-top:4px;}
 
-        nav {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            padding: 1rem;
-            background: rgba(0,0,0,0.2);
-        }
+        /* Test Quiz */
+        .test-quiz{width:100%;display:none;flex-direction:column;align-items:center;}
+        .quiz-meta{display:flex;justify-content:space-between;width:100%;margin-bottom:10px;font-size:0.72rem;font-weight:800;color:var(--text-dim);}
+        .quiz-progress-bar{width:100%;height:6px;background:var(--border);border-radius:3px;margin-bottom:20px;overflow:hidden;}
+        .quiz-progress-fill{height:100%;background:var(--primary);border-radius:3px;transition:width 0.4s ease;}
+        .quiz-question-box{width:100%;background:var(--card);border:2px solid var(--primary);border-radius:20px;padding:28px 22px;text-align:center;margin-bottom:18px;}
+        .quiz-q-label{font-size:0.65rem;font-weight:800;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;}
+        .quiz-q-text{font-size:1.85rem;font-weight:800;color:var(--text);line-height:1.25;}
+        .quiz-q-phonetic{font-size:0.85rem;font-style:italic;color:var(--text-dim);margin-top:8px;min-height:1.2em;}
+        .quiz-q-hear{background:transparent;border:1px solid var(--border);color:var(--text-dim);padding:6px 14px;border-radius:20px;font-size:0.68rem;font-weight:800;margin-top:10px;cursor:pointer;}
+        .quiz-q-hear:hover{border-color:var(--primary);color:var(--primary);}
+        .quiz-options{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+        .quiz-opt{padding:16px 10px;background:var(--card);border:2px solid var(--border);border-radius:14px;color:var(--text);font-weight:700;font-size:0.85rem;cursor:pointer;text-align:center;line-height:1.3;}
+        .quiz-opt:hover:not(:disabled){border-color:var(--primary);}
+        .quiz-opt.correct{border-color:#22c55e;background:rgba(34,197,94,0.15);color:#22c55e;}
+        .quiz-opt.wrong{border-color:#ef4444;background:rgba(239,68,68,0.12);color:#ef4444;}
+        .quiz-opt.reveal{border-color:#22c55e;background:rgba(34,197,94,0.1);color:#22c55e;}
+        .quiz-opt:disabled{cursor:default;}
 
-        .nav-btn {
-            background: transparent;
-            border: 2px solid var(--secondary);
-            color: var(--secondary);
-            padding: 0.5rem 1.5rem;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: bold;
-        }
+        /* Test Results */
+        .test-results{width:100%;display:none;flex-direction:column;align-items:center;}
+        .score-ring-wrap{position:relative;width:150px;height:150px;margin:8px auto 18px;}
+        .score-ring-wrap svg{position:absolute;top:0;left:0;transform:rotate(-90deg);}
+        .score-ring-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+        .score-big{font-size:3rem;font-weight:800;line-height:1;}
+        .score-denom{font-size:0.82rem;color:var(--text-dim);font-weight:700;}
+        .results-grade{font-size:1.3rem;font-weight:800;margin-bottom:5px;}
+        .results-sub{font-size:0.85rem;color:var(--text-dim);margin-bottom:22px;text-align:center;}
+        .results-breakdown{width:100%;display:flex;flex-direction:column;gap:8px;margin-bottom:22px;}
+        .result-row{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:12px;padding:12px 14px;border:1px solid var(--border);}
+        .result-row.r-correct{border-color:rgba(34,197,94,0.25);}
+        .result-row.r-wrong{border-color:rgba(239,68,68,0.3);}
+        .result-icon{font-size:1.1rem;flex-shrink:0;}
+        .result-q{font-size:0.98rem;font-weight:700;color:var(--text);}
+        .result-a{font-size:0.78rem;color:var(--text-dim);}
+        .btn-retry{width:100%;padding:16px;background:var(--primary);color:white;border:none;border-radius:14px;font-weight:800;cursor:pointer;box-shadow:0 4px 0 var(--shadow);font-size:0.95rem;}
 
-        .nav-btn.active {
-            background: var(--secondary);
-            color: var(--accent);
-        }
+        /* Watch */
+        .video-list{width:100%;display:grid;gap:10px;}
+        .video-item{display:flex;align-items:center;background:var(--card);padding:15px;border-radius:12px;text-decoration:none;color:white;border:1px solid var(--border);font-weight:600;font-size:0.9rem;}
 
-        main {
-            flex: 1;
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-            width: 100%;
-        }
+        /* Verbs */
+        .verb-picker{width:100%;display:flex;flex-direction:column;gap:12px;margin-bottom:18px;}
+        .verb-search{width:100%;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:0.95rem;font-family:inherit;outline:none;}
+        .verb-search:focus{border-color:var(--primary);}
+        .verb-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+        .verb-btn{padding:12px 10px;background:var(--card);border:2px solid var(--border);border-radius:12px;color:var(--text-dim);font-size:0.78rem;font-weight:700;cursor:pointer;text-align:left;line-height:1.3;}
+        .verb-btn:active{transform:scale(0.97);}
+        .verb-btn.active{border-color:var(--primary);color:var(--primary);background:rgba(34,197,94,0.08);}
+        .verb-btn .vb-inf{font-size:1rem;font-weight:800;color:var(--text);display:block;}
+        .verb-btn .vb-en{font-size:0.68rem;color:var(--text-dim);display:block;margin-top:2px;}
+        .verb-table-wrap{width:100%;display:flex;flex-direction:column;gap:14px;}
+        .verb-tense-block{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+        .verb-tense-title{padding:10px 14px;font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:white;background:var(--primary);}
+        .verb-tense-title.past{background:#6366f1;}
+        .verb-tense-title.future{background:#f59e0b;}
+        .verb-conj-table{width:100%;border-collapse:collapse;}
+        .verb-conj-table tr{border-bottom:1px solid var(--border);}
+        .verb-conj-table tr:last-child{border-bottom:none;}
+        .verb-conj-table td{padding:10px 14px;font-size:0.88rem;vertical-align:middle;}
+        .vc-pronoun{color:var(--text-dim);font-weight:600;width:38%;}
+        .vc-form{color:var(--text);font-weight:800;font-size:0.95rem;width:36%;}
+        .vc-ph{color:var(--text-dim);font-style:italic;font-size:0.72rem;width:26%;}
+        .verb-note{font-size:0.72rem;color:var(--text-dim);padding:8px 14px 10px;line-height:1.5;}
 
-        .section {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
 
-        .section.active {
-            display: block;
-        }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        /* Card emoji visual */
+        .card-emoji{font-size:4.5rem;line-height:1;margin-bottom:8px;display:block;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.3));}
 
-        .category-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-        }
+        /* Example sentence — front (dark card) */
+        .card-example-front{margin-top:12px;padding:10px 14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;width:100%;text-align:center;}
+        .card-example-front .ex-sentence{font-size:0.82rem;font-weight:600;color:var(--text);line-height:1.5;}
+        /* Example sentence — back (green card) */
+        .card-example-back{margin-top:12px;padding:10px 14px;background:rgba(0,0,0,0.2);border:1px solid rgba(0,0,0,0.15);border-radius:10px;width:100%;text-align:center;}
+        .card-example-back .ex-sentence-pt{font-size:0.85rem;font-weight:700;color:white;line-height:1.5;}
+        .card-example-back .ex-sentence-en{font-size:0.78rem;font-weight:500;color:rgba(255,255,255,0.75);line-height:1.5;margin-top:5px;font-style:italic;}
 
-        .category-card {
-            background: var(--card-bg);
-            padding: 1.5rem;
-            border-radius: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.3s;
-            border: 2px solid transparent;
-        }
+        /* False friend trap warning */
+        .ff-trap{margin-top:10px;padding:8px 14px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);border-radius:10px;width:100%;text-align:center;}
+        .ff-trap-text{font-size:0.78rem;font-weight:700;color:#fca5a5;line-height:1.4;}
+        .ff-trap-back .ff-trap-text{color:#fecaca;}
+        /* Star button */
+        .btn-star{position:absolute;top:14px;right:14px;background:none;border:none;font-size:1.5rem;cursor:pointer;line-height:1;padding:4px;opacity:0.5;transition:opacity 0.15s ease,transform 0.15s ease;z-index:2;}
+        .btn-star:active{transform:scale(1.3);}
+        .btn-star.starred{opacity:1;}
 
-        .category-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary);
-        }
+        /* Confidence buttons */
+        .conf-nav{display:flex;gap:8px;width:100%;margin-top:8px;}
+        .btn-conf{flex:1;padding:13px 4px;border:none;border-radius:14px;font-weight:800;font-size:0.72rem;cursor:pointer;letter-spacing:0.03em;}
+        .btn-conf:active{opacity:0.8;transform:scale(0.97);}
+        .btn-hard{background:#ef4444;color:white;box-shadow:0 4px 0 #b91c1c;}
+        .btn-good{background:var(--primary);color:white;box-shadow:0 4px 0 var(--shadow);}
+        .btn-easy{background:#6366f1;color:white;box-shadow:0 4px 0 #4338ca;}
+        .btn-prev-sm,.btn-next-sm{flex:0 0 46px;padding:13px 0;background:var(--card);color:var(--text-dim);border:1px solid var(--border);border-radius:14px;font-weight:800;font-size:0.85rem;cursor:pointer;}
+        .btn-prev-sm:active,.btn-next-sm:active{opacity:0.7;}
 
-        .category-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            display: block;
-        }
-
-        .flashcard-container {
-            perspective: 1000px;
-            width: 100%;
-            height: 400px;
-            margin-bottom: 2rem;
-        }
-
-        .flashcard {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-            cursor: pointer;
-        }
-
-        .flashcard.flipped {
-            transform: rotateY(180deg);
-        }
-
-        .card-front, .card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        .card-back {
-            transform: rotateY(180deg);
-            border: 3px solid var(--primary);
-        }
-
-        .card-label {
-            color: var(--text-muted);
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 2px;
-            margin-bottom: 1rem;
-        }
-
-        .card-text {
-            font-size: 3rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-        }
-
-        /* Gender Styling Classes */
-        .masculine { color: var(--masculine); text-shadow: 0 0 10px rgba(52, 152, 219, 0.3); }
-        .feminine { color: var(--feminine); text-shadow: 0 0 10px rgba(233, 30, 99, 0.3); }
-
-        .audio-btn {
-            background: rgba(255,255,255,0.1);
-            border: none;
-            color: var(--text);
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.5rem;
-            transition: all 0.3s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .audio-btn:hover {
-            background: var(--primary);
-            transform: scale(1.1);
-        }
-
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .btn {
-            padding: 1rem 2rem;
-            border-radius: 10px;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-secondary { background: #475569; color: white; }
-
-        .options-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        .option-btn {
-            padding: 1.5rem;
-            background: #334155;
-            border: 2px solid transparent;
-            border-radius: 10px;
-            color: white;
-            cursor: pointer;
-            font-size: 1.1rem;
-            transition: all 0.2s;
-        }
-
-        .option-btn:hover { background: #475569; }
-        .option-btn.correct { background: var(--primary); border-color: var(--secondary); }
-        .option-btn.wrong { background: #ef4444; }
-
-        .progress-bar {
-            width: 100%;
-            height: 10px;
-            background: #334155;
-            border-radius: 5px;
-            margin-bottom: 2rem;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--secondary);
-            width: 0%;
-            transition: width 0.3s;
-        }
+        /* Favorites empty state */
+        .fav-empty{text-align:center;padding:40px 20px;color:var(--text-dim);font-size:0.9rem;line-height:1.6;}
+        .fav-empty .fav-empty-icon{font-size:2.5rem;display:block;margin-bottom:12px;}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
     </style>
 </head>
 <body>
+<div class="top-nav"><a href="index.html" class="home-link">← HOME</a></div>
+<div class="app-container">
+    <header><h1>PROJETO <span style="color:var(--primary)">SAMBA</span> 🇧🇷</h1></header>
+    <nav>
+        <button class="nav-btn active" onclick="showTab('words',this)">Words</button>
+        <button class="nav-btn" onclick="showTab('phrases',this)">Phrases</button>
+        <button class="nav-btn" onclick="showTab('list',this)">List</button>
+        <button class="nav-btn" onclick="showTab('test',this)">Test</button>
+        <button class="nav-btn" onclick="showTab('verbs',this)">Verbs</button>
+        <button class="nav-btn" onclick="showTab('watch',this)">Watch</button>
+    </nav>
 
-<header>
-    <h1>PROJETO SAMBA</h1>
-    <p class="subtitle">Brazilian Portuguese Mastery</p>
-</header>
-
-<nav>
-    <button class="nav-btn active" onclick="showSection('categories')">Learn</button>
-    <button class="nav-btn" onclick="showSection('test')">Test Me</button>
-</nav>
-
-<main>
-    <section id="categories" class="section active">
-        <h2 style="margin-bottom: 1.5rem;">Select a Topic</h2>
-        <div class="category-grid" id="categoryGrid"></div>
-    </section>
-
-    <section id="flashcards" class="section">
-        <div style="margin-bottom: 1rem;">
-            <button class="btn-secondary" onclick="showSection('categories')">← Back to Topics</button>
+    <!-- WORDS -->
+    <div id="words" class="content-section active">
+        <div class="cat-scroll-wrap">
+            <div class="cat-scroll" id="words-cat-scroll"></div>
         </div>
-        <div class="flashcard-container">
-            <div class="flashcard" id="card" onclick="revealCard()">
+        <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
+            <div class="flashcard-inner">
                 <div class="card-front">
-                    <span class="card-label">English</span>
-                    <div class="card-text" id="engText">Dog</div>
-                    <p style="color: var(--text-muted)">Click to reveal translation</p>
+                    <button class="btn-star" id="word-star" onclick="event.stopPropagation();toggleStar()" title="Star this word">☆</button>
+                    <span id="card-emoji" class="card-emoji" style="display:none"></span>
+                    <h2 id="pt-text" style="font-size:2.2rem;margin:0">--</h2>
+                    <div class="pt-ph-view pronunciation">--</div>
+                    <button class="btn-hear" onclick="event.stopPropagation();speak('pt-text')">🔊 HEAR</button>
+                    <div class="card-example-front" id="card-example-front" style="display:none">
+                        <div class="ex-sentence" id="example-pt"></div>
+                    </div>
+                    <div class="ff-trap" id="ff-trap-front" style="display:none">
+                        <div class="ff-trap-text" id="ff-trap-text-front"></div>
+                    </div>
+                    <div class="card-counter" id="words-counter"></div>
                 </div>
                 <div class="card-back">
-                    <span class="card-label">Português</span>
-                    <div class="card-text" id="ptText">Cachorro</div>
-                    <button class="audio-btn" onclick="event.stopPropagation(); speak(currentCard.pt)">
-                        <i class="fas fa-volume-up"></i>
-                    </button>
-                    <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted)">Click to hear pronunciation</p>
+                    <h2 id="en-text" style="font-size:1.8rem;margin:0">--</h2>
+                    <div class="pt-ph-view pronunciation">--</div>
+                    <button class="btn-hear" onclick="event.stopPropagation();speak('pt-text')">🔊 HEAR</button>
+                    <div class="card-example-back" id="card-example-back" style="display:none">
+                        <div class="ex-sentence-pt" id="example-back-pt"></div>
+                        <div class="ex-sentence-en" id="example-en"></div>
+                    </div>
+                    <div class="ff-trap ff-trap-back" id="ff-trap-back" style="display:none">
+                        <div class="ff-trap-text" id="ff-trap-text-back"></div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="controls">
-            <button class="btn btn-primary" onclick="nextCard()">Next Word →</button>
+        <div class="conf-nav">
+            <button class="btn-prev-sm" onclick="prevCard()">←</button>
+            <button class="btn-conf btn-hard" onclick="rateCard('hard')">😓 Hard</button>
+            <button class="btn-conf btn-good" onclick="rateCard('good')">👍 Good</button>
+            <button class="btn-conf btn-easy" onclick="rateCard('easy')">⚡ Easy</button>
+            <button class="btn-next-sm" onclick="nextCard()">→</button>
         </div>
-    </section>
+    </div>
 
-    <section id="test" class="section">
-        <div class="progress-bar"><div class="progress-fill" id="testProgress"></div></div>
-        <div class="test-container" style="background: var(--card-bg); padding: 2rem; border-radius: 20px; text-align: center;">
-            <span class="card-label">Translate this:</span>
-            <div class="card-text" id="testQuestion" style="margin: 2rem 0;">Ready?</div>
-            <div class="options-grid" id="optionsGrid"></div>
+    <!-- PHRASES -->
+    <div id="phrases" class="content-section">
+        <div class="diff-toggle">
+            <button class="diff-btn active" onclick="setPhraseDiff('easy',this)">EASY</button>
+            <button class="diff-btn" onclick="setPhraseDiff('medium',this)">MED</button>
+            <button class="diff-btn" onclick="setPhraseDiff('hard',this)">HARD</button>
+            <button class="diff-btn" onclick="setPhraseDiff('vhard',this)">V.HARD</button>
         </div>
-    </section>
-</main>
+        <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
+            <div class="flashcard-inner">
+                <div class="card-front">
+                    <h2 id="phrase-pt" style="font-size:1.6rem;margin:0">--</h2>
+                    <div class="phrase-ph-view pronunciation">--</div>
+                    <button class="btn-hear" onclick="event.stopPropagation();speak('phrase-pt')">🔊 HEAR</button>
+                </div>
+                <div class="card-back">
+                    <h2 id="phrase-en" style="font-size:1.4rem;margin:0">--</h2>
+                    <div class="phrase-ph-view pronunciation">--</div>
+                    <button class="btn-hear" onclick="event.stopPropagation();speak('phrase-pt')">🔊 HEAR</button>
+                </div>
+            </div>
+        </div>
+        <div class="card-nav">
+            <button class="btn-prev" onclick="prevPhrase()">← PREV</button>
+            <button class="btn-next" onclick="nextPhrase()">NEXT →</button>
+        </div>
+    </div>
+
+    <!-- LIST -->
+    <div id="list" class="content-section">
+        <div class="list-type-toggle">
+            <button class="list-type-btn active" onclick="setListType('words',this)">WORDS</button>
+            <button class="list-type-btn" onclick="setListType('phrases',this)">PHRASES</button>
+        </div>
+        <div id="list-words-controls">
+            <div class="cat-scroll-wrap">
+                <div class="cat-scroll" id="list-cat-scroll"></div>
+            </div>
+        </div>
+        <div id="list-phrases-controls" style="display:none;">
+            <div class="diff-toggle">
+                <button class="diff-btn active" onclick="setListPhraseDiff('easy',this)">EASY</button>
+                <button class="diff-btn" onclick="setListPhraseDiff('medium',this)">MED</button>
+                <button class="diff-btn" onclick="setListPhraseDiff('hard',this)">HARD</button>
+                <button class="diff-btn" onclick="setListPhraseDiff('vhard',this)">V.HARD</button>
+            </div>
+        </div>
+        <div class="list-count" id="list-count">0 items</div>
+        <div class="list-scroll">
+            <table class="list-table">
+                <thead><tr><th>PORTUGUESE</th><th>ENGLISH</th><th></th></tr></thead>
+                <tbody id="list-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- TEST -->
+    <div id="test" class="content-section">
+        <div id="test-setup" class="test-setup">
+            <div>
+                <div class="setup-label">What to test</div>
+                <div class="setup-row">
+                    <button class="setup-opt active" onclick="pickTestType('words',this)">Words</button>
+                    <button class="setup-opt" onclick="pickTestType('phrases',this)">Phrases</button>
+                    <button class="setup-opt" onclick="pickTestType('both',this)">Both</button>
+                </div>
+            </div>
+            <div id="test-cat-section">
+                <div class="setup-label">Category</div>
+                <div class="cat-scroll-wrap">
+                    <div class="cat-scroll" id="test-cat-scroll"></div>
+                </div>
+            </div>
+            <div id="test-diff-section" style="display:none;">
+                <div class="setup-label">Difficulty</div>
+                <div class="setup-row">
+                    <button class="setup-opt active" onclick="pickTestDiff('easy',this)">Easy</button>
+                    <button class="setup-opt" onclick="pickTestDiff('medium',this)">Med</button>
+                    <button class="setup-opt" onclick="pickTestDiff('hard',this)">Hard</button>
+                    <button class="setup-opt" onclick="pickTestDiff('vhard',this)">V.Hard</button>
+                </div>
+            </div>
+            <button class="btn-start-test" onclick="beginTest()">START TEST →</button>
+        </div>
+        <div id="test-quiz" class="test-quiz">
+            <div class="quiz-meta">
+                <span id="q-counter">Question 1 / 10</span>
+                <span id="q-score-live">Score: 0</span>
+            </div>
+            <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="q-progress"></div></div>
+            <div class="quiz-question-box">
+                <div class="quiz-q-label">What does this mean?</div>
+                <div class="quiz-q-text" id="q-text">--</div>
+                <div class="quiz-q-phonetic" id="q-phonetic"></div>
+                <button class="quiz-q-hear" onclick="speakCurrentQ()">🔊 HEAR</button>
+            </div>
+            <div class="quiz-options" id="q-options"></div>
+        </div>
+        <div id="test-results" class="test-results">
+            <div class="score-ring-wrap">
+                <svg width="150" height="150" viewBox="0 0 150 150">
+                    <circle cx="75" cy="75" r="65" fill="none" stroke="#334155" stroke-width="10"/>
+                    <circle id="score-arc" cx="75" cy="75" r="65" fill="none" stroke="#22c55e" stroke-width="10" stroke-dasharray="408.4" stroke-dashoffset="408.4" stroke-linecap="round"/>
+                </svg>
+                <div class="score-ring-inner">
+                    <div class="score-big" id="results-num">0</div>
+                    <div class="score-denom">/ 10</div>
+                </div>
+            </div>
+            <div class="results-grade" id="results-grade"></div>
+            <div class="results-sub" id="results-sub"></div>
+            <div class="results-breakdown" id="results-breakdown"></div>
+            <button class="btn-retry" onclick="showSetup()">↩ TRY AGAIN</button>
+        </div>
+    </div>
+
+    <!-- VERBS -->
+    <div id="verbs" class="content-section">
+        <div class="verb-picker">
+            <input class="verb-search" id="verb-search" type="text" placeholder="🔍  Search verbs..." oninput="filterVerbs(this.value)">
+            <div class="verb-grid" id="verb-grid"></div>
+        </div>
+        <div class="verb-table-wrap" id="verb-table-wrap"></div>
+    </div>
+
+    <!-- WATCH -->
+    <div id="watch" class="content-section">
+        <div class="video-list">
+            <a href="https://www.youtube.com/watch?v=PkZnDv_ZNGk" target="_blank" class="video-item">▶️ Portuguese in 30 Min (Basics)</a>
+            <a href="https://www.youtube.com/watch?v=gQkHOcLHpbk" target="_blank" class="video-item">▶️ 100 Phrases for Beginners</a>
+            <a href="https://www.youtube.com/watch?v=XQBN3TlPVHo" target="_blank" class="video-item">▶️ Brazilian Pronunciation Guide</a>
+            <a href="https://www.youtube.com/watch?v=pBrBCouyIvk" target="_blank" class="video-item">▶️ Essential Verbs (Speaking Brazilian)</a>
+            <a href="https://www.youtube.com/c/PortuguesePod101" target="_blank" class="video-item">▶️ PortuguesePod101 Channel →</a>
+        </div>
+    </div>
+</div>
 
 <script>
-    const WORD_LIBRARY = {
-        basics: [
-            {pt: 'Olá', en: 'Hello'},
-            {pt: 'Obrigado', en: 'Thank you', gender: 'm'},
-            {pt: 'Obrigada', en: 'Thank you', gender: 'f'},
-            {pt: 'Por favor', en: 'Please'},
-            {pt: 'Sim', en: 'Yes'},
-            {pt: 'Não', en: 'No'}
-        ],
-        food: [
-            {pt: 'Pão', en: 'Bread', gender: 'm'},
-            {pt: 'Água', en: 'Water', gender: 'f'},
-            {pt: 'Café', en: 'Coffee', gender: 'm'},
-            {pt: 'Cerveja', en: 'Beer', gender: 'f'},
-            {pt: 'Arroz', en: 'Rice', gender: 'm'},
-            {pt: 'Maçã', en: 'Apple', gender: 'f'}
-        ],
-        false_friends: [
-            {pt: 'Pretender', en: 'To Intend (Not Pretend)'},
-            {pt: 'Lanche', en: 'Snack (Not Lunch)', gender: 'm'},
-            {pt: 'Novela', en: 'Soap Opera (Not Novel)', gender: 'f'},
-            {pt: 'Livraria', en: 'Bookstore (Not Library)', gender: 'f'}
-        ],
-        slang: [
-            {pt: 'Beleza?', en: 'Whats up? / Everything good?'},
-            {pt: 'Valeu!', en: 'Thanks / Bye'},
-            {pt: 'Mano', en: 'Bro / Dude', gender: 'm'},
-            {pt: 'Gata', en: 'Attractive woman', gender: 'f'}
-        ]
-    };
+// ════════════════════════════════════════════════════
+// WORD LIBRARY — categories, each item: {pt, en, ph}
+// ════════════════════════════════════════════════════
+const CATEGORIES = [
+    { id:'power100', label:'Power 100',  icon:'⚡' },
+    { id:'colours',  label:'Colours',    icon:'🎨' },
+    { id:'numbers',  label:'Numbers',    icon:'🔢' },
+    { id:'body',     label:'Body',       icon:'🫀' },
+    { id:'food',     label:'Food',       icon:'🍽️' },
+    { id:'animals',  label:'Animals',    icon:'🐾' },
+    { id:'travel',   label:'Travel',     icon:'✈️' },
+    { id:'family',   label:'Family',     icon:'👨‍👩‍👧' },
+    { id:'time',     label:'Time',       icon:'⏰' },
+    { id:'favorites',label:'⭐ Faves',    icon:'⭐' },
+    { id:'falsefriends',label:'False Friends',icon:'🪤' },
+];
 
-    let currentCategory = 'basics';
-    let currentCardIndex = 0;
-    let currentCard = null;
+const WORD_LIBRARY = {
+    colours:[
+        {pt:'Vermelho',en:'Red',ph:'vair-MEL-yoo',example:'O semáforo ficou vermelho.',example_en:'The traffic light turned red.'},{pt:'Azul',en:'Blue',ph:'ah-ZOOL',example:'O céu está azul hoje.',example_en:'The sky is blue today.'},
+        {pt:'Verde',en:'Green',ph:'VAIR-jee',example:'A grama é muito verde.',example_en:'The grass is very green.'},{pt:'Amarelo',en:'Yellow',ph:'ah-mah-REL-oo',example:'O táxi é amarelo.',example_en:'The taxi is yellow.'},
+        {pt:'Preto',en:'Black',ph:'PRAY-too',example:'Ele usa um casaco preto.',example_en:'He wears a black coat.'},{pt:'Branco',en:'White',ph:'BRAN-koo',example:'A parede é branca.',example_en:'The wall is white.'},
+        {pt:'Laranja',en:'Orange',ph:'lah-RAN-zhah',example:'A laranja é rica em vitamina C.',example_en:'Orange is rich in vitamin C.'},{pt:'Rosa',en:'Pink',ph:'HOH-zah',example:'Ela comprou flores rosas.',example_en:'She bought pink flowers.'},
+        {pt:'Roxo',en:'Purple',ph:'HOH-shoo',example:'O roxo é minha cor favorita.',example_en:'Purple is my favourite colour.'},{pt:'Cinza',en:'Grey',ph:'SIN-zah',example:'O céu está cinza hoje.',example_en:'The sky is grey today.'},
+        {pt:'Marrom',en:'Brown',ph:'mah-HOWN',example:'O urso é marrom.',example_en:'The bear is brown.'},{pt:'Dourado',en:'Gold',ph:'doh-RAH-doo',example:'O troféu é dourado.',example_en:'The trophy is golden.'},
+        {pt:'Prateado',en:'Silver',ph:'prah-chee-AH-doo',example:'Ela usa um colar prateado.',example_en:'She wears a silver necklace.'},{pt:'Bege',en:'Beige',ph:'BEH-zhee',example:'As paredes são bege.',example_en:'The walls are beige.'},
+        {pt:'Turquesa',en:'Turquoise',ph:'tur-KEH-zah',example:'O mar é turquesa.',example_en:'The sea is turquoise.'},{pt:'Lilás',en:'Lilac',ph:'lee-LAHS',example:'Ela pintou o quarto de lilás.',example_en:'She painted the room lilac.'},
+        {pt:'Bordô',en:'Burgundy',ph:'bor-DOH',example:'O vinho tem cor bordô.',example_en:'The wine has a burgundy colour.'},{pt:'Creme',en:'Cream',ph:'KREH-mee',example:'A sopa tem cor creme.',example_en:'The soup is cream-coloured.'},
+        {pt:'Magenta',en:'Magenta',ph:'mah-ZHEN-tah',example:'A flor é magenta.',example_en:'The flower is magenta.'},{pt:'Coral',en:'Coral',ph:'koh-RAHL',example:'Ela usa um batom coral.',example_en:'She wears coral lipstick.'},
+    ],
+    numbers:[
+        {pt:'Um',en:'One',ph:'oong',example:'Quero um café, por favor.',example_en:'I want one coffee, please.'},{pt:'Dois',en:'Two',ph:'doyss',example:'Tenho dois irmãos.',example_en:'I have two brothers.'},
+        {pt:'Três',en:'Three',ph:'trays',example:'Ele mora a três ruas daqui.',example_en:'He lives three streets from here.'},{pt:'Quatro',en:'Four',ph:'KWAH-troo',example:'A mesa tem quatro cadeiras.',example_en:'The table has four chairs.'},
+        {pt:'Cinco',en:'Five',ph:'SINK-oo',example:'O trem chega em cinco minutos.',example_en:'The train arrives in five minutes.'},{pt:'Seis',en:'Six',ph:'sayss',example:'Temos seis ovos na geladeira.',example_en:'We have six eggs in the fridge.'},
+        {pt:'Sete',en:'Seven',ph:'SEH-chee',example:'A loja abre às sete da manhã.',example_en:'The shop opens at seven in the morning.'},{pt:'Oito',en:'Eight',ph:'OY-too',example:'Durmo oito horas por noite.',example_en:'I sleep eight hours a night.'},
+        {pt:'Nove',en:'Nine',ph:'NOH-vee',example:'O voo parte às nove horas.',example_en:'The flight departs at nine o\'clock.'},{pt:'Dez',en:'Ten',ph:'desh',example:'Comprei dez laranjas no mercado.',example_en:'I bought ten oranges at the market.'},
+        {pt:'Onze',en:'Eleven',ph:'ON-zee',example:'O jogo começa às onze.',example_en:'The game starts at eleven.'},{pt:'Doze',en:'Twelve',ph:'DOH-zee',example:'Há doze meses no ano.',example_en:'There are twelve months in a year.'},
+        {pt:'Treze',en:'Thirteen',ph:'TREH-zee',example:'Ela tem treze anos.',example_en:'She is thirteen years old.'},{pt:'Catorze',en:'Fourteen',ph:'kah-TOR-zee',example:'Faltam catorze dias.',example_en:'There are fourteen days to go.'},
+        {pt:'Quinze',en:'Fifteen',ph:'KEEN-zee',example:'O prazo é de quinze dias.',example_en:'The deadline is fifteen days.'},{pt:'Dezesseis',en:'Sixteen',ph:'deh-zeh-SAYSS',example:'Ele tem dezesseis anos.',example_en:'He is sixteen years old.'},
+        {pt:'Dezessete',en:'Seventeen',ph:'deh-zeh-SEH-chee',example:'São dezessete horas agora.',example_en:'It is seventeen hundred hours now.'},{pt:'Dezoito',en:'Eighteen',ph:'deh-ZOY-too',example:'Ela completa dezoito anos amanhã.',example_en:'She turns eighteen tomorrow.'},
+        {pt:'Dezenove',en:'Nineteen',ph:'deh-zeh-NOH-vee',example:'Tenho dezenove livros.',example_en:'I have nineteen books.'},{pt:'Vinte',en:'Twenty',ph:'VIN-chee',example:'Vinte pessoas vieram à festa.',example_en:'Twenty people came to the party.'},
+        {pt:'Trinta',en:'Thirty',ph:'TRIN-tah',example:'Ele tem trinta anos.',example_en:'He is thirty years old.'},{pt:'Quarenta',en:'Forty',ph:'kwah-REN-tah',example:'A viagem leva quarenta minutos.',example_en:'The journey takes forty minutes.'},
+        {pt:'Cinquenta',en:'Fifty',ph:'sin-KWEN-tah',example:'Paguei cinquenta reais.',example_en:'I paid fifty reais.'},{pt:'Sessenta',en:'Sixty',ph:'seh-SEN-tah',example:'Minha avó tem sessenta anos.',example_en:'My grandmother is sixty years old.'},
+        {pt:'Setenta',en:'Seventy',ph:'seh-TEN-tah',example:'Há setenta pessoas na fila.',example_en:'There are seventy people in the queue.'},{pt:'Oitenta',en:'Eighty',ph:'oy-TEN-tah',example:'O carro vai a oitenta quilômetros.',example_en:'The car goes at eighty kilometres an hour.'},
+        {pt:'Noventa',en:'Ninety',ph:'noh-VEN-tah',example:'Faltam noventa segundos.',example_en:'There are ninety seconds left.'},{pt:'Cem',en:'One hundred',ph:'seng',example:'Isso custa cem reais.',example_en:'That costs one hundred reais.'},
+        {pt:'Duzentos',en:'Two hundred',ph:'doo-ZEN-toos',example:'O hotel custa duzentos reais.',example_en:'The hotel costs two hundred reais.'},{pt:'Quinhentos',en:'Five hundred',ph:'keen-YEN-toos',example:'Ele ganhou quinhentos reais.',example_en:'He earned five hundred reais.'},
+        {pt:'Mil',en:'One thousand',ph:'meel',example:'A passagem custa mil reais.',example_en:'The ticket costs one thousand reais.'},{pt:'Um milhão',en:'One million',ph:'oong meel-YOWNG',example:'Sonho em ganhar um milhão!',example_en:'I dream of winning one million!'},
+    ],
+    body:[
+        {pt:'Cabeça',en:'Head',ph:'kah-BAY-sah',example:'Estou com dor de cabeça.',example_en:'I have a headache.'},{pt:'Olho',en:'Eye',ph:'OL-yoo',example:'Ela tem olhos azuis.',example_en:'She has blue eyes.'},
+        {pt:'Nariz',en:'Nose',ph:'nah-REEZ',example:'Meu nariz está escorrendo.',example_en:'My nose is running.'},{pt:'Boca',en:'Mouth',ph:'BOH-kah',example:'Feche a boca quando mastigar.',example_en:'Close your mouth when you chew.'},
+        {pt:'Orelha',en:'Ear',ph:'oh-REL-yah',example:'A orelha esquerda está doendo.',example_en:'My left ear hurts.'},{pt:'Mão',en:'Hand',ph:'mowng',example:'Dê a mão para atravessar a rua.',example_en:'Hold my hand to cross the street.'},
+        {pt:'Pé',en:'Foot',ph:'peh',example:'Meu pé está dormindo.',example_en:'My foot has gone to sleep.'},{pt:'Braço',en:'Arm',ph:'BRAH-soo',example:'Ele quebrou o braço.',example_en:'He broke his arm.'},
+        {pt:'Perna',en:'Leg',ph:'PAIR-nah',example:'Ela tem uma perna comprida.',example_en:'She has a long leg.'},{pt:'Costas',en:'Back',ph:'KOS-tahs',example:'Tenho dor nas costas.',example_en:'I have back pain.'},
+        {pt:'Coração',en:'Heart',ph:'kor-ah-SOWNG',example:'Meu coração está acelerado.',example_en:'My heart is racing.'},{pt:'Dente',en:'Tooth',ph:'DEN-chee',example:'Preciso ir ao dentista.',example_en:'I need to go to the dentist.'},
+        {pt:'Pescoço',en:'Neck',ph:'pes-KOH-soo',example:'Estou com torcicolo no pescoço.',example_en:'I have a stiff neck.'},{pt:'Ombro',en:'Shoulder',ph:'OM-broo',example:'Ela massageou o ombro dele.',example_en:'She massaged his shoulder.'},
+        {pt:'Joelho',en:'Knee',ph:'zhoo-EL-yoo',example:'Ele caiu e machucou o joelho.',example_en:'He fell and hurt his knee.'},{pt:'Dedo',en:'Finger',ph:'DEH-doo',example:'Cortei o dedo na faca.',example_en:'I cut my finger on the knife.'},
+        {pt:'Barriga',en:'Belly',ph:'bah-HEE-gah',example:'Estou com a barriga cheia.',example_en:'My belly is full.'},{pt:'Língua',en:'Tongue',ph:'LIN-gwah',example:'A língua portuguesa é bonita.',example_en:'The Portuguese language is beautiful.'},
+        {pt:'Cabelo',en:'Hair',ph:'kah-BEH-loo',example:'Ela cortou o cabelo hoje.',example_en:'She cut her hair today.'},{pt:'Rosto',en:'Face',ph:'HOS-too',example:'Lave o rosto com água fria.',example_en:'Wash your face with cold water.'},
+    ],
+    food:[
+        {pt:'Arroz',en:'Rice',em:'🍚',ph:'ah-HOSS',example:'O arroz está cozido.',example_en:'The rice is cooked.'},{pt:'Feijão',en:'Beans',em:'🫘',ph:'fay-ZHOWNG',example:'Arroz com feijão é uma delícia.',example_en:'Rice and beans is a delight.'},
+        {pt:'Frango',en:'Chicken',em:'🍗',ph:'FRAN-goo',example:'O frango está assado no forno.',example_en:'The chicken is roasting in the oven.'},{pt:'Peixe',en:'Fish',em:'🐟',ph:'PAY-shee',example:'O peixe nada no rio.',example_en:'The fish swims in the river.'},
+        {pt:'Pão',en:'Bread',em:'🍞',ph:'powng',example:'Comprei pão fresco na padaria.',example_en:'I bought fresh bread at the bakery.'},{pt:'Leite',en:'Milk',em:'🥛',ph:'LAY-chee',example:'O bebê toma leite toda manhã.',example_en:'The baby drinks milk every morning.'},
+        {pt:'Ovo',en:'Egg',em:'🥚',ph:'OH-voo',example:'Quero um ovo mexido.',example_en:'I want a scrambled egg.'},{pt:'Queijo',en:'Cheese',em:'🧀',ph:'KAY-zhoo',example:'O queijo mineiro é delicioso.',example_en:'Minas cheese is delicious.'},
+        {pt:'Fruta',en:'Fruit',em:'🍓',ph:'FROO-tah',example:'Coma fruta todos os dias.',example_en:'Eat fruit every day.'},{pt:'Legumes',en:'Vegetables',em:'🥦',ph:'leh-GOO-mees',example:'Os legumes estão frescos.',example_en:'The vegetables are fresh.'},
+        {pt:'Café',en:'Coffee',em:'☕',ph:'kah-FEH',example:'Tomo café todas as manhãs.',example_en:'I drink coffee every morning.'},{pt:'Suco',en:'Juice',em:'🧃',ph:'SOO-koo',example:'Quero um suco de laranja.',example_en:'I want an orange juice.'},
+        {pt:'Carne',en:'Meat',em:'🥩',ph:'KAR-nee',example:'A carne está mal passada.',example_en:'The meat is rare.'},{pt:'Macarrão',en:'Pasta',em:'🍝',ph:'mah-kah-HOWNG',example:'O macarrão está al dente.',example_en:'The pasta is al dente.'},
+        {pt:'Salada',en:'Salad',em:'🥗',ph:'sah-LAH-dah',example:'Vou pedir uma salada.',example_en:'I\'ll order a salad.'},{pt:'Sopa',en:'Soup',em:'🍲',ph:'SOH-pah',example:'A sopa está quente.',example_en:'The soup is hot.'},
+        {pt:'Bolo',en:'Cake',em:'🎂',ph:'BOH-loo',example:'Ela fez um bolo de chocolate.',example_en:'She made a chocolate cake.'},{pt:'Sorvete',en:'Ice cream',em:'🍦',ph:'sor-VEH-chee',example:'Quero sorvete de morango.',example_en:'I want strawberry ice cream.'},
+        {pt:'Manteiga',en:'Butter',em:'🧈',ph:'man-TAY-gah',example:'Passe manteiga no pão.',example_en:'Spread butter on the bread.'},{pt:'Alho',en:'Garlic',em:'🧄',ph:'AHL-yoo',example:'Adicione alho à receita.',example_en:'Add garlic to the recipe.'},
+        {pt:'Cebola',en:'Onion',em:'🧅',ph:'seh-BOH-lah',example:'A cebola faz chorar.',example_en:'Onion makes you cry.'},{pt:'Tomate',en:'Tomato',em:'🍅',ph:'toh-MAH-chee',example:'O tomate está maduro.',example_en:'The tomato is ripe.'},
+        {pt:'Batata',en:'Potato',em:'🥔',ph:'bah-TAH-tah',example:'Adoro batata frita.',example_en:'I love fried potato.'},{pt:'Açúcar',en:'Sugar',em:'🍬',ph:'ah-SOO-kar',example:'Quer açúcar no café?',example_en:'Do you want sugar in your coffee?'},
+        // Fruits
+        {pt:'Maçã',en:'Apple',em:'🍎',ph:'mah-SAH',example:'Uma maçã por dia faz bem.',example_en:'An apple a day does you good.'},{pt:'Banana',en:'Banana',em:'🍌',ph:'bah-NAH-nah',example:'A banana está madura.',example_en:'The banana is ripe.'},
+        {pt:'Laranja',en:'Orange',em:'🍊',ph:'lah-RAN-zhah',example:'A laranja é rica em vitamina C.',example_en:'Orange is rich in vitamin C.'},{pt:'Uva',en:'Grape',em:'🍇',ph:'OO-vah',example:'Esse vinho é feito de uva.',example_en:'This wine is made from grapes.'},
+        {pt:'Melancia',en:'Watermelon',em:'🍉',ph:'meh-lan-SEE-ah',example:'A melancia é perfeita no verão.',example_en:'Watermelon is perfect in summer.'},{pt:'Manga',en:'Mango',em:'🥭',ph:'MAN-gah',example:'Adoro manga com limão.',example_en:'I love mango with lime.'},
+        {pt:'Abacaxi',en:'Pineapple',em:'🍍',ph:'ah-bah-kah-SHEE',example:'O abacaxi é doce e ácido.',example_en:'Pineapple is sweet and sour.'},{pt:'Morango',en:'Strawberry',em:'🍓',ph:'moh-RAN-goo',example:'O morango está vermelho e maduro.',example_en:'The strawberry is red and ripe.'},
+        {pt:'Limão',en:'Lemon/Lime',em:'🍋',ph:'lee-MOWNG',example:'Esprema limão na água.',example_en:'Squeeze lime into the water.'},{pt:'Melão',en:'Melon',em:'🍈',ph:'meh-LOWNG',example:'O melão está gelado.',example_en:'The melon is chilled.'},
+        {pt:'Pera',en:'Pear',em:'🍐',ph:'PEH-rah',example:'A pera caiu da árvore.',example_en:'The pear fell from the tree.'},{pt:'Mamão',en:'Papaya',em:'🪷',ph:'mah-MOWNG',example:'O mamão é bom para a digestão.',example_en:'Papaya is good for digestion.'},
+        // Vegetables
+        {pt:'Cenoura',en:'Carrot',em:'🥕',ph:'seh-NOH-rah',example:'A cenoura está no caldo.',example_en:'The carrot is in the broth.'},{pt:'Alface',en:'Lettuce',em:'🥬',ph:'al-FAH-see',example:'Coloque alface na salada.',example_en:'Put lettuce in the salad.'},
+        {pt:'Pepino',en:'Cucumber',em:'🥒',ph:'peh-PEE-noo',example:'O pepino está fatiado.',example_en:'The cucumber is sliced.'},{pt:'Pimentão',en:'Bell pepper',em:'🫑',ph:'pee-men-TOWNG',example:'O pimentão vermelho é doce.',example_en:'Red bell pepper is sweet.'},
+        {pt:'Brócolis',en:'Broccoli',em:'🥦',ph:'BROH-koh-lees',example:'O brócolis é cheio de nutrientes.',example_en:'Broccoli is full of nutrients.'},{pt:'Milho',en:'Corn',em:'🌽',ph:'MEEL-yoo',example:'O milho está na espiga.',example_en:'The corn is on the cob.'},
+        {pt:'Abobrinha',en:'Courgette',em:'🥒',ph:'ah-boh-BREEN-yah',example:'Ela grelhei a abobrinha.',example_en:'She grilled the courgette.'},{pt:'Espinafre',en:'Spinach',em:'🥬',ph:'es-pee-NAH-free',example:'O espinafre é rico em ferro.',example_en:'Spinach is rich in iron.'},
+        // Drinks
+        {pt:'Água',en:'Water',em:'💧',ph:'AH-gwah',example:'Beba água durante o dia.',example_en:'Drink water throughout the day.'},{pt:'Chá',en:'Tea',em:'🍵',ph:'shah',example:'Vou tomar um chá quente.',example_en:'I\'ll have a hot tea.'},
+        {pt:'Cerveja',en:'Beer',em:'🍺',ph:'ser-VAY-zhah',example:'Ele pediu uma cerveja gelada.',example_en:'He ordered a cold beer.'},{pt:'Vinho',en:'Wine',em:'🍷',ph:'VEEN-yoo',example:'Esse vinho é muito bom.',example_en:'This wine is very good.'},
+        {pt:'Refrigerante',en:'Soft drink',em:'🥤',ph:'heh-free-zheh-RAN-chee',example:'A criança quer refrigerante.',example_en:'The child wants a soft drink.'},{pt:'Vitamina',en:'Smoothie/Milkshake',em:'🥤',ph:'vee-tah-MEE-nah',example:'Fiz uma vitamina de banana.',example_en:'I made a banana smoothie.'},
+        // Proteins & Staples
+        {pt:'Camarão',en:'Prawn/Shrimp',em:'🦐',ph:'kah-mah-ROWNG',example:'O camarão está no molho.',example_en:'The prawn is in the sauce.'},{pt:'Bacon',en:'Bacon',em:'🥓',ph:'BAY-kon',example:'O bacon está crocante.',example_en:'The bacon is crispy.'},
+        {pt:'Linguiça',en:'Sausage',em:'🌭',ph:'lin-GWEE-sah',example:'A linguiça está na churrasqueira.',example_en:'The sausage is on the grill.'},{pt:'Atum',en:'Tuna',em:'🐟',ph:'ah-TOONG',example:'O sanduíche é de atum.',example_en:'The sandwich is tuna.'},
+        // Brazilian favourites
+        {pt:'Feijoada',en:'Black bean stew',em:'🫕',ph:'fay-ZHWAH-dah',example:'A feijoada é o prato nacional.',example_en:'Feijoada is the national dish.'},{pt:'Pão de queijo',en:'Cheese bread',em:'🧀',ph:'powng jee KAY-zhoo',example:'Pão de queijo é típico de Minas.',example_en:'Cheese bread is typical of Minas Gerais.'},
+        {pt:'Brigadeiro',en:'Chocolate truffle',em:'🍫',ph:'bree-gah-DAY-roo',example:'O brigadeiro é feito de chocolate.',example_en:'Brigadeiro is made from chocolate.'},{pt:'Coxinha',en:'Chicken croquette',em:'🍢',ph:'koh-SHEEN-yah',example:'A coxinha é recheada de frango.',example_en:'The croquette is filled with chicken.'},
+        // Condiments & other
+        {pt:'Azeite',en:'Olive oil',em:'🫒',ph:'ah-ZAY-chee',example:'Regue a salada com azeite.',example_en:'Drizzle the salad with olive oil.'},{pt:'Mel',en:'Honey',em:'🍯',ph:'mel',example:'O mel é natural e doce.',example_en:'Honey is natural and sweet.'},
+        {pt:'Pimenta',en:'Pepper/Chilli',em:'🌶️',ph:'pee-MEN-tah',example:'A pimenta está ardendo.',example_en:'The chilli is burning hot.'},{pt:'Sal',en:'Salt',em:'🧂',ph:'sal',example:'Não coloque sal demais.',example_en:'Don\'t add too much salt.'},
+        {pt:'Arroz integral',en:'Brown rice',em:'🍚',ph:'ah-HOSS in-teh-GRAL',example:'Arroz integral é mais saudável.',example_en:'Brown rice is healthier.'},{pt:'Tapioca',en:'Tapioca',em:'🫓',ph:'tah-pee-OH-kah',example:'A tapioca é feita de mandioca.',example_en:'Tapioca is made from cassava.'},
+    ],
+    animals:[
+        {pt:'Cachorro',en:'Dog',em:'🐶',ph:'kah-SHOH-hoo',example:'O cachorro está latindo.',example_en:'The dog is barking.'},{pt:'Gato',en:'Cat',em:'🐱',ph:'GAH-too',example:'O gato está dormindo no sofá.',example_en:'The cat is sleeping on the sofa.'},
+        {pt:'Pássaro',en:'Bird',em:'🐦',ph:'PAH-sah-roo',example:'O pássaro canta de manhã.',example_en:'The bird sings in the morning.'},{pt:'Peixe',en:'Fish',em:'🐟',ph:'PAY-shee',example:'O peixe nada no rio.',example_en:'The fish swims in the river.'},
+        {pt:'Cavalo',en:'Horse',em:'🐴',ph:'kah-VAH-loo',example:'O cavalo corre muito rápido.',example_en:'The horse runs very fast.'},{pt:'Vaca',en:'Cow',em:'🐄',ph:'VAH-kah',example:'A vaca está no pasto.',example_en:'The cow is in the pasture.'},
+        {pt:'Porco',en:'Pig',em:'🐷',ph:'POR-koo',example:'O porco rola na lama.',example_en:'The pig rolls in the mud.'},{pt:'Ovelha',en:'Sheep',em:'🐑',ph:'oh-VEL-yah',example:'A ovelha tem lã branca.',example_en:'The sheep has white wool.'},
+        {pt:'Macaco',en:'Monkey',em:'🐒',ph:'mah-KAH-koo',example:'O macaco pula de galho em galho.',example_en:'The monkey jumps from branch to branch.'},{pt:'Leão',en:'Lion',em:'🦁',ph:'leh-OWNG',example:'O leão é o rei da selva.',example_en:'The lion is the king of the jungle.'},
+        {pt:'Elefante',en:'Elephant',em:'🐘',ph:'el-eh-FAN-chee',example:'O elefante tem uma memória incrível.',example_en:'The elephant has an incredible memory.'},{pt:'Cobra',en:'Snake',em:'🐍',ph:'KOH-brah',example:'A cobra é perigosa.',example_en:'The snake is dangerous.'},
+        {pt:'Coelho',en:'Rabbit',em:'🐰',ph:'koo-EL-yoo',example:'O coelho come cenoura.',example_en:'The rabbit eats carrot.'},{pt:'Tigre',en:'Tiger',em:'🐯',ph:'CHEE-gree',example:'O tigre caça à noite.',example_en:'The tiger hunts at night.'},
+        {pt:'Urso',en:'Bear',em:'🐻',ph:'OOR-soo',example:'O urso hiberna no inverno.',example_en:'The bear hibernates in winter.'},{pt:'Sapo',en:'Frog',em:'🐸',ph:'SAH-poo',example:'O sapo pula na poça.',example_en:'The frog jumps in the puddle.'},
+        {pt:'Rato',en:'Mouse',em:'🐭',ph:'HAH-too',example:'O rato entrou na cozinha.',example_en:'The mouse got into the kitchen.'},{pt:'Galinha',en:'Chicken',em:'🐔',ph:'gah-LEEN-yah',example:'A galinha bota ovos todo dia.',example_en:'The hen lays eggs every day.'},
+        {pt:'Papagaio',en:'Parrot',em:'🦜',ph:'pah-pah-GYE-oo',example:'O papagaio repete tudo que ouve.',example_en:'The parrot repeats everything it hears.'},{pt:'Tartaruga',en:'Turtle',em:'🐢',ph:'tar-tah-ROO-gah',example:'A tartaruga anda devagar.',example_en:'The turtle walks slowly.'},
+    ],
+    travel:[
+        {pt:'Aeroporto',en:'Airport',ph:'ah-eh-roh-POR-too',example:'Chegamos ao aeroporto cedo.',example_en:'We arrived at the airport early.'},{pt:'Hotel',en:'Hotel',ph:'oh-TEL',example:'O hotel fica no centro.',example_en:'The hotel is in the city centre.'},
+        {pt:'Trem',en:'Train',ph:'treng',example:'O trem está chegando.',example_en:'The train is arriving.'},{pt:'Ônibus',en:'Bus',ph:'OH-nee-boos',example:'O ônibus está atrasado.',example_en:'The bus is late.'},
+        {pt:'Táxi',en:'Taxi',ph:'TAK-see',example:'Vou pedir um táxi.',example_en:'I\'ll call a taxi.'},{pt:'Passaporte',en:'Passport',ph:'pah-sah-POR-chee',example:'Não esqueça o passaporte.',example_en:'Don\'t forget your passport.'},
+        {pt:'Mala',en:'Suitcase',ph:'MAH-lah',example:'A mala está pesada.',example_en:'The suitcase is heavy.'},{pt:'Mapa',en:'Map',ph:'MAH-pah',example:'Preciso de um mapa da cidade.',example_en:'I need a map of the city.'},
+        {pt:'Praia',en:'Beach',ph:'PRAH-yah',example:'Vamos à praia amanhã.',example_en:'We\'re going to the beach tomorrow.'},{pt:'Museu',en:'Museum',ph:'moo-ZEH-oo',example:'O museu abre às dez.',example_en:'The museum opens at ten.'},
+        {pt:'Restaurante',en:'Restaurant',ph:'hes-tah-oo-RAN-chee',example:'O restaurante está cheio.',example_en:'The restaurant is full.'},{pt:'Dinheiro',en:'Money',ph:'jin-YAY-roo',example:'Preciso sacar dinheiro.',example_en:'I need to withdraw money.'},
+        {pt:'Metrô',en:'Metro/Subway',ph:'meh-TROH',example:'O metrô é mais rápido.',example_en:'The metro is faster.'},{pt:'Avião',en:'Aeroplane',ph:'ah-vee-OWN',example:'O avião decola às oito.',example_en:'The plane takes off at eight.'},
+        {pt:'Bilhete',en:'Ticket',ph:'beel-YEH-chee',example:'Comprei o bilhete online.',example_en:'I bought the ticket online.'},{pt:'Reserva',en:'Reservation',ph:'heh-ZAIR-vah',example:'Fiz uma reserva para dois.',example_en:'I made a reservation for two.'},
+        {pt:'Moto',en:'Motorcycle',ph:'MOH-too',example:'Ele veio de moto.',example_en:'He came by motorcycle.'},{pt:'Barco',en:'Boat',ph:'BAR-koo',example:'Cruzamos o rio de barco.',example_en:'We crossed the river by boat.'},
+        {pt:'Câmbio',en:'Exchange office',ph:'KAM-byoo',example:'Onde fica o câmbio?',example_en:'Where is the exchange office?'},{pt:'Bagagem',en:'Luggage',ph:'bah-GAH-zheng',example:'A bagagem está no bagageiro.',example_en:'The luggage is in the boot.'},
+    ],
+    family:[
+        {pt:'Mãe',en:'Mother',ph:'mowng',example:'Minha mãe cozinha muito bem.',example_en:'My mother cooks very well.'},{pt:'Pai',en:'Father',ph:'pye',example:'Meu pai trabalha em São Paulo.',example_en:'My father works in São Paulo.'},
+        {pt:'Irmão',en:'Brother',ph:'eer-MOWNG',example:'Meu irmão mais velho mora no Rio.',example_en:'My older brother lives in Rio.'},{pt:'Irmã',en:'Sister',ph:'eer-MAH',example:'Minha irmã está estudando medicina.',example_en:'My sister is studying medicine.'},
+        {pt:'Avó',en:'Grandmother',ph:'ah-VOH',example:'A avó faz bolo toda domingo.',example_en:'Grandmother makes cake every Sunday.'},{pt:'Avô',en:'Grandfather',ph:'ah-VOH',example:'O avô me conta histórias.',example_en:'My grandfather tells me stories.'},
+        {pt:'Filho',en:'Son',ph:'FEE-lyoo',example:'Meu filho tem cinco anos.',example_en:'My son is five years old.'},{pt:'Filha',en:'Daughter',ph:'FEE-lyah',example:'A filha dela está na escola.',example_en:'Her daughter is at school.'},
+        {pt:'Tio',en:'Uncle',ph:'CHEE-oo',example:'Meu tio mora em Lisboa.',example_en:'My uncle lives in Lisbon.'},{pt:'Tia',en:'Aunt',ph:'CHEE-ah',example:'A tia me deu um presente.',example_en:'My aunt gave me a present.'},
+        {pt:'Primo',en:'Cousin (m)',ph:'PREE-moo',example:'Meu primo veio me visitar.',example_en:'My cousin came to visit me.'},{pt:'Marido',en:'Husband',ph:'mah-HEE-doo',example:'O marido dela é muito simpático.',example_en:'Her husband is very friendly.'},
+        {pt:'Esposa',en:'Wife',ph:'es-POH-zah',example:'A esposa dele é professora.',example_en:'His wife is a teacher.'},{pt:'Bebê',en:'Baby',ph:'beh-BEH',example:'O bebê está chorando.',example_en:'The baby is crying.'},
+        {pt:'Sobrinho',en:'Nephew',ph:'soh-BREEN-yoo',example:'Meu sobrinho tem dois anos.',example_en:'My nephew is two years old.'},{pt:'Sobrinha',en:'Niece',ph:'soh-BREEN-yah',example:'A sobrinha dela é muito fofa.',example_en:'Her niece is very cute.'},
+        {pt:'Cunhado',en:'Brother-in-law',ph:'koon-YAH-doo',example:'Meu cunhado é médico.',example_en:'My brother-in-law is a doctor.'},{pt:'Sogra',en:'Mother-in-law',ph:'SOH-grah',example:'A sogra veio jantar conosco.',example_en:'My mother-in-law came for dinner.'},
+        {pt:'Sogro',en:'Father-in-law',ph:'SOH-groo',example:'O sogro é muito generoso.',example_en:'My father-in-law is very generous.'},{pt:'Padrinho',en:'Godfather',ph:'pah-DREEN-yoo',example:'O padrinho fez um discurso.',example_en:'The godfather gave a speech.'},
+    ],
+    time:[
+        {pt:'Hoje',en:'Today',ph:'OH-zhee',example:'O que você vai fazer hoje?',example_en:'What are you going to do today?'},{pt:'Amanhã',en:'Tomorrow',ph:'ah-mah-NYAH',example:'Amanhã tem reunião cedo.',example_en:'There\'s an early meeting tomorrow.'},
+        {pt:'Ontem',en:'Yesterday',ph:'ON-teng',example:'Ontem eu fui ao cinema.',example_en:'Yesterday I went to the cinema.'},{pt:'Semana',en:'Week',ph:'seh-MAH-nah',example:'Essa semana está passando rápido.',example_en:'This week is going by fast.'},
+        {pt:'Mês',en:'Month',ph:'mess',example:'No mês passado fui ao Brasil.',example_en:'Last month I went to Brazil.'},{pt:'Ano',en:'Year',ph:'AH-noo',example:'O ano novo está chegando.',example_en:'The new year is approaching.'},
+        {pt:'Hora',en:'Hour',ph:'OH-rah',example:'Já é hora de ir embora.',example_en:'It\'s already time to leave.'},{pt:'Minuto',en:'Minute',ph:'mee-NOO-too',example:'Espera um minuto, por favor.',example_en:'Wait a minute, please.'},
+        {pt:'Manhã',en:'Morning',ph:'mah-NYAH',example:'De manhã tomo café e leio.',example_en:'In the morning I have coffee and read.'},{pt:'Tarde',en:'Afternoon',ph:'TAR-jee',example:'À tarde vou ao parque.',example_en:'In the afternoon I\'m going to the park.'},
+        {pt:'Noite',en:'Night',ph:'NOY-chee',example:'À noite gosto de assistir filmes.',example_en:'At night I like to watch films.'},{pt:'Agora',en:'Now',ph:'ah-GOH-rah',example:'Preciso sair agora.',example_en:'I need to leave now.'},
+        {pt:'Segunda',en:'Monday',ph:'seh-GOON-dah',example:'Segunda é dia de trabalho.',example_en:'Monday is a work day.'},{pt:'Terça',en:'Tuesday',ph:'TER-sah',example:'Na terça tenho aula de português.',example_en:'On Tuesday I have a Portuguese class.'},
+        {pt:'Quarta',en:'Wednesday',ph:'KWAR-tah',example:'Na quarta tem reunião.',example_en:'On Wednesday there\'s a meeting.'},{pt:'Quinta',en:'Thursday',ph:'KEEN-tah',example:'Quinta é quase fim de semana.',example_en:'Thursday is almost the weekend.'},
+        {pt:'Sexta',en:'Friday',ph:'SEHS-tah',example:'Todo mundo ama sexta-feira.',example_en:'Everyone loves Friday.'},{pt:'Sábado',en:'Saturday',ph:'SAH-bah-doo',example:'No sábado vou à praia.',example_en:'On Saturday I\'m going to the beach.'},
+        {pt:'Domingo',en:'Sunday',ph:'doh-MEEN-goo',example:'Domingo é dia de família.',example_en:'Sunday is family day.'},{pt:'Segundo',en:'Second',ph:'seh-GOON-doo',example:'Só vai demorar um segundo.',example_en:'It\'ll only take a second.'},
+    ],
+    power100:[
+        {pt:'Ser',en:'To be (permanent)',ph:'sehr',example:'Eu sou brasileira.',example_en:'I am Brazilian.'},
+        {pt:'Estar',en:'To be (temporary)',ph:'es-TAR',example:'Ela está cansada.',example_en:'She is tired.'},
+        {pt:'Ter',en:'To have',ph:'tehr',example:'Você tem um minuto?',example_en:'Do you have a minute?'},
+        {pt:'Fazer',en:'To do / make',ph:'fah-ZEHR',example:'O que você está fazendo?',example_en:'What are you doing?'},
+        {pt:'Ir',en:'To go',ph:'eer',example:'Vamos ao supermercado.',example_en:'We\'re going to the supermarket.'},
+        {pt:'Poder',en:'To be able to / can',ph:'poh-DEHR',example:'Posso sentar aqui?',example_en:'Can I sit here?'},
+        {pt:'Querer',en:'To want',ph:'keh-REHR',example:'Quero aprender português.',example_en:'I want to learn Portuguese.'},
+        {pt:'Precisar',en:'To need',ph:'preh-see-ZAR',example:'Preciso de ajuda.',example_en:'I need help.'},
+        {pt:'Saber',en:'To know (a fact)',ph:'sah-BEHR',example:'Você sabe onde fica a estação?',example_en:'Do you know where the station is?'},
+        {pt:'Falar',en:'To speak',ph:'fah-LAR',example:'Você fala inglês?',example_en:'Do you speak English?'},
+        {pt:'Entender',en:'To understand',ph:'en-ten-DEHR',example:'Não entendo muito bem.',example_en:'I don\'t understand very well.'},
+        {pt:'Gostar',en:'To like',ph:'gos-TAR',example:'Gosto muito de música brasileira.',example_en:'I really like Brazilian music.'},
+        {pt:'Dar',en:'To give',ph:'dar',example:'Pode me dar um copo de água?',example_en:'Can you give me a glass of water?'},
+        {pt:'Ver',en:'To see',ph:'vehr',example:'Você viu o jogo ontem?',example_en:'Did you see the match yesterday?'},
+        {pt:'Ouvir',en:'To hear / listen',ph:'oh-VEER',example:'Ouvi que você vai se mudar.',example_en:'I heard you\'re going to move.'},
+        {pt:'Comer',en:'To eat',ph:'koh-MEHR',example:'Vamos comer pizza hoje à noite?',example_en:'Shall we eat pizza tonight?'},
+        {pt:'Beber',en:'To drink',ph:'beh-BEHR',example:'Quer beber alguma coisa?',example_en:'Do you want to drink something?'},
+        {pt:'Trabalhar',en:'To work',ph:'trah-bahl-YAR',example:'Trabalho em casa às sextas.',example_en:'I work from home on Fridays.'},
+        {pt:'Morar',en:'To live / reside',ph:'moh-RAR',example:'Moro em São Paulo há três anos.',example_en:'I have lived in São Paulo for three years.'},
+        {pt:'Chegar',en:'To arrive',ph:'sheh-GAR',example:'O trem chega às dez.',example_en:'The train arrives at ten.'},
+        {pt:'Sair',en:'To leave / go out',ph:'sah-EER',example:'Saio do trabalho às seis.',example_en:'I leave work at six.'},
+        {pt:'Comprar',en:'To buy',ph:'kom-PRAR',example:'Preciso comprar pão.',example_en:'I need to buy bread.'},
+        {pt:'Pagar',en:'To pay',ph:'pah-GAR',example:'Posso pagar com cartão?',example_en:'Can I pay by card?'},
+        {pt:'Perguntar',en:'To ask',ph:'pehr-gun-TAR',example:'Posso te perguntar uma coisa?',example_en:'Can I ask you something?'},
+        {pt:'Ajudar',en:'To help',ph:'ah-zhoo-DAR',example:'Pode me ajudar com isso?',example_en:'Can you help me with this?'},
+        {pt:'Esperar',en:'To wait / hope',ph:'es-peh-RAR',example:'Espera um segundo, por favor.',example_en:'Wait a second, please.'},
+        {pt:'Voltar',en:'To return',ph:'vol-TAR',example:'A que horas você volta?',example_en:'What time are you coming back?'},
+        {pt:'Eu',en:'I',ph:'ew',example:'Eu sou de Londres.',example_en:'I am from London.'},
+        {pt:'Você',en:'You (informal)',ph:'voh-SAY',example:'Você quer mais café?',example_en:'Do you want more coffee?'},
+        {pt:'Ele',en:'He',ph:'EH-lee',example:'Ele chegou atrasado.',example_en:'He arrived late.'},
+        {pt:'Ela',en:'She',ph:'EH-lah',example:'Ela trabalha muito.',example_en:'She works a lot.'},
+        {pt:'Nós',en:'We',ph:'noss',example:'Nós vamos à praia amanhã.',example_en:'We are going to the beach tomorrow.'},
+        {pt:'Eles',en:'They',ph:'EH-lees',example:'Eles moram perto daqui.',example_en:'They live near here.'},
+        {pt:'Meu / Minha',en:'My',ph:'MEH-oo / MEEN-ya',example:'Meu nome é João.',example_en:'My name is João.'},
+        {pt:'Seu / Sua',en:'Your / His / Her',ph:'seh-oo / SOO-ah',example:'Qual é o seu número?',example_en:'What is your number?'},
+        {pt:'Que',en:'What / That / Which',ph:'keh',example:'Que horas são?',example_en:'What time is it?'},
+        {pt:'Quem',en:'Who',ph:'keng',example:'Quem é você?',example_en:'Who are you?'},
+        {pt:'Onde',en:'Where',ph:'ON-jee',example:'Onde fica o banheiro?',example_en:'Where is the bathroom?'},
+        {pt:'Como',en:'How',ph:'KOH-moo',example:'Como você está?',example_en:'How are you?'},
+        {pt:'Quando',en:'When',ph:'KWAN-doo',example:'Quando você chega?',example_en:'When are you arriving?'},
+        {pt:'Por que',en:'Why',ph:'por KEH',example:'Por que você está rindo?',example_en:'Why are you laughing?'},
+        {pt:'Quanto',en:'How much / How many',ph:'KWAN-too',example:'Quanto custa isso?',example_en:'How much does this cost?'},
+        {pt:'Bom / Boa',en:'Good',ph:'bong / BOH-ah',example:'Tive um bom dia.',example_en:'I had a good day.'},
+        {pt:'Mau / Má',en:'Bad',ph:'mow / mah',example:'O tempo está mau hoje.',example_en:'The weather is bad today.'},
+        {pt:'Grande',en:'Big / Large',ph:'GRAN-jee',example:'São Paulo é uma cidade muito grande.',example_en:'São Paulo is a very big city.'},
+        {pt:'Pequeno',en:'Small / Little',ph:'peh-KEH-noo',example:'Tenho um apartamento pequeno.',example_en:'I have a small apartment.'},
+        {pt:'Novo',en:'New / Young',ph:'NOH-voo',example:'Comprei um carro novo.',example_en:'I bought a new car.'},
+        {pt:'Velho',en:'Old',ph:'VEH-lyoo',example:'Este é um bairro velho.',example_en:'This is an old neighbourhood.'},
+        {pt:'Muito',en:'Very / A lot',ph:'MWEE-too',example:'Estou muito cansado.',example_en:'I am very tired.'},
+        {pt:'Pouco',en:'Little / Few',ph:'POH-koo',example:'Falo um pouco de português.',example_en:'I speak a little Portuguese.'},
+        {pt:'Mais',en:'More',ph:'mice',example:'Pode falar mais devagar?',example_en:'Can you speak more slowly?'},
+        {pt:'Menos',en:'Less / Fewer',ph:'MEH-noos',example:'Preciso comer menos açúcar.',example_en:'I need to eat less sugar.'},
+        {pt:'Todo',en:'All / Every',ph:'TOH-doo',example:'Todo dia eu pratico.',example_en:'I practise every day.'},
+        {pt:'Outro',en:'Other / Another',ph:'OH-troo',example:'Tem outro tamanho?',example_en:'Do you have another size?'},
+        {pt:'Mesmo',en:'Same / Even / Really',ph:'MEZ-moo',example:'É o mesmo preço.',example_en:'It\'s the same price.'},
+        {pt:'Só',en:'Only / Alone',ph:'soh',example:'Só tenho dinheiro em espécie.',example_en:'I only have cash.'},
+        {pt:'Fácil',en:'Easy',ph:'FAH-seel',example:'Esse exercício é fácil.',example_en:'This exercise is easy.'},
+        {pt:'Difícil',en:'Difficult',ph:'jee-FEE-seel',example:'A gramática é difícil.',example_en:'Grammar is difficult.'},
+        {pt:'Certo',en:'Right / Sure',ph:'SEHR-too',example:'Certo, entendi!',example_en:'Right, I understood!'},
+        {pt:'Pronto',en:'Ready / Done',ph:'PRON-too',example:'Estou pronto para sair.',example_en:'I am ready to go out.'},
+        {pt:'E',en:'And',ph:'ee',example:'Gosto de café e pão.',example_en:'I like coffee and bread.'},
+        {pt:'Mas',en:'But',ph:'mahs',example:'Gosto disso, mas é caro.',example_en:'I like it, but it\'s expensive.'},
+        {pt:'Ou',en:'Or',ph:'oh',example:'Café ou chá?',example_en:'Coffee or tea?'},
+        {pt:'Porque',en:'Because',ph:'por-KEH',example:'Fui cedo porque estava cansado.',example_en:'I left early because I was tired.'},
+        {pt:'Se',en:'If',ph:'see',example:'Se você quiser, posso ajudar.',example_en:'If you want, I can help.'},
+        {pt:'Então',en:'So / Then',ph:'en-TOWM',example:'Então, o que fazemos?',example_en:'So, what do we do?'},
+        {pt:'Também',en:'Also / Too',ph:'tam-BENG',example:'Eu também quero ir.',example_en:'I want to go too.'},
+        {pt:'Já',en:'Already / Yet',ph:'zhah',example:'Você já comeu?',example_en:'Have you eaten already?'},
+        {pt:'Ainda',en:'Still / Yet',ph:'ah-EEN-dah',example:'Ainda estou aprendendo.',example_en:'I am still learning.'},
+        {pt:'Sempre',en:'Always',ph:'SEM-pree',example:'Sempre tomo café de manhã.',example_en:'I always have coffee in the morning.'},
+        {pt:'Nunca',en:'Never',ph:'NOON-kah',example:'Nunca fui ao Japão.',example_en:'I have never been to Japan.'},
+        {pt:'Às vezes',en:'Sometimes',ph:'ahz VEH-zeez',example:'Às vezes trabalho à noite.',example_en:'Sometimes I work at night.'},
+        {pt:'Em',en:'In / At / On',ph:'eng',example:'Estou em casa agora.',example_en:'I am at home now.'},
+        {pt:'De',en:'Of / From',ph:'jee',example:'Sou de Lisboa.',example_en:'I am from Lisbon.'},
+        {pt:'Para',en:'For / To',ph:'PAH-rah',example:'Isso é para você.',example_en:'This is for you.'},
+        {pt:'Com',en:'With',ph:'kong',example:'Vou com meus amigos.',example_en:'I\'m going with my friends.'},
+        {pt:'Sem',en:'Without',ph:'seng',example:'Café sem açúcar, por favor.',example_en:'Coffee without sugar, please.'},
+        {pt:'Por',en:'By / Per / Through',ph:'por',example:'Obrigado por tudo.',example_en:'Thank you for everything.'},
+        {pt:'Sobre',en:'About / On top of',ph:'SOH-bree',example:'Podemos falar sobre isso?',example_en:'Can we talk about this?'},
+        {pt:'Entre',en:'Between / Among',ph:'EN-tree',example:'A loja fica entre o banco e o café.',example_en:'The shop is between the bank and the café.'},
+        {pt:'Antes',en:'Before',ph:'AN-tees',example:'Ligo antes de chegar.',example_en:'I\'ll call before I arrive.'},
+        {pt:'Depois',en:'After',ph:'deh-POYZ',example:'Vejo você depois do trabalho.',example_en:'I\'ll see you after work.'},
+        {pt:'Aqui',en:'Here',ph:'ah-KEE',example:'Pode vir aqui, por favor?',example_en:'Can you come here, please?'},
+        {pt:'Perto',en:'Near / Close',ph:'PEHR-too',example:'O hotel é perto daqui.',example_en:'The hotel is close to here.'},
+        {pt:'Longe',en:'Far',ph:'LON-zhee',example:'Fica longe do centro?',example_en:'Is it far from the centre?'},
+        {pt:'Dia',en:'Day',ph:'JEE-ah',example:'Bom dia! Como vai?',example_en:'Good morning! How are you?'},
+        {pt:'Vez',en:'Time / Turn',ph:'vez',example:'Pode repetir mais uma vez?',example_en:'Can you repeat one more time?'},
+        {pt:'Coisa',en:'Thing',ph:'KOY-zah',example:'Tem uma coisa que preciso te falar.',example_en:'There\'s something I need to tell you.'},
+        {pt:'Pessoa',en:'Person',ph:'peh-SOH-ah',example:'É uma pessoa muito simpática.',example_en:'She is a very friendly person.'},
+        {pt:'Lugar',en:'Place',ph:'loo-GAR',example:'Qual é o melhor lugar para jantar?',example_en:'What\'s the best place for dinner?'},
+        {pt:'Hora',en:'Hour / Time',ph:'OH-rah',example:'A que hora começa?',example_en:'What time does it start?'},
+        {pt:'Nome',en:'Name',ph:'NOH-mee',example:'Qual é o seu nome completo?',example_en:'What is your full name?'},
+        {pt:'Número',en:'Number',ph:'NOO-meh-roo',example:'Qual é o número do seu quarto?',example_en:'What is your room number?'},
+        {pt:'Obrigado',en:'Thank you (m)',ph:'oh-bree-GAH-doo',example:'Muito obrigado pela ajuda!',example_en:'Thank you very much for the help!'},
+        {pt:'Por favor',en:'Please',ph:'por fah-VOR',example:'Um café, por favor.',example_en:'A coffee, please.'},
+        {pt:'Sim',en:'Yes',ph:'sing',example:'Sim, com certeza!',example_en:'Yes, of course!'},
+        {pt:'Não',en:'No / Not',ph:'nowm',example:'Não, obrigado.',example_en:'No, thank you.'},
+        {pt:'Tudo',en:'Everything / All',ph:'TOO-doo',example:'Tudo bem com você?',example_en:'Is everything okay with you?'},
+        {pt:'Nada',en:'Nothing',ph:'NAH-dah',example:'De nada! Não foi nada.',example_en:'You\'re welcome! It was nothing.'},
+        {pt:'Gente',en:'People / Folks',ph:'ZHEN-chee',example:'A gente se vê amanhã.',example_en:'We\'ll see each other tomorrow.'}
+    ],
+    falsefriends:[
+        {pt:'Pretender',en:'To intend / plan',ph:'preh-ten-DEHR',trap:'Pretend',example:'Pretendo viajar para o Brasil no verão.',example_en:'I intend to travel to Brazil in the summer.'},
+        {pt:'Lanche',en:'Snack',ph:'LAN-shee',trap:'Lunch',example:'Vou tomar um lanche antes do jantar.',example_en:'I\'m going to have a snack before dinner.'},
+        {pt:'Novela',en:'Soap opera',ph:'noh-VEH-lah',trap:'Novel',example:'Minha mãe adora assistir novela.',example_en:'My mother loves watching soap operas.'},
+        {pt:'Borracha',en:'Rubber / Eraser',ph:'boh-HA-shah',trap:'Borracha → Drunk (in Spanish — different language trap!)',example:'Preciso de uma borracha para apagar isso.',example_en:'I need an eraser to rub that out.'},
+        {pt:'Polvo',en:'Octopus',ph:'POL-voo',trap:'Powder',example:'O polvo tem oito tentáculos.',example_en:'The octopus has eight tentacles.'},
+        {pt:'Acordar',en:'To wake up',ph:'ah-kor-DAR',trap:'Accord / Agree',example:'Acordo às sete horas toda manhã.',example_en:'I wake up at seven every morning.'},
+        {pt:'Assistir',en:'To watch',ph:'ah-sees-TEER',trap:'Assist',example:'Vou assistir um filme hoje à noite.',example_en:'I\'m going to watch a film tonight.'},
+        {pt:'Bordar',en:'To embroider',ph:'bor-DAR',trap:'Board',example:'Ela adora bordar toalhas de mesa.',example_en:'She loves to embroider tablecloths.'},
+        {pt:'Pasta',en:'Folder / Briefcase / Toothpaste',ph:'PAS-tah',trap:'Pasta (food)',example:'Coloquei os documentos na pasta.',example_en:'I put the documents in the folder.'},
+        {pt:'Policial',en:'Police officer / Detective',ph:'poh-lee-see-AL',trap:'Political',example:'O policial pediu minha carteira de identidade.',example_en:'The police officer asked for my ID.'},
+        {pt:'Parentes',en:'Relatives / Family',ph:'pah-REN-chees',trap:'Parents',example:'Meus parentes moram em Minas Gerais.',example_en:'My relatives live in Minas Gerais.'},
+        {pt:'Gravidez',en:'Pregnancy',ph:'grah-vee-DEZ',trap:'Gravity',example:'A gravidez dura nove meses.',example_en:'Pregnancy lasts nine months.'},
+        {pt:'Exquisito',en:'Refined / Exquisite',ph:'es-kee-ZEE-too',trap:'Exquisite (same meaning — but English speakers get it backwards with Spanish \'extraño\')',example:'Esse restaurante serve comida exquisita.',example_en:'This restaurant serves exquisite food.'},
+        {pt:'Borboleta',en:'Butterfly',ph:'bor-boh-LEH-tah',trap:'Bobble / Bobblehead',example:'Uma borboleta colorida pousou na flor.',example_en:'A colourful butterfly landed on the flower.'},
+        {pt:'Esquisito',en:'Weird / Strange',ph:'es-kee-ZEE-too',trap:'Exquisite',example:'Que situação esquisita!',example_en:'What a weird situation!'},
+        {pt:'Pegar',en:'To grab / catch / take',ph:'peh-GAR',trap:'Peg',example:'Posso pegar o seu telefone emprestado?',example_en:'Can I borrow your phone?'},
+        {pt:'Intoxicado',en:'Food-poisoned',ph:'in-tok-see-KAH-doo',trap:'Intoxicated (drunk)',example:'Fiquei intoxicado depois do restaurante.',example_en:'I got food poisoning after the restaurant.'},
+        {pt:'Sensível',en:'Sensitive',ph:'sen-SEE-vel',trap:'Sensible',example:'Ela é muito sensível a críticas.',example_en:'She is very sensitive to criticism.'},
+        {pt:'Libraria',en:'Bookshop',ph:'lee-vrah-REE-ah',trap:'Library',example:'Comprei esse livro numa livraria.',example_en:'I bought this book in a bookshop.'},
+        {pt:'Jornal',en:'Newspaper',ph:'zhor-NAL',trap:'Journal',example:'Leio o jornal toda manhã.',example_en:'I read the newspaper every morning.'},
+        {pt:'Actual',en:'Current / Present',ph:'ah-too-AL',trap:'Actual (= real in English)',example:'Qual é a situação actual?',example_en:'What is the current situation?'},
+        {pt:'Engraçado',en:'Funny',ph:'en-grah-SAH-doo',trap:'Engraved / Gracious',example:'Ele é muito engraçado!',example_en:'He is very funny!'},
+        {pt:'Terrível',en:'Terrible / Awful',ph:'teh-HEE-vel',trap:'Terrific (means great in English!)',example:'O trânsito estava terrível hoje.',example_en:'The traffic was terrible today.'},
+        {pt:'Marcar',en:'To schedule / book / score',ph:'mar-KAR',trap:'Mark',example:'Preciso marcar uma consulta.',example_en:'I need to book an appointment.'},
+        {pt:'Largo',en:'Wide / Broad',ph:'LAR-goo',trap:'Large',example:'A avenida é muito larga.',example_en:'The avenue is very wide.'},
+        {pt:'Agenda',en:'Diary / Schedule',ph:'ah-ZHEN-dah',trap:'Agenda (meeting agenda)',example:'Anotei o compromisso na agenda.',example_en:'I noted the appointment in my diary.'},
+        {pt:'Pretensão',en:'Claim / Ambition',ph:'preh-ten-SOWM',trap:'Pretension (arrogance in English)',example:'Ele tem grandes pretensões na carreira.',example_en:'He has great ambitions in his career.'}
+    ],
+};
 
-    function init() {
-        const grid = document.getElementById('categoryGrid');
-        Object.keys(WORD_LIBRARY).forEach(cat => {
-            const card = document.createElement('div');
-            card.className = 'category-card';
-            card.innerHTML = `
-                <span class="category-icon">${getIcon(cat)}</span>
-                <h3 style="text-transform: capitalize">${cat.replace('_', ' ')}</h3>
-                <small>${WORD_LIBRARY[cat].length} words</small>
-            `;
-            card.onclick = () => startCategory(cat);
-            grid.appendChild(card);
-        });
+// ════════════════════════════════════════════════════
+// PHRASE LIBRARY — by difficulty
+// ════════════════════════════════════════════════════
+function getPhraseLib(diff){
+    if(typeof PORTUGUESE_LIBRARY!=='undefined' && PORTUGUESE_LIBRARY.phrases && PORTUGUESE_LIBRARY.phrases[diff] && PORTUGUESE_LIBRARY.phrases[diff].length)
+        return PORTUGUESE_LIBRARY.phrases[diff];
+    return [];
+}
+
+// ════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════
+let currentCat = 'power100';
+let wordPool = [], wordIdx = 0, wordHistory = [];
+
+// ════════════════════════════════════════════════════
+// STARS & FAVORITES (localStorage)
+// ════════════════════════════════════════════════════
+const LS_STARS = 'samba_starred_v1';
+const LS_EASY  = 'samba_easy_v1';
+
+function getStarred(){ try{ return JSON.parse(localStorage.getItem(LS_STARS)||'[]'); }catch(e){ return []; } }
+function saveStarred(arr){ try{ localStorage.setItem(LS_STARS, JSON.stringify(arr)); }catch(e){} }
+function getEasyUntil(){ try{ return JSON.parse(localStorage.getItem(LS_EASY)||'{}'); }catch(e){ return {}; } }
+function saveEasyUntil(obj){ try{ localStorage.setItem(LS_EASY, JSON.stringify(obj)); }catch(e){} }
+
+function cardKey(card){ return card.pt + '|' + card.en; }
+
+function isStarred(card){
+    return getStarred().includes(cardKey(card));
+}
+
+function toggleStar(){
+    const card = wordPool[wordIdx];
+    if(!card) return;
+    const key = cardKey(card);
+    let starred = getStarred();
+    if(starred.includes(key)){
+        starred = starred.filter(k=>k!==key);
+    } else {
+        starred.push(key);
+    }
+    saveStarred(starred);
+    updateStarUI(card);
+    // Refresh favorites pool if we're in that category
+    if(currentCat === 'favorites') loadWordCat('favorites');
+}
+
+function updateStarUI(card){
+    const btn = document.getElementById('word-star');
+    if(!btn || !card) return;
+    const on = isStarred(card);
+    btn.textContent = on ? '★' : '☆';
+    btn.classList.toggle('starred', on);
+}
+
+// ════════════════════════════════════════════════════
+// CONFIDENCE / SPACED REPETITION (simple)
+// ════════════════════════════════════════════════════
+// Hard  → stays in current session pool (reshuffle to near-top)
+// Good  → move to next card normally
+// Easy  → mark as "skip until next session" (next page load)
+
+function rateCard(rating){
+    const card = wordPool[wordIdx];
+    if(!card){ nextCard(); return; }
+
+    if(rating === 'easy'){
+        // Mark card to be skipped until next session
+        const eu = getEasyUntil();
+        eu[cardKey(card)] = Date.now() + 24*60*60*1000; // 24 hrs
+        saveEasyUntil(eu);
+        // Remove from current pool so it doesn't reappear this session
+        wordPool.splice(wordIdx, 1);
+        if(wordPool.length === 0){ loadWordCat(currentCat); return; }
+        wordIdx = wordIdx % wordPool.length;
+        showWordCard();
+    } else if(rating === 'hard'){
+        // Reinsert the card 2–4 positions ahead so it comes back soon
+        wordPool.splice(wordIdx, 1);
+        const ahead = Math.min(wordPool.length, 2 + Math.floor(Math.random()*3));
+        const insertAt = (wordIdx + ahead) % (wordPool.length + 1);
+        wordPool.splice(insertAt, 0, card);
+        wordIdx = wordIdx % wordPool.length;
+        showWordCard();
+    } else {
+        nextCard();
+    }
+}
+let phraseDiff = 'easy', phrasePool = [], phraseIdx = 0, phraseHistory = [];
+let listType = 'words', listCat = 'power100', listPhraseDiff = 'easy';
+let testType = 'words', testCat = 'power100', testDiff = 'easy';
+let quizQs = [], quizIdx = 0, quizScore = 0, quizLog = [];
+let currentQuizItem = null;
+let voices = [];
+
+// ════════════════════════════════════════════════════
+// TTS
+// ════════════════════════════════════════════════════
+function loadVoices(){ voices = window.speechSynthesis.getVoices(); }
+window.speechSynthesis.onvoiceschanged = loadVoices; loadVoices();
+function _speak(text){
+    window.speechSynthesis.cancel();
+    const ut = new SpeechSynthesisUtterance(text);
+    const v = voices.find(v=>v.lang.startsWith('pt'));
+    if(v) ut.voice = v; ut.lang = 'pt-BR'; ut.rate = 0.85;
+    window.speechSynthesis.speak(ut);
+}
+function speak(id){ _speak(document.getElementById(id).innerText); }
+function speakText(t){ _speak(t); }
+function speakCurrentQ(){ if(currentQuizItem) _speak(currentQuizItem.pt); }
+
+// ════════════════════════════════════════════════════
+// CATEGORY BUTTONS — build + render
+// ════════════════════════════════════════════════════
+function buildCatButtons(containerId, activeCat, onClickFn){
+    const wrap = document.getElementById(containerId);
+    wrap.innerHTML = '';
+    CATEGORIES.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = 'cat-btn' + (cat.id === activeCat ? ' active' : '');
+        btn.innerHTML = `<span class="cat-icon">${cat.icon}</span>${cat.label}`;
+        btn.onclick = () => onClickFn(cat.id, btn, containerId);
+        wrap.appendChild(btn);
+    });
+}
+function setActiveCatBtn(containerId, catId){
+    document.querySelectorAll(`#${containerId} .cat-btn`).forEach(b => b.classList.remove('active'));
+    const btns = document.querySelectorAll(`#${containerId} .cat-btn`);
+    const cats = CATEGORIES.map(c=>c.id);
+    const idx = cats.indexOf(catId);
+    if(btns[idx]) btns[idx].classList.add('active');
+}
+
+// ════════════════════════════════════════════════════
+// WORDS
+// ════════════════════════════════════════════════════
+function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+
+function loadWordCat(catId){
+    currentCat = catId;
+
+    let pool;
+    if(catId === 'favorites'){
+        const starred = getStarred();
+        // Gather all words from all categories and filter by starred keys
+        const all = Object.values(WORD_LIBRARY).flat();
+        pool = all.filter(w => starred.includes(cardKey(w)));
+    } else {
+        pool = WORD_LIBRARY[catId] || [];
     }
 
-    function getIcon(cat) {
-        const icons = { basics: '👋', food: '🍎', false_friends: '⚠️', slang: '🇧🇷' };
-        return icons[cat] || '📚';
-    }
+    // Filter out "easy" words whose cooldown hasn't expired
+    const eu = getEasyUntil();
+    const now = Date.now();
+    pool = pool.filter(w => {
+        const until = eu[cardKey(w)];
+        return !until || now > until;
+    });
 
-    function showSection(sectionId) {
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        document.getElementById(sectionId).classList.add('active');
-        
-        document.querySelectorAll('.nav-btn').forEach(b => {
-            b.classList.toggle('active', b.innerText.toLowerCase().includes(sectionId));
-        });
+    wordPool = shuffle(pool);
+    wordIdx = 0; wordHistory = [0];
+    showWordCard();
+    setActiveCatBtn('words-cat-scroll', catId);
+}
+function showWordCard(){
+    document.querySelectorAll('#words .flashcard-wrapper').forEach(w=>w.classList.remove('is-flipped'));
+    const card = wordPool[wordIdx];
 
-        if(sectionId === 'test') startTest();
-    }
-
-    function startCategory(cat) {
-        currentCategory = cat;
-        currentCardIndex = 0;
-        showSection('flashcards');
-        loadCard();
-    }
-
-    function loadCard() {
-        const cardEl = document.getElementById('card');
-        cardEl.classList.remove('flipped');
-        
-        currentCard = WORD_LIBRARY[currentCategory][currentCardIndex];
-        document.getElementById('engText').innerText = currentCard.en;
-        
-        const ptDisplay = document.getElementById('ptText');
-        ptDisplay.innerText = currentCard.pt;
-        
-        // APPLY GENDER STYLING
-        ptDisplay.classList.remove('masculine', 'feminine');
-        if(currentCard.gender === 'm') ptDisplay.classList.add('masculine');
-        if(currentCard.gender === 'f') ptDisplay.classList.add('feminine');
-    }
-
-    function revealCard() {
-        const card = document.getElementById('card');
-        if (!card.classList.contains('flipped')) {
-            card.classList.add('flipped');
-            // Auto-play removed as requested!
+    // Show empty state for favorites with no starred words
+    const favEmpty = document.getElementById('fav-empty-msg');
+    if(!card){
+        document.getElementById('pt-text').innerText = '--';
+        document.getElementById('en-text').innerText = '--';
+        document.querySelectorAll('.pt-ph-view').forEach(el=>el.innerText='');
+        document.getElementById('words-counter').innerText = '';
+        updateStarUI(null);
+        if(currentCat === 'favorites' && !favEmpty){
+            const msg = document.createElement('div');
+            msg.id = 'fav-empty-msg';
+            msg.className = 'fav-empty';
+            msg.innerHTML = '<span class="fav-empty-icon">☆</span>No favourites yet!<br>Tap the ☆ on any word card to save it here.';
+            document.getElementById('words').appendChild(msg);
         }
+        return;
     }
+    if(favEmpty) favEmpty.remove();
 
-    function nextCard() {
-        currentCardIndex = (currentCardIndex + 1) % WORD_LIBRARY[currentCategory].length;
-        loadCard();
-    }
-
-    // HIGH-QUALITY SPEECH ENGINE
-    function speak(text) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        const voices = window.speechSynthesis.getVoices();
-
-        let preferredVoice = voices.find(v => v.lang === 'pt-BR' && v.name.includes('Google')) 
-                          || voices.find(v => v.lang === 'pt-BR')
-                          || voices.find(v => v.lang.startsWith('pt'));
-
-        if (preferredVoice) utterance.voice = preferredVoice;
-        utterance.lang = 'pt-BR';
-        utterance.rate = 0.9;
-        window.speechSynthesis.speak(utterance);
-    }
-
-    window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
-
-    function startTest() {
-        const allWords = Object.values(WORD_LIBRARY).flat();
-        const question = allWords[Math.floor(Math.random() * allWords.length)];
-        
-        document.getElementById('testQuestion').innerText = question.en;
-        const grid = document.getElementById('optionsGrid');
-        grid.innerHTML = '';
-
-        const options = [question.pt];
-        while(options.length < 4) {
-            const randomWord = allWords[Math.floor(Math.random() * allWords.length)].pt;
-            if(!options.includes(randomWord)) options.push(randomWord);
+    setTimeout(()=>{
+        document.getElementById('pt-text').innerText = card.pt;
+        document.getElementById('en-text').innerText = card.en;
+        document.querySelectorAll('.pt-ph-view').forEach(el=>el.innerText=`[ ${card.ph} ]`);
+        document.getElementById('words-counter').innerText = `${wordIdx+1} / ${wordPool.length}`;
+        updateStarUI(card);
+        // Emoji visual
+        const emojiEl = document.getElementById('card-emoji');
+        if(card.em){
+            emojiEl.textContent = card.em;
+            emojiEl.style.display = 'block';
+        } else {
+            emojiEl.textContent = '';
+            emojiEl.style.display = 'none';
         }
-        options.sort(() => Math.random() - 0.5);
+        // Example sentence — Portuguese on front, English on back
+        const exFront = document.getElementById('card-example-front');
+        const exBack  = document.getElementById('card-example-back');
+        if(card.example){
+            document.getElementById('example-pt').textContent = card.example;
+            document.getElementById('example-back-pt').textContent = card.example;
+            document.getElementById('example-en').textContent = card.example_en || '';
+            exFront.style.display = 'block';
+            exBack.style.display  = 'block';
+        } else {
+            exFront.style.display = 'none';
+            exBack.style.display  = 'none';
+        }
+        // False friend trap warning
+        const trapFront = document.getElementById('ff-trap-front');
+        const trapBack  = document.getElementById('ff-trap-back');
+        if(card.trap){
+            document.getElementById('ff-trap-text-front').textContent = '⚠️ Looks like: "' + card.trap + '"';
+            document.getElementById('ff-trap-text-back').textContent  = '⚠️ NOT "' + card.trap + '" — false friend!';
+            if(trapFront) trapFront.style.display = 'block';
+            if(trapBack)  trapBack.style.display  = 'block';
+        } else {
+            if(trapFront) trapFront.style.display = 'none';
+            if(trapBack)  trapBack.style.display  = 'none';
+        }
+    },150);
+}
+function nextCard(){
+    wordIdx = (wordIdx+1) % wordPool.length;
+    wordHistory.push(wordIdx); if(wordHistory.length>200) wordHistory.shift();
+    showWordCard();
+}
+function prevCard(){
+    if(wordHistory.length>1){ wordHistory.pop(); wordIdx=wordHistory[wordHistory.length-1]; }
+    else wordIdx=(wordIdx-1+wordPool.length)%wordPool.length;
+    showWordCard();
+}
 
-        options.forEach(opt => {
-            const btn = document.createElement('button');
-            btn.className = 'option-btn';
-            btn.innerText = opt;
-            btn.onclick = () => {
-                if(opt === question.pt) {
-                    btn.classList.add('correct');
-                    speak(opt);
-                    setTimeout(startTest, 1000);
-                } else {
-                    btn.classList.add('wrong');
-                }
-            };
-            grid.appendChild(btn);
-        });
+// ════════════════════════════════════════════════════
+// PHRASES
+// ════════════════════════════════════════════════════
+function loadPhrases(){
+    phrasePool = shuffle(getPhraseLib(phraseDiff));
+    phraseIdx = 0; phraseHistory = [0];
+    showPhraseCard();
+}
+function showPhraseCard(){
+    document.querySelectorAll('#phrases .flashcard-wrapper').forEach(w=>w.classList.remove('is-flipped'));
+    const card = phrasePool[phraseIdx];
+    if(!card) return;
+    setTimeout(()=>{
+        document.getElementById('phrase-pt').innerText = card.pt;
+        document.getElementById('phrase-en').innerText = card.en;
+        document.querySelectorAll('.phrase-ph-view').forEach(el=>el.innerText=`[ ${card.ph} ]`);
+    },150);
+}
+function nextPhrase(){
+    phraseIdx=(phraseIdx+1)%phrasePool.length;
+    phraseHistory.push(phraseIdx); if(phraseHistory.length>200) phraseHistory.shift();
+    showPhraseCard();
+}
+function prevPhrase(){
+    if(phraseHistory.length>1){phraseHistory.pop();phraseIdx=phraseHistory[phraseHistory.length-1];}
+    else phraseIdx=(phraseIdx-1+phrasePool.length)%phrasePool.length;
+    showPhraseCard();
+}
+function setPhraseDiff(diff,btn){
+    phraseDiff=diff;
+    document.querySelectorAll('#phrases .diff-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    loadPhrases();
+}
+
+// ════════════════════════════════════════════════════
+// LIST
+// ════════════════════════════════════════════════════
+function setListType(type,btn){
+    listType=type;
+    document.querySelectorAll('.list-type-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('list-words-controls').style.display = type==='words'?'block':'none';
+    document.getElementById('list-phrases-controls').style.display = type==='phrases'?'block':'none';
+    renderList();
+}
+function setListCat(catId, btn, containerId){
+    listCat=catId; setActiveCatBtn(containerId,catId); renderList();
+}
+function setListPhraseDiff(diff,btn){
+    listPhraseDiff=diff;
+    document.querySelectorAll('#list-phrases-controls .diff-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active'); renderList();
+}
+function renderList(){
+    let data;
+    if(listType==='words'){
+        data = WORD_LIBRARY[listCat]||[];
+    } else {
+        data = getPhraseLib(listPhraseDiff);
     }
+    document.getElementById('list-count').innerText=`${data.length} items`;
+    const tb=document.getElementById('list-body'); tb.innerHTML='';
+    data.forEach(item=>{
+        const native=item.pt, tr=document.createElement('tr');
+        tr.innerHTML=`<td><div class="list-native">${native}</div><div class="list-ph">[ ${item.ph} ]</div></td>
+            <td><span class="list-en">${item.en}</span></td>
+            <td><button class="list-hear" onclick="event.stopPropagation();speakText('${native.replace(/'/g,"\\'")}')">🔊</button></td>`;
+        tr.onclick=()=>speakText(native); tb.appendChild(tr);
+    });
+}
 
-    init();
+// ════════════════════════════════════════════════════
+// TEST
+// ════════════════════════════════════════════════════
+function pickTestType(type, btn){
+    testType=type;
+    btn.parentElement.querySelectorAll('.setup-opt').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('test-cat-section').style.display = (type==='phrases')?'none':'block';
+    document.getElementById('test-diff-section').style.display = (type==='words')?'none':'block';
+}
+function pickTestCat(catId, btn, containerId){
+    testCat=catId; setActiveCatBtn(containerId,catId);
+}
+function pickTestDiff(diff,btn){
+    testDiff=diff;
+    btn.parentElement.querySelectorAll('.setup-opt').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+}
+function buildTestPool(){
+    let p=[];
+    if(testType==='words') p=[...WORD_LIBRARY[testCat]||[]];
+    else if(testType==='phrases') p=[...getPhraseLib(testDiff)];
+    else { p=[...(WORD_LIBRARY[testCat]||[]),...getPhraseLib(testDiff)]; }
+    return shuffle(p);
+}
+function showSetup(){
+    document.getElementById('test-setup').style.display='flex';
+    document.getElementById('test-quiz').style.display='none';
+    document.getElementById('test-results').style.display='none';
+}
+function beginTest(){
+    const pool=buildTestPool();
+    if(pool.length<4){alert('Not enough items (need 4+).');return;}
+    quizQs=pool.slice(0,10); quizIdx=0; quizScore=0; quizLog=[];
+    document.getElementById('test-setup').style.display='none';
+    document.getElementById('test-quiz').style.display='flex';
+    document.getElementById('test-results').style.display='none';
+    showQuestion();
+}
+function showQuestion(){
+    const total=quizQs.length, q=quizQs[quizIdx];
+    currentQuizItem=q;
+    document.getElementById('q-counter').innerText=`Question ${quizIdx+1} / ${total}`;
+    document.getElementById('q-score-live').innerText=`Score: ${quizScore}`;
+    document.getElementById('q-progress').style.width=`${(quizIdx/total)*100}%`;
+    document.getElementById('q-text').innerText=q.pt;
+    document.getElementById('q-phonetic').innerText=q.ph?`[ ${q.ph} ]`:'';
+    const allPool=buildTestPool();
+    const others=shuffle(allPool.filter(x=>x.en!==q.en));
+    const opts=shuffle([q,...others.slice(0,3)]);
+    const wrap=document.getElementById('q-options'); wrap.innerHTML='';
+    opts.forEach(opt=>{
+        const b=document.createElement('button');
+        b.className='quiz-opt'; b.textContent=opt.en;
+        b.onclick=()=>answerChosen(b,opt.en===q.en,q,wrap);
+        wrap.appendChild(b);
+    });
+}
+function answerChosen(btn,correct,q,wrap){
+    wrap.querySelectorAll('.quiz-opt').forEach(b=>{b.disabled=true;b.onclick=null;});
+    if(correct){btn.classList.add('correct');quizScore++;}
+    else{btn.classList.add('wrong');wrap.querySelectorAll('.quiz-opt').forEach(b=>{if(b.textContent===q.en)b.classList.add('reveal');});}
+    quizLog.push({pt:q.pt,en:q.en,ok:correct});
+    setTimeout(()=>{quizIdx++;if(quizIdx<quizQs.length)showQuestion();else showResults();},950);
+}
+function showResults(){
+    document.getElementById('test-quiz').style.display='none';
+    document.getElementById('test-results').style.display='flex';
+    const s=quizScore,t=quizQs.length;
+    document.getElementById('results-num').innerText=s;
+    const circ=2*Math.PI*65;
+    document.getElementById('score-arc').style.strokeDashoffset=circ-(circ*(s/t));
+    const pct=s/t;
+    let grade,sub;
+    if(pct===1){grade='🏆 Perfect Score!';sub='Absolutely flawless. Incredible work!';}
+    else if(pct>=0.8){grade='🌟 Excellent!';sub='Really impressive — almost perfect!';}
+    else if(pct>=0.6){grade='👍 Good Job!';sub="Solid effort. Keep practising!";}
+    else if(pct>=0.4){grade='📚 Keep Going!';sub='Check the List tab to review.';}
+    else{grade='💪 Keep Practising!';sub="Every attempt makes you better!";}
+    document.getElementById('results-grade').innerText=grade;
+    document.getElementById('results-sub').innerText=sub;
+    const bd=document.getElementById('results-breakdown'); bd.innerHTML='';
+    quizLog.forEach(r=>{
+        const row=document.createElement('div');
+        row.className=`result-row ${r.ok?'r-correct':'r-wrong'}`;
+        row.innerHTML=`<div class="result-icon">${r.ok?'✅':'❌'}</div><div><div class="result-q">${r.pt}</div><div class="result-a">${r.en}</div></div>`;
+        bd.appendChild(row);
+    });
+}
+
+// ════════════════════════════════════════════════════
+// TABS
+// ════════════════════════════════════════════════════
+function showTab(id,btn){
+    document.querySelectorAll('.content-section').forEach(s=>s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById(id).classList.add('active'); btn.classList.add('active');
+    if(id==='list') renderList();
+    if(id==='test') showSetup();
+    if(id==='verbs') renderVerbGrid(verbFilter);
+}
+
+// ════════════════════════════════════════════════════
+// VERBS — conjugation tables
+// ════════════════════════════════════════════════════
+// Each verb: infinitive, English, type (-ar/-er/-ir), irregular forms override
+// Conjugation rows: [pronoun, present, ph_pres, preterite, ph_pret, future, ph_fut]
+const VERB_DATA = [
+    {
+        inf:'Falar', en:'To speak', type:'-ar',
+        conj:[
+            {pro:'Eu',        pres:'falo',    ph_pres:'FAH-loo',      pret:'falei',    ph_pret:'fah-LAY',      fut:'falarei',    ph_fut:'fah-lah-RAY'},
+            {pro:'Você/Ele',  pres:'fala',    ph_pres:'FAH-lah',      pret:'falou',    ph_pret:'fah-LOH',      fut:'falará',     ph_fut:'fah-lah-RAH'},
+            {pro:'Nós',       pres:'falamos', ph_pres:'fah-LAH-moos', pret:'falamos',  ph_pret:'fah-LAH-moos', fut:'falaremos',  ph_fut:'fah-lah-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'falam',   ph_pres:'FAH-lowm',     pret:'falaram',  ph_pret:'fah-LAH-rowm', fut:'falarão',    ph_fut:'fah-lah-ROWM'},
+        ],
+        note:'Regular -ar verb. Falar follows the standard -ar pattern and is a great model for the group.',
+    },
+    {
+        inf:'Comer', en:'To eat', type:'-er',
+        conj:[
+            {pro:'Eu',        pres:'como',    ph_pres:'KOH-moo',      pret:'comi',     ph_pret:'koh-MEE',      fut:'comerei',    ph_fut:'koh-meh-RAY'},
+            {pro:'Você/Ele',  pres:'come',    ph_pres:'KOH-mee',      pret:'comeu',    ph_pret:'koh-MEH-oo',   fut:'comerá',     ph_fut:'koh-meh-RAH'},
+            {pro:'Nós',       pres:'comemos', ph_pres:'koh-MAY-moos', pret:'comemos',  ph_pret:'koh-MAY-moos', fut:'comeremos',  ph_fut:'koh-meh-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'comem',   ph_pres:'KOH-meng',     pret:'comeram',  ph_pret:'koh-MAY-rowm', fut:'comerão',    ph_fut:'koh-meh-ROWM'},
+        ],
+        note:'Regular -er verb. The model verb for the -er group.',
+    },
+    {
+        inf:'Abrir', en:'To open', type:'-ir',
+        conj:[
+            {pro:'Eu',        pres:'abro',    ph_pres:'AH-broo',      pret:'abri',     ph_pret:'ah-BREE',      fut:'abrirei',    ph_fut:'ah-bree-RAY'},
+            {pro:'Você/Ele',  pres:'abre',    ph_pres:'AH-bree',      pret:'abriu',    ph_pret:'ah-BREE-oo',   fut:'abrirá',     ph_fut:'ah-bree-RAH'},
+            {pro:'Nós',       pres:'abrimos', ph_pres:'ah-BREE-moos', pret:'abrimos',  ph_pret:'ah-BREE-moos', fut:'abriremos',  ph_fut:'ah-bree-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'abrem',   ph_pres:'AH-breng',     pret:'abriram',  ph_pret:'ah-BREE-rowm', fut:'abrirão',    ph_fut:'ah-bree-ROWM'},
+        ],
+        note:'Regular -ir verb. Model for the -ir group.',
+    },
+    {
+        inf:'Ser', en:'To be (permanent)', type:'irreg',
+        conj:[
+            {pro:'Eu',        pres:'sou',     ph_pres:'soh',          pret:'fui',      ph_pret:'fwee',         fut:'serei',      ph_fut:'seh-RAY'},
+            {pro:'Você/Ele',  pres:'é',       ph_pres:'eh',           pret:'foi',      ph_pret:'foy',          fut:'será',       ph_fut:'seh-RAH'},
+            {pro:'Nós',       pres:'somos',   ph_pres:'SOH-moos',     pret:'fomos',    ph_pret:'FOH-moos',     fut:'seremos',    ph_fut:'seh-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'são',     ph_pres:'sowm',         pret:'foram',    ph_pret:'FOH-rowm',     fut:'serão',      ph_fut:'seh-ROWM'},
+        ],
+        note:'Highly irregular. Ser is used for permanent states: identity, nationality, profession, characteristics.',
+    },
+    {
+        inf:'Estar', en:'To be (temporary)', type:'irreg',
+        conj:[
+            {pro:'Eu',        pres:'estou',   ph_pres:'es-TOH',       pret:'estive',   ph_pret:'es-CHEE-vee',  fut:'estarei',    ph_fut:'es-tah-RAY'},
+            {pro:'Você/Ele',  pres:'está',    ph_pres:'es-TAH',       pret:'esteve',   ph_pret:'es-TEH-vee',   fut:'estará',     ph_fut:'es-tah-RAH'},
+            {pro:'Nós',       pres:'estamos', ph_pres:'es-TAH-moos',  pret:'estivemos',ph_pret:'es-chee-VAY-moos',fut:'estaremos',ph_fut:'es-tah-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'estão',   ph_pres:'es-TOWM',      pret:'estiveram',ph_pret:'es-chee-VAY-rowm',fut:'estarão', ph_fut:'es-tah-ROWM'},
+        ],
+        note:'Irregular. Estar is used for temporary states, feelings, and locations: "Estou cansado" (I am tired).',
+    },
+    {
+        inf:'Ter', en:'To have', type:'irreg',
+        conj:[
+            {pro:'Eu',        pres:'tenho',   ph_pres:'TEN-yoo',      pret:'tive',     ph_pret:'CHEE-vee',     fut:'terei',      ph_fut:'teh-RAY'},
+            {pro:'Você/Ele',  pres:'tem',     ph_pres:'teng',         pret:'teve',     ph_pret:'TEH-vee',      fut:'terá',       ph_fut:'teh-RAH'},
+            {pro:'Nós',       pres:'temos',   ph_pres:'TAY-moos',     pret:'tivemos',  ph_pret:'chee-VAY-moos',fut:'teremos',    ph_fut:'teh-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'têm',     ph_pres:'teng',         pret:'tiveram',  ph_pret:'chee-VAY-rowm',fut:'terão',      ph_fut:'teh-ROWM'},
+        ],
+        note:'Irregular. Also used as an auxiliary verb: "Tenho que ir" (I have to go).',
+    },
+    {
+        inf:'Ir', en:'To go', type:'irreg',
+        conj:[
+            {pro:'Eu',        pres:'vou',     ph_pres:'voh',          pret:'fui',      ph_pret:'fwee',         fut:'irei',       ph_fut:'ee-RAY'},
+            {pro:'Você/Ele',  pres:'vai',     ph_pres:'vye',          pret:'foi',      ph_pret:'foy',          fut:'irá',        ph_fut:'ee-RAH'},
+            {pro:'Nós',       pres:'vamos',   ph_pres:'VAH-moos',     pret:'fomos',    ph_pret:'FOH-moos',     fut:'iremos',     ph_fut:'ee-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'vão',     ph_pres:'vowm',         pret:'foram',    ph_pret:'FOH-rowm',     fut:'irão',       ph_fut:'ee-ROWM'},
+        ],
+        note:'Highly irregular — shares past tense with Ser. Present tense comes from "vir" (to come) historically.',
+    },
+    {
+        inf:'Fazer', en:'To do / make', type:'irreg',
+        conj:[
+            {pro:'Eu',        pres:'faço',    ph_pres:'FAH-soo',      pret:'fiz',      ph_pret:'feez',         fut:'farei',      ph_fut:'fah-RAY'},
+            {pro:'Você/Ele',  pres:'faz',     ph_pres:'fahz',         pret:'fez',      ph_pret:'fez',          fut:'fará',       ph_fut:'fah-RAH'},
+            {pro:'Nós',       pres:'fazemos', ph_pres:'fah-ZAY-moos', pret:'fizemos',  ph_pret:'fee-ZAY-moos', fut:'faremos',    ph_fut:'fah-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'fazem',   ph_pres:'FAH-zeng',     pret:'fizeram',  ph_pret:'fee-ZAY-rowm', fut:'farão',      ph_fut:'fah-ROWM'},
+        ],
+        note:'Irregular. Note the irregular future stem "far-" instead of "fazer-".',
+    },
+    {
+        inf:'Poder', en:'To be able to / can', type:'irreg',
+        conj:[
+            {pro:'Eu',        pres:'posso',   ph_pres:'POH-soo',      pret:'pude',     ph_pret:'POO-jee',      fut:'poderei',    ph_fut:'poh-deh-RAY'},
+            {pro:'Você/Ele',  pres:'pode',    ph_pres:'POH-jee',      pret:'pôde',     ph_pret:'POH-jee',      fut:'poderá',     ph_fut:'poh-deh-RAH'},
+            {pro:'Nós',       pres:'podemos', ph_pres:'poh-DAY-moos', pret:'pudemos',  ph_pret:'poo-DAY-moos', fut:'poderemos',  ph_fut:'poh-deh-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'podem',   ph_pres:'POH-deng',     pret:'puderam',  ph_pret:'poo-DAY-rowm', fut:'poderão',    ph_fut:'poh-deh-ROWM'},
+        ],
+        note:'Irregular stem-changer. "Posso" (I can) is one of the most useful words in Portuguese.',
+    },
+    {
+        inf:'Querer', en:'To want', type:'irreg',
+        conj:[
+            {pro:'Eu',        pres:'quero',   ph_pres:'KEH-roo',      pret:'quis',     ph_pret:'keez',         fut:'quererei',   ph_fut:'keh-reh-RAY'},
+            {pro:'Você/Ele',  pres:'quer',    ph_pres:'kehr',         pret:'quis',     ph_pret:'keez',         fut:'quererá',    ph_fut:'keh-reh-RAH'},
+            {pro:'Nós',       pres:'queremos',ph_pres:'keh-RAY-moos', pret:'quisemos', ph_pret:'kee-ZAY-moos', fut:'quereremos', ph_fut:'keh-reh-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'querem',  ph_pres:'KEH-reng',     pret:'quiseram', ph_pret:'kee-ZAY-rowm', fut:'quererão',   ph_fut:'keh-reh-ROWM'},
+        ],
+        note:'Irregular. "Quero" is essential — use it to order food, ask for things, and express desires.',
+    },
+    {
+        inf:'Saber', en:'To know (a fact)', type:'irreg',
+        conj:[
+            {pro:'Eu',        pres:'sei',     ph_pres:'say',          pret:'soube',    ph_pret:'SOH-bee',      fut:'saberei',    ph_fut:'sah-beh-RAY'},
+            {pro:'Você/Ele',  pres:'sabe',    ph_pres:'SAH-bee',      pret:'soube',    ph_pret:'SOH-bee',      fut:'saberá',     ph_fut:'sah-beh-RAH'},
+            {pro:'Nós',       pres:'sabemos', ph_pres:'sah-BAY-moos', pret:'soubemos', ph_pret:'soh-BAY-moos', fut:'saberemos',  ph_fut:'sah-beh-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'sabem',   ph_pres:'SAH-beng',     pret:'souberam', ph_pret:'soh-BAY-rowm', fut:'saberão',    ph_fut:'sah-beh-ROWM'},
+        ],
+        note:'Irregular. Use Saber for knowing facts/information. "Não sei" (I don\'t know) is very handy!',
+    },
+    {
+        inf:'Vir', en:'To come', type:'irreg',
+        conj:[
+            {pro:'Eu',        pres:'venho',   ph_pres:'VEN-yoo',      pret:'vim',      ph_pret:'veeng',        fut:'virei',      ph_fut:'vee-RAY'},
+            {pro:'Você/Ele',  pres:'vem',     ph_pres:'veng',         pret:'veio',     ph_pret:'VAY-oo',       fut:'virá',       ph_fut:'vee-RAH'},
+            {pro:'Nós',       pres:'vimos',   ph_pres:'VEE-moos',     pret:'viemos',   ph_pret:'vee-AY-moos',  fut:'viremos',    ph_fut:'vee-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'vêm',     ph_pres:'veng',         pret:'vieram',   ph_pret:'vee-AY-rowm',  fut:'virão',      ph_fut:'vee-ROWM'},
+        ],
+        note:'Highly irregular. "De onde você vem?" (Where do you come from?) is a classic opener.',
+    },
+    {
+        inf:'Dar', en:'To give', type:'irreg',
+        conj:[
+            {pro:'Eu',        pres:'dou',     ph_pres:'doh',          pret:'dei',      ph_pret:'day',          fut:'darei',      ph_fut:'dah-RAY'},
+            {pro:'Você/Ele',  pres:'dá',      ph_pres:'dah',          pret:'deu',      ph_pret:'deh-oo',       fut:'dará',       ph_fut:'dah-RAH'},
+            {pro:'Nós',       pres:'damos',   ph_pres:'DAH-moos',     pret:'demos',    ph_pret:'DAY-moos',     fut:'daremos',    ph_fut:'dah-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'dão',     ph_pres:'dowm',         pret:'deram',    ph_pret:'DAY-rowm',     fut:'darão',      ph_fut:'dah-ROWM'},
+        ],
+        note:'Irregular. "Me dá um café, por favor?" (Can you give me a coffee, please?) is very natural.',
+    },
+    {
+        inf:'Trabalhar', en:'To work', type:'-ar',
+        conj:[
+            {pro:'Eu',        pres:'trabalho',    ph_pres:'trah-BAL-yoo',     pret:'trabalhei',    ph_pret:'trah-bal-YAY',     fut:'trabalharei',   ph_fut:'trah-bal-yah-RAY'},
+            {pro:'Você/Ele',  pres:'trabalha',    ph_pres:'trah-BAL-yah',     pret:'trabalhou',    ph_pret:'trah-bal-YOH',     fut:'trabalhará',    ph_fut:'trah-bal-yah-RAH'},
+            {pro:'Nós',       pres:'trabalhamos', ph_pres:'trah-bal-YAH-moos',pret:'trabalhamos',  ph_pret:'trah-bal-YAH-moos',fut:'trabalharemos', ph_fut:'trah-bal-yah-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'trabalham',   ph_pres:'trah-BAL-yowm',    pret:'trabalharam',  ph_pret:'trah-bal-YAH-rowm',fut:'trabalharão',   ph_fut:'trah-bal-yah-ROWM'},
+        ],
+        note:'Regular -ar verb. "Onde você trabalha?" (Where do you work?) is a very common question.',
+    },
+    {
+        inf:'Morar', en:'To live / reside', type:'-ar',
+        conj:[
+            {pro:'Eu',        pres:'moro',    ph_pres:'MOH-roo',      pret:'morei',    ph_pret:'moh-RAY',      fut:'morarei',    ph_fut:'moh-rah-RAY'},
+            {pro:'Você/Ele',  pres:'mora',    ph_pres:'MOH-rah',      pret:'morou',    ph_pret:'moh-ROH',      fut:'morará',     ph_fut:'moh-rah-RAH'},
+            {pro:'Nós',       pres:'moramos', ph_pres:'moh-RAH-moos', pret:'moramos',  ph_pret:'moh-RAH-moos', fut:'moraremos',  ph_fut:'moh-rah-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'moram',   ph_pres:'MOH-rowm',     pret:'moraram',  ph_pret:'moh-RAH-rowm', fut:'morarão',    ph_fut:'moh-rah-ROWM'},
+        ],
+        note:'Regular -ar verb. "Eu moro no Brasil" (I live in Brazil). Essential for introductions.',
+    },
+    {
+        inf:'Beber', en:'To drink', type:'-er',
+        conj:[
+            {pro:'Eu',        pres:'bebo',    ph_pres:'BEH-boo',      pret:'bebi',     ph_pret:'beh-BEE',      fut:'beberei',    ph_fut:'beh-beh-RAY'},
+            {pro:'Você/Ele',  pres:'bebe',    ph_pres:'BEH-bee',      pret:'bebeu',    ph_pret:'beh-BEH-oo',   fut:'beberá',     ph_fut:'beh-beh-RAH'},
+            {pro:'Nós',       pres:'bebemos', ph_pres:'beh-BAY-moos', pret:'bebemos',  ph_pret:'beh-BAY-moos', fut:'beberemos',  ph_fut:'beh-beh-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'bebem',   ph_pres:'BEH-beng',     pret:'beberam',  ph_pret:'beh-BAY-rowm', fut:'beberão',    ph_fut:'beh-beh-ROWM'},
+        ],
+        note:'Regular -er verb. Great to practise alongside Comer — "comer e beber" (to eat and drink).',
+    },
+    {
+        inf:'Dormir', en:'To sleep', type:'-ir',
+        conj:[
+            {pro:'Eu',        pres:'durmo',   ph_pres:'DOOR-moo',     pret:'dormi',    ph_pret:'dor-MEE',      fut:'dormirei',   ph_fut:'dor-mee-RAY'},
+            {pro:'Você/Ele',  pres:'dorme',   ph_pres:'DOR-mee',      pret:'dormiu',   ph_pret:'dor-MEE-oo',   fut:'dormirá',    ph_fut:'dor-mee-RAH'},
+            {pro:'Nós',       pres:'dormimos',ph_pres:'dor-MEE-moos', pret:'dormimos', ph_pret:'dor-MEE-moos', fut:'dormiremos', ph_fut:'dor-mee-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'dormem',  ph_pres:'DOR-meng',     pret:'dormiram', ph_pret:'dor-MEE-rowm', fut:'dormirão',   ph_fut:'dor-mee-ROWM'},
+        ],
+        note:'Stem-changing -ir verb: the "o" changes to "u" in Eu. "Dormi bem" (I slept well).',
+    },
+    {
+        inf:'Comprar', en:'To buy', type:'-ar',
+        conj:[
+            {pro:'Eu',        pres:'compro',    ph_pres:'KOM-proo',       pret:'comprei',    ph_pret:'kom-PRAY',       fut:'comprarei',    ph_fut:'kom-prah-RAY'},
+            {pro:'Você/Ele',  pres:'compra',    ph_pres:'KOM-prah',       pret:'comprou',    ph_pret:'kom-PROH',       fut:'comprará',     ph_fut:'kom-prah-RAH'},
+            {pro:'Nós',       pres:'compramos', ph_pres:'kom-PRAH-moos',  pret:'compramos',  ph_pret:'kom-PRAH-moos',  fut:'compraremos',  ph_fut:'kom-prah-RAY-moos'},
+            {pro:'Vocês/Eles',pres:'compram',   ph_pres:'KOM-prowm',      pret:'compraram',  ph_pret:'kom-PRAH-rowm',  fut:'comprarão',    ph_fut:'kom-prah-ROWM'},
+        ],
+        note:'Regular -ar verb. Very useful for shopping: "Quanto custa? Vou comprar!" (How much? I\'ll buy it!)',
+    },
+];
+
+let currentVerb = 0;
+let verbFilter = '';
+
+function filterVerbs(val){
+    verbFilter = val.toLowerCase();
+    renderVerbGrid(verbFilter);
+}
+
+function renderVerbGrid(filter){
+    const grid = document.getElementById('verb-grid');
+    grid.innerHTML = '';
+    const filtered = VERB_DATA.filter(v =>
+        !filter ||
+        v.inf.toLowerCase().includes(filter) ||
+        v.en.toLowerCase().includes(filter)
+    );
+    filtered.forEach((v, i) => {
+        const realIdx = VERB_DATA.indexOf(v);
+        const btn = document.createElement('button');
+        btn.className = 'verb-btn' + (realIdx === currentVerb ? ' active' : '');
+        btn.innerHTML = `<span class="vb-inf">${v.inf}</span><span class="vb-en">${v.en}</span>`;
+        btn.onclick = () => { currentVerb = realIdx; renderVerbGrid(verbFilter); renderVerbTable(); };
+        grid.appendChild(btn);
+    });
+    renderVerbTable();
+}
+
+function renderVerbTable(){
+    const v = VERB_DATA[currentVerb];
+    const wrap = document.getElementById('verb-table-wrap');
+    if(!v){ wrap.innerHTML = ''; return; }
+
+    const tenses = [
+        { key:'pres', ph:'ph_pres', label:'Present Tense — Presente',         cls:'' },
+        { key:'pret', ph:'ph_pret', label:'Past Tense — Pretérito Perfeito',   cls:'past' },
+        { key:'fut',  ph:'ph_fut',  label:'Future Tense — Futuro',             cls:'future' },
+    ];
+
+    wrap.innerHTML = tenses.map(t => `
+        <div class="verb-tense-block">
+            <div class="verb-tense-title ${t.cls}">${v.inf} &mdash; ${t.label}</div>
+            <table class="verb-conj-table">
+                ${v.conj.map(r => `
+                <tr>
+                    <td class="vc-pronoun">${r.pro}</td>
+                    <td class="vc-form" onclick="speakText('${r[t.key].replace(/'/g,"\\'")}')" style="cursor:pointer" title="Tap to hear">${r[t.key]} 🔊</td>
+                    <td class="vc-ph">${r[t.ph]}</td>
+                </tr>`).join('')}
+            </table>
+            ${t.key==='fut' && v.note ? `<div class="verb-note">💡 ${v.note}</div>` : ''}
+        </div>`).join('');
+}
+
+// ════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════
+buildCatButtons('words-cat-scroll', currentCat, (catId,btn,cid)=>{ loadWordCat(catId); setActiveCatBtn(cid,catId); });
+buildCatButtons('list-cat-scroll', listCat, setListCat);
+buildCatButtons('test-cat-scroll', testCat, pickTestCat);
+loadWordCat(currentCat);
+loadPhrases();
+showSetup();
+renderVerbGrid('');
 </script>
-
 </body>
 </html>
