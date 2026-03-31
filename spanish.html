@@ -473,7 +473,43 @@ function loadWordCat(catId){
     wordPool=shuffle(pool);wordIdx=0;wordHistory=[0];
     showWordCard();setActiveCatBtn('words-cat-scroll',catId);
 }
-function showWordCard(){document.querySelectorAll('#words .flashcard-wrapper').forEach(w=>w.classList.remove('is-flipped'));const card=wordPool[wordIdx];if(!card)return;setTimeout(()=>{document.getElementById('sp-text').innerText=card.sp;document.getElementById('en-text').innerText=card.en;document.querySelectorAll('.sp-ph-view').forEach(el=>el.innerText=`[ ${card.ph} ]`);document.getElementById('words-counter').innerText=`${wordIdx+1} / ${wordPool.length}`;},150);}
+function showWordCard(){
+    document.querySelectorAll('#words .flashcard-wrapper').forEach(w=>w.classList.remove('is-flipped'));
+    const card=wordPool[wordIdx];
+    const favEmpty=document.getElementById('fav-empty-msg');
+    if(!card){
+        document.getElementById('sp-text').innerText='--';
+        document.getElementById('en-text').innerText='--';
+        document.querySelectorAll('.sp-ph-view').forEach(el=>el.innerText='');
+        document.getElementById('words-counter').innerText='';
+        updateStarUI(null);
+        if(currentCat==='favorites'&&!favEmpty){
+            const msg=document.createElement('div');msg.id='fav-empty-msg';msg.className='fav-empty';
+            msg.innerHTML='<span class="fav-empty-icon">☆</span>No favourites yet!<br>Tap the ☆ on any word card to save it here.';
+            document.getElementById('words').appendChild(msg);
+        }
+        return;
+    }
+    if(favEmpty)favEmpty.remove();
+    setTimeout(()=>{
+        document.getElementById('sp-text').innerText=card.sp;
+        document.getElementById('en-text').innerText=card.en;
+        document.querySelectorAll('.sp-ph-view').forEach(el=>el.innerText=`[ ${card.ph} ]`);
+        document.getElementById('words-counter').innerText=`${wordIdx+1} / ${wordPool.length}`;
+        updateStarUI(card);
+        const emojiEl=document.getElementById('card-emoji');
+        if(card.em){emojiEl.textContent=card.em;emojiEl.style.display='block';}
+        else{emojiEl.textContent='';emojiEl.style.display='none';}
+        const exFront=document.getElementById('card-example-front');
+        const exBack=document.getElementById('card-example-back');
+        if(card.example){
+            document.getElementById('example-native').textContent=card.example;
+            document.getElementById('example-back-native').textContent=card.example;
+            document.getElementById('example-en').textContent=card.example_en||'';
+            exFront.style.display='block';exBack.style.display='block';
+        }else{exFront.style.display='none';exBack.style.display='none';}
+    },150);
+}
 function nextCard(){wordIdx=(wordIdx+1)%wordPool.length;wordHistory.push(wordIdx);if(wordHistory.length>200)wordHistory.shift();showWordCard();}
 function prevCard(){if(wordHistory.length>1){wordHistory.pop();wordIdx=wordHistory[wordHistory.length-1];}else wordIdx=(wordIdx-1+wordPool.length)%wordPool.length;showWordCard();}
 
