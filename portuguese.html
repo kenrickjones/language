@@ -21,8 +21,9 @@
         .content-section.active{display:flex;animation:fadeIn 0.3s ease;}
 
         /* Category Scroller */
-        .cat-scroll-wrap{width:100%;overflow-x:auto;overflow-y:visible;margin-bottom:15px;-webkit-overflow-scrolling:touch;scrollbar-width:none;min-width:0;}
+        .cat-scroll-wrap{width:100%;overflow-x:auto;overflow-y:visible;margin-bottom:15px;-webkit-overflow-scrolling:touch;scrollbar-width:none;min-width:0;cursor:grab;}
         .cat-scroll-wrap::-webkit-scrollbar{display:none;}
+        .cat-scroll-wrap.is-dragging{cursor:grabbing;user-select:none;}
         .cat-scroll{display:flex;gap:8px;padding:4px 2px;width:max-content;}
         #list-words-controls{width:100%;overflow:hidden;min-width:0;} #test-cat-section{width:100%;overflow:hidden;min-width:0;}
         .cat-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 14px;background:var(--card);border:2px solid var(--border);border-radius:14px;cursor:pointer;color:var(--text-dim);font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;white-space:nowrap;}
@@ -1507,6 +1508,31 @@ loadWordCat(currentCat);
 loadPhrases();
 showSetup();
 renderVerbGrid('');
+
+// ════════════════════════════════════════════════════
+// DRAG-TO-SCROLL — category sliders on desktop
+// ════════════════════════════════════════════════════
+function enableDragScroll(el){
+    let startX, startLeft, dragging=false;
+    el.addEventListener('mousedown', e=>{
+        // don't hijack clicks on the buttons themselves
+        if(e.target.closest('.cat-btn')) { startX=e.pageX; startLeft=el.scrollLeft; dragging=true; el.classList.add('is-dragging'); return; }
+        dragging=true; startX=e.pageX; startLeft=el.scrollLeft;
+        el.classList.add('is-dragging');
+        e.preventDefault();
+    });
+    window.addEventListener('mousemove', e=>{
+        if(!dragging) return;
+        const dx = e.pageX - startX;
+        if(Math.abs(dx) > 3) e.preventDefault();
+        el.scrollLeft = startLeft - dx;
+    });
+    window.addEventListener('mouseup', e=>{
+        if(!dragging) return;
+        dragging=false; el.classList.remove('is-dragging');
+    });
+}
+document.querySelectorAll('.cat-scroll-wrap').forEach(enableDragScroll);
 </script>
 </body>
 </html>
