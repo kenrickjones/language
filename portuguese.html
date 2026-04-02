@@ -95,6 +95,25 @@
         .quiz-opt.reveal{border-color:#22c55e;background:rgba(34,197,94,0.1);color:#22c55e;}
         .quiz-opt:disabled{cursor:default;}
 
+        /* Audio-First Mode Toggle */
+        .mode-toggle-wrap{width:100%;}
+        .mode-toggle{display:flex;background:var(--bg);padding:4px;border-radius:10px;width:100%;gap:4px;border:1px solid var(--border);}
+        .mode-btn{flex:1;padding:11px 6px;font-size:0.68rem;border:none;background:transparent;color:var(--text-dim);cursor:pointer;border-radius:6px;font-weight:800;letter-spacing:0.03em;}
+        .mode-btn.active{background:var(--card);color:var(--primary);}
+
+        /* Audio-first question box */
+        .quiz-audio-box{width:100%;background:var(--card);border:2px solid #6366f1;border-radius:20px;padding:30px 22px;text-align:center;margin-bottom:18px;display:none;flex-direction:column;align-items:center;gap:14px;}
+        .quiz-audio-icon{font-size:4rem;line-height:1;animation:pulse-icon 2s ease-in-out infinite;}
+        @keyframes pulse-icon{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.08);opacity:0.85;}}
+        .quiz-audio-label{font-size:0.65rem;font-weight:800;color:#a5b4fc;text-transform:uppercase;letter-spacing:0.1em;}
+        .quiz-audio-hint{font-size:0.82rem;color:var(--text-dim);font-weight:600;}
+        .btn-replay{background:#6366f1;color:white;border:none;padding:12px 28px;border-radius:20px;font-size:0.82rem;font-weight:800;cursor:pointer;box-shadow:0 3px 0 #4338ca;display:flex;align-items:center;gap:6px;}
+        .btn-replay:active{transform:translateY(1px);box-shadow:0 2px 0 #4338ca;}
+        .quiz-audio-reveal{font-size:1.1rem;font-weight:800;color:#a5b4fc;display:none;}
+
+        /* Results row — show PT word in audio mode */
+        .result-audio-mode .result-q{color:#a5b4fc;}
+
         /* Test Results */
         .test-results{width:100%;display:none;flex-direction:column;align-items:center;}
         .score-ring-wrap{position:relative;width:150px;height:150px;margin:8px auto 18px;}
@@ -326,6 +345,13 @@
                     <button class="setup-opt" onclick="pickTestDiff('vhard',this)">V.Hard</button>
                 </div>
             </div>
+            <div class="mode-toggle-wrap">
+                <div class="setup-label">Quiz Mode</div>
+                <div class="mode-toggle">
+                    <button class="mode-btn active" onclick="pickTestMode('standard',this)">📖 Standard</button>
+                    <button class="mode-btn" onclick="pickTestMode('audio',this)">🎧 Audio-First</button>
+                </div>
+            </div>
             <button class="btn-start-test" onclick="beginTest()">START TEST →</button>
         </div>
         <div id="test-quiz" class="test-quiz">
@@ -334,11 +360,18 @@
                 <span id="q-score-live">Score: 0</span>
             </div>
             <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="q-progress"></div></div>
-            <div class="quiz-question-box">
+            <div class="quiz-question-box" id="quiz-standard-box">
                 <div class="quiz-q-label">What does this mean?</div>
                 <div class="quiz-q-text" id="q-text">--</div>
                 <div class="quiz-q-phonetic" id="q-phonetic"></div>
                 <button class="quiz-q-hear" onclick="speakCurrentQ()">🔊 HEAR</button>
+            </div>
+            <div class="quiz-audio-box" id="quiz-audio-box">
+                <div class="quiz-audio-label">🎧 Listening Challenge</div>
+                <div class="quiz-audio-icon" id="audio-pulse-icon">🔊</div>
+                <div class="quiz-audio-hint">What did you hear?</div>
+                <button class="btn-replay" onclick="speakCurrentQ()">↺ &nbsp;Play Again</button>
+                <div class="quiz-audio-reveal" id="quiz-audio-reveal"></div>
             </div>
             <div class="quiz-options" id="q-options"></div>
         </div>
@@ -754,7 +787,7 @@ function rateCard(rating){
 }
 let phraseDiff = 'easy', phrasePool = [], phraseIdx = 0, phraseHistory = [];
 let listType = 'words', listCat = 'power100', listPhraseDiff = 'easy';
-let testType = 'words', testCat = 'power100', testDiff = 'easy';
+let testType = 'words', testCat = 'power100', testDiff = 'easy', testMode = 'standard';
 let quizQs = [], quizIdx = 0, quizScore = 0, quizLog = [];
 let currentQuizItem = null;
 let voices = [];
@@ -996,6 +1029,11 @@ function renderList(){
 // ════════════════════════════════════════════════════
 // TEST
 // ════════════════════════════════════════════════════
+function pickTestMode(mode, btn){
+    testMode = mode;
+    btn.parentElement.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+}
 function pickTestType(type, btn){
     testType=type;
     btn.parentElement.querySelectorAll('.setup-opt').forEach(b=>b.classList.remove('active'));
@@ -1038,8 +1076,25 @@ function showQuestion(){
     document.getElementById('q-counter').innerText=`Question ${quizIdx+1} / ${total}`;
     document.getElementById('q-score-live').innerText=`Score: ${quizScore}`;
     document.getElementById('q-progress').style.width=`${(quizIdx/total)*100}%`;
+
+    const isAudio = testMode==='audio';
+    document.getElementById('quiz-standard-box').style.display = isAudio ? 'none' : 'block';
+    document.getElementById('quiz-audio-box').style.display    = isAudio ? 'flex'  : 'none';
+
+    // Standard mode: show PT text
     document.getElementById('q-text').innerText=q.pt;
     document.getElementById('q-phonetic').innerText=q.ph?`[ ${q.ph} ]`:'';
+
+    // Audio mode: hide reveal until answered, reset pulse icon
+    if(isAudio){
+        const revealEl = document.getElementById('quiz-audio-reveal');
+        revealEl.style.display='none';
+        revealEl.textContent='';
+        document.getElementById('audio-pulse-icon').style.animation='pulse-icon 2s ease-in-out infinite';
+        // auto-play after a short delay
+        setTimeout(()=>speakCurrentQ(), 400);
+    }
+
     const allPool=buildTestPool();
     const others=shuffle(allPool.filter(x=>x.en!==q.en));
     const opts=shuffle([q,...others.slice(0,3)]);
@@ -1056,7 +1111,18 @@ function answerChosen(btn,correct,q,wrap){
     if(correct){btn.classList.add('correct');quizScore++;}
     else{btn.classList.add('wrong');wrap.querySelectorAll('.quiz-opt').forEach(b=>{if(b.textContent===q.en)b.classList.add('reveal');});}
     quizLog.push({pt:q.pt,en:q.en,ok:correct});
-    setTimeout(()=>{quizIdx++;if(quizIdx<quizQs.length)showQuestion();else showResults();},950);
+
+    // Audio mode: reveal the Portuguese word after answering
+    if(testMode==='audio'){
+        const revealEl = document.getElementById('quiz-audio-reveal');
+        revealEl.textContent = correct ? `✅ ${q.pt}` : `❌ ${q.pt}`;
+        revealEl.style.display = 'block';
+        revealEl.style.color = correct ? '#4ade80' : '#f87171';
+        // stop pulsing
+        document.getElementById('audio-pulse-icon').style.animation = 'none';
+    }
+
+    setTimeout(()=>{quizIdx++;if(quizIdx<quizQs.length)showQuestion();else showResults();},1100);
 }
 function showResults(){
     document.getElementById('test-quiz').style.display='none';
@@ -1077,8 +1143,9 @@ function showResults(){
     const bd=document.getElementById('results-breakdown'); bd.innerHTML='';
     quizLog.forEach(r=>{
         const row=document.createElement('div');
-        row.className=`result-row ${r.ok?'r-correct':'r-wrong'}`;
-        row.innerHTML=`<div class="result-icon">${r.ok?'✅':'❌'}</div><div><div class="result-q">${r.pt}</div><div class="result-a">${r.en}</div></div>`;
+        row.className=`result-row ${r.ok?'r-correct':'r-wrong'}${testMode==='audio'?' result-audio-mode':''}`;
+        const modeTag = testMode==='audio' ? ' <span style="font-size:0.65rem;opacity:0.6;margin-left:4px">🎧</span>' : '';
+        row.innerHTML=`<div class="result-icon">${r.ok?'✅':'❌'}</div><div><div class="result-q">${r.pt}${modeTag}</div><div class="result-a">${r.en}</div></div>`;
         bd.appendChild(row);
     });
 }
