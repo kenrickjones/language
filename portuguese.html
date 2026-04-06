@@ -242,13 +242,36 @@
         /* Favorites empty state */
         .fav-empty{text-align:center;padding:40px 20px;color:var(--text-dim);font-size:0.9rem;line-height:1.6;}
         .fav-empty .fav-empty-icon{font-size:2.5rem;display:block;margin-bottom:12px;}
+        /* Streak badge in top-nav */
+        .streak-badge{display:flex;align-items:center;gap:5px;margin-left:auto;background:var(--card);border:1px solid var(--border);padding:6px 12px;border-radius:20px;font-size:0.72rem;font-weight:800;color:var(--text-dim);cursor:default;user-select:none;}
+        .streak-badge.streak-active{border-color:rgba(251,146,60,0.5);color:#fb923c;background:rgba(251,146,60,0.08);}
+        .streak-num{font-size:0.95rem;font-weight:900;}
+
+        /* Mastery progress bar in header */
+        .mastery-wrap{width:100%;margin-top:4px;margin-bottom:6px;}
+        .mastery-label{display:flex;justify-content:space-between;align-items:center;font-size:0.62rem;font-weight:800;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:5px;}
+        .mastery-label span{color:var(--primary);}
+        .mastery-bar-track{width:100%;height:7px;background:var(--border);border-radius:4px;overflow:hidden;}
+        .mastery-bar-fill{height:100%;background:linear-gradient(90deg,#22c55e,#4ade80);border-radius:4px;transition:width 0.6s cubic-bezier(.4,0,.2,1);}
+
         @keyframes fadeIn{from{opacity:0}to{opacity:1}}
     </style>
 </head>
 <body>
-<div class="top-nav"><a href="index.html" class="home-link">← HOME</a></div>
+<div class="top-nav">
+    <a href="index.html" class="home-link">← HOME</a>
+    <div class="streak-badge" id="streak-badge" title="Daily streak — complete a test each day to keep it going!">
+        🔥 <span class="streak-num" id="streak-num">0</span> day streak
+    </div>
+</div>
 <div class="app-container">
-    <header><h1>PROJETO <span style="color:var(--primary)">SAMBA</span> 🇧🇷</h1></header>
+    <header>
+        <h1>PROJETO <span style="color:var(--primary)">SAMBA</span> 🇧🇷</h1>
+        <div class="mastery-wrap">
+            <div class="mastery-label">Words Mastered <span id="mastery-pct">0%</span></div>
+            <div class="mastery-bar-track"><div class="mastery-bar-fill" id="mastery-bar" style="width:0%"></div></div>
+        </div>
+    </header>
     <nav>
         <button class="nav-btn active" onclick="showTab('words',this)">Words</button>
         <button class="nav-btn" onclick="showTab('phrases',this)">Phrases</button>
@@ -767,8 +790,62 @@ let wordPool = [], wordIdx = 0, wordHistory = [];
 // ════════════════════════════════════════════════════
 // STARS & FAVORITES (localStorage)
 // ════════════════════════════════════════════════════
-const LS_STARS = 'samba_starred_v1';
-const LS_EASY  = 'samba_easy_v1';
+const LS_STARS  = 'samba_starred_v1';
+const LS_EASY   = 'samba_easy_v1';
+const LS_STREAK = 'samba_streak_v1'; // { count, lastDate }
+
+// ── Streak helpers ───────────────────────────────────
+function getStreak(){ try{ return JSON.parse(localStorage.getItem(LS_STREAK)||'{"count":0,"lastDate":""}'); }catch(e){ return {count:0,lastDate:''}; } }
+function saveStreak(obj){ try{ localStorage.setItem(LS_STREAK, JSON.stringify(obj)); }catch(e){} }
+
+function todayStr(){ return new Date().toISOString().slice(0,10); } // "YYYY-MM-DD"
+
+function recordTestComplete(){
+    const today = todayStr();
+    const s = getStreak();
+    if(s.lastDate === today) return; // already counted today
+    const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+    const yStr = yesterday.toISOString().slice(0,10);
+    s.count = (s.lastDate === yStr) ? s.count + 1 : 1; // continue or restart
+    s.lastDate = today;
+    saveStreak(s);
+    renderStreak();
+}
+
+function renderStreak(){
+    const s = getStreak();
+    const today = todayStr();
+    const active = s.lastDate === today;
+    const badge = document.getElementById('streak-badge');
+    const num   = document.getElementById('streak-num');
+    num.textContent = s.count;
+    badge.classList.toggle('streak-active', s.count > 0);
+    badge.title = s.count > 0
+        ? `🔥 ${s.count}-day streak! ${active ? 'Completed today ✅' : 'Complete a test today to keep it going!'}`
+        : 'Complete a test to start your streak!';
+}
+
+// ── Mastery helpers ──────────────────────────────────
+function countMastered(){
+    const eu = getEasyUntil();
+    const all = Object.values(WORD_LIBRARY).flat();
+    // count unique words that are currently marked easy (still within their window)
+    const now = Date.now();
+    // easy keys are "pt|en" — filter all words
+    let mastered = 0;
+    all.forEach(w=>{
+        const key = w.pt + '|' + w.en;
+        if(eu[key] && eu[key] > now) mastered++;
+    });
+    return { mastered, total: all.length };
+}
+
+function renderMastery(){
+    const {mastered, total} = countMastered();
+    const pct = total ? Math.round((mastered/total)*100) : 0;
+    document.getElementById('mastery-pct').textContent = `${mastered} / ${total} (${pct}%)`;
+    document.getElementById('mastery-bar').style.width = pct + '%';
+}
 
 function getStarred(){ try{ return JSON.parse(localStorage.getItem(LS_STARS)||'[]'); }catch(e){ return []; } }
 function saveStarred(arr){ try{ localStorage.setItem(LS_STARS, JSON.stringify(arr)); }catch(e){} }
@@ -821,6 +898,7 @@ function rateCard(rating){
         const eu = getEasyUntil();
         eu[cardKey(card)] = Date.now() + 24*60*60*1000; // 24 hrs
         saveEasyUntil(eu);
+        renderMastery(); // 📊 update progress bar
         // Remove from current pool so it doesn't reappear this session
         wordPool.splice(wordIdx, 1);
         if(wordPool.length === 0){ loadWordCat(currentCat); return; }
@@ -1300,6 +1378,7 @@ function answerChosen(btn,correct,q,wrap){
 function showResults(){
     document.getElementById('test-quiz').style.display='none';
     document.getElementById('test-results').style.display='flex';
+    recordTestComplete(); // 🔥 streak
     const s=quizScore,t=quizQs.length;
     document.getElementById('results-num').innerText=s;
     const circ=2*Math.PI*65;
@@ -1994,6 +2073,8 @@ loadWordCat(currentCat);
 loadPhrases();
 showSetup();
 renderVerbGrid('');
+renderStreak();   // 🔥 show streak on load
+renderMastery();  // 📊 show mastery on load
 
 // ════════════════════════════════════════════════════
 // DRAG-TO-SCROLL — category sliders on desktop
