@@ -7,10 +7,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="portuguese_vault.js"></script>
     <style>
-        :root{--bg:#0f172a;--card:#1e293b;--primary:#22c55e;--shadow:#166534;--text:#f8fafc;--text-dim:#94a3b8;--border:#334155;}
+        :root{--bg:#0f172a;--card:#1e293b;--primary:#22c55e;--shadow:#166534;--text:#f8fafc;--text-dim:#94a3b8;--border:#334155;--nav-bg:rgba(15,23,42,0.95);--card-back-text:white;}
+        html.theme-rio{--bg:#fdf6ec;--card:#ffffff;--primary:#16a34a;--shadow:#14532d;--text:#1e293b;--text-dim:#64748b;--border:#e2e8f0;--nav-bg:rgba(253,246,236,0.95);--card-back-text:white;}
+        /* Rio-mode overrides for elements that use hardcoded dark colours */
+        html.theme-rio .card-front{box-shadow:0 4px 24px rgba(0,0,0,0.08);}
+        html.theme-rio .pronunciation{color:#dcfce7;}
+        html.theme-rio .verb-tense-block{box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+        html.theme-rio .quiz-question-box,html.theme-rio .quiz-cloze-box,html.theme-rio .quiz-verb-box,html.theme-rio .quiz-audio-box{box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+        html.theme-rio .list-scroll{box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+        html.theme-rio .score-ring-wrap circle:first-child{stroke:#e2e8f0;}
+
+        /* Theme toggle button */
+        .theme-btn{background:var(--card);border:1px solid var(--border);color:var(--text-dim);padding:6px 11px;border-radius:20px;font-size:0.82rem;cursor:pointer;line-height:1;flex-shrink:0;transition:background 0.3s,border-color 0.3s,color 0.3s;}
+        .theme-btn:hover{border-color:var(--primary);color:var(--primary);}
         *{box-sizing:border-box;transition:transform 0.2s ease, opacity 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;-webkit-tap-highlight-color:transparent;}
         body{font-family:'Inter',sans-serif;background-color:var(--bg);color:var(--text);margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding-top:env(safe-area-inset-top);}
-        .top-nav{width:100%;display:flex;padding:12px 15px;background:rgba(15,23,42,0.95);backdrop-filter:blur(10px);position:sticky;top:0;z-index:100;border-bottom:1px solid var(--border);}
+        .top-nav{width:100%;display:flex;padding:12px 15px;background:var(--nav-bg);backdrop-filter:blur(10px);position:sticky;top:0;z-index:100;border-bottom:1px solid var(--border);gap:8px;align-items:center;}
         .home-link{text-decoration:none;color:var(--text-dim);font-size:0.75rem;font-weight:800;border:1px solid var(--border);padding:6px 14px;border-radius:20px;background:var(--card);}
         .app-container{max-width:600px;width:92%;display:flex;flex-direction:column;align-items:center;padding-bottom:50px;}
         header{width:100%;text-align:center;padding:25px 0;}
@@ -260,6 +272,7 @@
 <body>
 <div class="top-nav">
     <a href="index.html" class="home-link">← HOME</a>
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Switch theme">🌙</button>
     <div class="streak-badge" id="streak-badge" title="Daily streak — complete a test each day to keep it going!">
         🔥 <span class="streak-num" id="streak-num">0</span> day streak
     </div>
@@ -328,11 +341,20 @@
 
     <!-- PHRASES -->
     <div id="phrases" class="content-section">
-        <div class="diff-toggle">
-            <button class="diff-btn active" onclick="setPhraseDiff('easy',this)">EASY</button>
-            <button class="diff-btn" onclick="setPhraseDiff('medium',this)">MED</button>
-            <button class="diff-btn" onclick="setPhraseDiff('hard',this)">HARD</button>
-            <button class="diff-btn" onclick="setPhraseDiff('vhard',this)">V.HARD</button>
+        <div class="list-type-toggle" style="margin-bottom:12px;">
+            <button class="list-type-btn active" onclick="setPhraseMode('difficulty',this)">📚 By Level</button>
+            <button class="list-type-btn" onclick="setPhraseMode('scenario',this)">🎯 Scenarios</button>
+        </div>
+        <div id="phrase-diff-controls">
+            <div class="diff-toggle">
+                <button class="diff-btn active" onclick="setPhraseDiff('easy',this)">EASY</button>
+                <button class="diff-btn" onclick="setPhraseDiff('medium',this)">MED</button>
+                <button class="diff-btn" onclick="setPhraseDiff('hard',this)">HARD</button>
+                <button class="diff-btn" onclick="setPhraseDiff('vhard',this)">V.HARD</button>
+            </div>
+        </div>
+        <div id="phrase-scenario-controls" style="display:none;">
+            <div class="cat-scroll-wrap"><div class="cat-scroll" id="scenario-scroll"></div></div>
         </div>
         <div class="flashcard-wrapper" onclick="this.classList.toggle('is-flipped')">
             <div class="flashcard-inner">
@@ -775,10 +797,153 @@ const WORD_LIBRARY = {
 // ════════════════════════════════════════════════════
 // PHRASE LIBRARY — by difficulty
 // ════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════
+// SCENARIO PHRASES — Survival Situations
+// ════════════════════════════════════════════════════
+const SCENARIOS = [
+    { id:'beach',      label:'At the Beach',          icon:'🏖️' },
+    { id:'pharmacy',   label:'At the Pharmacy',        icon:'💊' },
+    { id:'lanchonete', label:'At the Lanchonete',      icon:'🥪' },
+    { id:'transport',  label:'Getting Around',         icon:'🚌' },
+    { id:'hotel',      label:'At the Hotel',           icon:'🏨' },
+    { id:'shopping',   label:'Shopping',               icon:'🛍️' },
+    { id:'doctor',     label:'At the Doctor',          icon:'🩺' },
+    { id:'bar',        label:'At the Bar',             icon:'🍺' },
+    { id:'emergency',  label:'Emergencies',            icon:'🆘' },
+    { id:'small_talk', label:'Small Talk',             icon:'💬' },
+];
+
+const SCENARIO_PHRASES = {
+    beach:[
+        {pt:'Tem guarda-sol para alugar?',              en:'Are there umbrellas for rent?',              ph:'tem gwar-da-SOL pah-rah ah-loo-GAR'},
+        {pt:'A água está boa para nadar?',              en:'Is the water good for swimming?',            ph:'ah AH-gwah es-TAH BOH-ah pah-rah nah-DAR'},
+        {pt:'Pode tomar conta das minhas coisas?',      en:'Can you watch my things?',                   ph:'POH-jee toh-MAR KON-tah dahs MEEN-yahs KOY-zahs'},
+        {pt:'Onde fica o chuveiro?',                    en:'Where is the shower?',                       ph:'ON-jee FEE-kah oo shoo-VAY-roo'},
+        {pt:'Tem protetor solar?',                      en:'Do you have sunscreen?',                     ph:'teng proh-teh-TOR soh-LAR'},
+        {pt:'Qual é a melhor praia aqui perto?',        en:'What\'s the best beach nearby?',             ph:'kwahl eh ah mel-YOR PRAY-ah ah-KEE PEHR-too'},
+        {pt:'Cuidado com as correntes!',                en:'Watch out for the currents!',                ph:'kwee-DAH-doo kong ahs koh-HEN-cheez'},
+        {pt:'Dois coqueiros gelados, por favor.',       en:'Two cold coconut waters, please.',           ph:'doyss koh-KAY-rohs zheh-LAH-doos por fah-VOR'},
+        {pt:'Essa praia tem bandeira vermelha?',        en:'Does this beach have a red flag?',           ph:'ES-sah PRAY-ah teng ban-DAY-rah vehr-MEL-yah'},
+        {pt:'Posso usar a minha rede aqui?',            en:'Can I set up my hammock here?',              ph:'POH-soo oo-ZAR ah MEEN-yah HEH-jee ah-KEE'},
+    ],
+    pharmacy:[
+        {pt:'Tem algo para dor de cabeça?',             en:'Do you have something for a headache?',      ph:'teng AHL-goo PAH-rah dor jee kah-BEH-sah'},
+        {pt:'Preciso de protetor solar fator 50.',      en:'I need SPF 50 sunscreen.',                   ph:'preh-SEE-zoo jee proh-teh-TOR soh-LAR fah-TOR sin-KWEN-tah'},
+        {pt:'Esse remédio tem receita?',                en:'Does this medicine need a prescription?',    ph:'ES-see heh-MEH-jee-oo teng heh-SAY-tah'},
+        {pt:'Estou com diarreia.',                      en:'I have diarrhoea.',                          ph:'es-TOH kong jee-ah-HAY-ah'},
+        {pt:'Tenho uma alergia a penicilina.',          en:'I have a penicillin allergy.',               ph:'TEN-yoo OO-mah ah-lehr-ZHEE-ah ah peh-nee-see-LEE-nah'},
+        {pt:'Pode me recomendar algo para enjoo?',      en:'Can you recommend something for nausea?',    ph:'POH-jee mee heh-koh-men-DAR AHL-goo PAH-rah en-ZHOH-oo'},
+        {pt:'Qual é a dosagem recomendada?',            en:'What is the recommended dosage?',            ph:'kwahl eh ah doh-SAH-zheng heh-koh-men-DAH-dah'},
+        {pt:'Tem repelente de insetos?',                en:'Do you have insect repellent?',              ph:'teng heh-peh-LEN-chee jee een-SEH-tooz'},
+        {pt:'Estou grávida — é seguro tomar?',         en:'I\'m pregnant — is it safe to take?',        ph:'es-TOH GRAH-vee-dah eh seh-GOO-roo toh-MAR'},
+        {pt:'Onde ficam os curativos?',                 en:'Where are the plasters/bandages?',           ph:'ON-jee FEE-kong oos koo-rah-CHEE-vooz'},
+    ],
+    lanchonete:[
+        {pt:'O que vem no X-burguer?',                  en:'What comes in the X-burger?',                ph:'oo kee veng noo SHEEZ-boor-gehr'},
+        {pt:'Uma mista quente, por favor.',             en:'One toasted ham and cheese, please.',        ph:'OO-mah MEES-tah KEN-chee por fah-VOR'},
+        {pt:'Pode tirar a maionese?',                   en:'Can you leave out the mayonnaise?',          ph:'POH-jee chee-RAR ah my-oh-NEH-zee'},
+        {pt:'Tem suco natural?',                        en:'Do you have fresh juice?',                   ph:'teng SOO-koo nah-too-RAL'},
+        {pt:'Um café com leite e um pão de queijo.',    en:'A white coffee and a cheese bread.',         ph:'oong kah-FEH kong LAY-chee ee oong powm jee KAY-zhoo'},
+        {pt:'Para viagem, por favor.',                  en:'To take away, please.',                      ph:'PAH-rah vyah-ZHENG por fah-VOR'},
+        {pt:'Qual o sabor do suco hoje?',               en:'What flavour is the juice today?',           ph:'kwahl oo sah-BOR doo SOO-koo OH-zhee'},
+        {pt:'Vou querer uma coxinha também.',           en:'I\'ll also have a coxinha.',                 ph:'voh keh-RER OO-mah koh-SHEEN-yah tahm-BENG'},
+        {pt:'Aceita cartão ou só dinheiro?',            en:'Do you take card or only cash?',             ph:'ah-SAY-tah kar-TOWM oh soh jin-YAY-roo'},
+        {pt:'Tem açaí no cardápio?',                    en:'Is açaí on the menu?',                       ph:'teng ah-sah-EE noo kar-DAH-pyoo'},
+    ],
+    transport:[
+        {pt:'Esse ônibus vai para o centro?',           en:'Does this bus go to the centre?',            ph:'ES-see OH-nee-boos vye PAH-rah oo SEN-troo'},
+        {pt:'Quanto tempo até a próxima estação?',      en:'How long until the next station?',           ph:'KWAN-too TEM-poo ah-TEH ah PROH-shee-mah es-tah-SOWM'},
+        {pt:'Pode me avisar quando chegar lá?',         en:'Can you let me know when we arrive?',        ph:'POH-jee mee ah-vee-ZAR KWAN-doo sheh-GAR lah'},
+        {pt:'Qual é a tarifa do metrô?',                en:'What is the metro fare?',                    ph:'kwahl eh ah tah-REE-fah doo meh-TROH'},
+        {pt:'Tem Uber aqui?',                           en:'Is Uber available here?',                    ph:'teng OO-behr ah-KEE'},
+        {pt:'Me deixa na próxima esquina.',             en:'Drop me at the next corner.',                ph:'mee DAY-shah nah PROH-shee-mah es-KEE-nah'},
+        {pt:'Qual linha eu pego para ir à praia?',      en:'Which line do I take to get to the beach?',  ph:'kwahl LEEN-yah ew PEH-goo PAH-rah eer ah PRAY-ah'},
+        {pt:'Estou perdido — onde estou?',              en:'I\'m lost — where am I?',                    ph:'es-TOH pehr-JEE-doo ON-jee es-TOH'},
+        {pt:'Tem bicicleta para alugar aqui perto?',   en:'Is there a bike rental nearby?',             ph:'teng bee-see-KLEH-tah PAH-rah ah-loo-GAR ah-KEE PEHR-too'},
+        {pt:'O táxi tem taxímetro?',                    en:'Does the taxi have a meter?',                ph:'oo TAHK-see teng tahk-SEE-meh-troo'},
+    ],
+    hotel:[
+        {pt:'Tem quarto disponível para esta noite?',   en:'Do you have a room available tonight?',      ph:'teng KWAR-too jis-poh-NEE-vel PAH-rah ES-tah NOY-chee'},
+        {pt:'Posso fazer o check-in mais cedo?',        en:'Can I check in early?',                      ph:'POH-soo fah-ZEHR oo CHEK-een myss SEH-doo'},
+        {pt:'Café da manhã está incluído?',             en:'Is breakfast included?',                     ph:'kah-FEH dah mah-NYAH es-TAH een-kloo-EE-doo'},
+        {pt:'O ar-condicionado não está funcionando.',  en:'The air conditioning isn\'t working.',       ph:'oo AR kon-see-syoh-NAH-doo nowm es-TAH foon-syoh-NAN-doo'},
+        {pt:'Pode me chamar um táxi às seis?',          en:'Can you call me a taxi at six?',             ph:'POH-jee mee shah-MAR oong TAHK-see ahss sayss'},
+        {pt:'Qual é o wi-fi e a senha?',                en:'What is the wi-fi and password?',            ph:'kwahl eh oo WEE-fee ee ah SEN-yah'},
+        {pt:'Preciso de mais toalhas, por favor.',      en:'I need more towels, please.',                ph:'preh-SEE-zoo jee myss toh-AHL-yahs por fah-VOR'},
+        {pt:'A chave do quarto não está funcionando.',  en:'The room key isn\'t working.',               ph:'ah SHA-vee doo KWAR-too nowm es-TAH foon-syoh-NAN-doo'},
+        {pt:'Pode guardar a minha bagagem?',            en:'Can you store my luggage?',                  ph:'POH-jee gwar-DAR ah MEEN-yah bah-GAH-zheng'},
+        {pt:'Qual é o horário do checkout?',            en:'What time is checkout?',                     ph:'kwahl eh oo oh-RAH-ryoo doo CHEK-owt'},
+    ],
+    shopping:[
+        {pt:'Tem esse em outro tamanho?',               en:'Do you have this in another size?',          ph:'teng ES-see eng OH-troo tah-MAN-yoo'},
+        {pt:'Posso experimentar?',                      en:'Can I try it on?',                           ph:'POH-soo ex-peh-ree-men-TAR'},
+        {pt:'Tem desconto?',                            en:'Is there a discount?',                       ph:'teng des-KON-too'},
+        {pt:'Aceita devolução?',                        en:'Do you accept returns?',                     ph:'ah-SAY-tah deh-voh-loo-SOWM'},
+        {pt:'Quanto custa ao todo?',                    en:'How much is it altogether?',                 ph:'KWAN-too KOOS-tah ow TOH-doo'},
+        {pt:'Pode embrulhar para presente?',            en:'Can you gift wrap it?',                      ph:'POH-jee em-brool-YAR PAH-rah preh-ZEN-chee'},
+        {pt:'Tem alguma promoção?',                     en:'Is there a sale on?',                        ph:'teng AHL-goo-mah proh-moh-SOWM'},
+        {pt:'Onde ficam os provadores?',                en:'Where are the fitting rooms?',               ph:'ON-jee FEE-kong oos proh-vah-DOH-reez'},
+        {pt:'Isso tem garantia?',                       en:'Does this come with a warranty?',            ph:'EE-soo teng gah-ran-CHEE-ah'},
+        {pt:'Pode parcelar em três vezes?',             en:'Can I pay in three instalments?',            ph:'POH-jee par-seh-LAR eng trayss VEH-zeez'},
+    ],
+    doctor:[
+        {pt:'Preciso de um médico com urgência.',       en:'I need a doctor urgently.',                  ph:'preh-SEE-zoo jee oong MEH-jee-koo kong oor-ZHEN-syah'},
+        {pt:'Estou com dor aqui.',                      en:'I have pain here.',                          ph:'es-TOH kong dor ah-KEE'},
+        {pt:'A dor começou ontem de manhã.',            en:'The pain started yesterday morning.',        ph:'ah dor koh-meh-SOO ON-teng jee mah-NYAH'},
+        {pt:'Sou alérgico a esse medicamento.',         en:'I am allergic to this medication.',          ph:'soh ah-LAIR-zhee-koo ah ES-see meh-jee-kah-MEN-too'},
+        {pt:'Tenho pressão alta.',                      en:'I have high blood pressure.',                ph:'TEN-yoo preh-SOWM AHL-tah'},
+        {pt:'Pode me dar um atestado médico?',          en:'Can you give me a medical certificate?',     ph:'POH-jee mee dar oong ah-tes-TAH-doo MEH-jee-koo'},
+        {pt:'Preciso ir ao pronto-socorro.',            en:'I need to go to A&E / the emergency room.',  ph:'preh-SEE-zoo eer ow PRON-too soh-KOH-roo'},
+        {pt:'Estou tomando esse remédio.',              en:'I am taking this medication.',               ph:'es-TOH toh-MAN-doo ES-see heh-MEH-jee-oo'},
+        {pt:'Tenho diabetes.',                          en:'I have diabetes.',                           ph:'TEN-yoo jee-ah-BEH-cheez'},
+        {pt:'Quando recebo os resultados?',             en:'When will I get the results?',               ph:'KWAN-doo heh-SEH-boo oos heh-zool-TAH-dooz'},
+    ],
+    bar:[
+        {pt:'Uma cerveja gelada, por favor.',           en:'One cold beer, please.',                     ph:'OO-mah sehr-VAY-zhah zheh-LAH-dah por fah-VOR'},
+        {pt:'Tem caipirinha?',                          en:'Do you have caipirinha?',                    ph:'teng ky-pee-REEN-yah'},
+        {pt:'Qual é o petisco do dia?',                 en:'What\'s the snack of the day?',              ph:'kwahl eh oo peh-CHEES-koo doo JEE-ah'},
+        {pt:'Mais uma rodada para a mesa.',             en:'Another round for the table.',               ph:'myss OO-mah hoh-DAH-dah PAH-rah ah MEH-zah'},
+        {pt:'Pode fechar a conta?',                     en:'Can we get the bill?',                       ph:'POH-jee feh-SHAR ah KON-tah'},
+        {pt:'Vamos rachar a conta.',                    en:'Let\'s split the bill.',                     ph:'VAH-mooz hah-SHAR ah KON-tah'},
+        {pt:'Tem chopp?',                               en:'Do you have draught beer?',                  ph:'teng SHOH-pee'},
+        {pt:'Sem gelo, por favor.',                     en:'No ice, please.',                            ph:'seng ZHEH-loo por fah-VOR'},
+        {pt:'É aberto até que horas?',                  en:'How late are you open until?',               ph:'eh ah-BEHR-too ah-TEH kee OH-rahs'},
+        {pt:'Tem música ao vivo hoje?',                 en:'Is there live music tonight?',               ph:'teng MOO-zee-kah ow VEE-voo OH-zhee'},
+    ],
+    emergency:[
+        {pt:'Chama a polícia!',                         en:'Call the police!',                           ph:'SHA-mah ah poh-LEE-syah'},
+        {pt:'Chama o SAMU!',                            en:'Call an ambulance!',                         ph:'SHA-mah oo SAH-moo'},
+        {pt:'Me roubaram!',                             en:'I\'ve been robbed!',                         ph:'mee hoh-BAH-rowm'},
+        {pt:'Perdi meu passaporte.',                    en:'I lost my passport.',                        ph:'pehr-JEE MEH-oo pah-sah-POR-chee'},
+        {pt:'Preciso falar com o consulado.',           en:'I need to speak to the consulate.',          ph:'preh-SEE-zoo fah-LAR kong oo kon-soo-LAH-doo'},
+        {pt:'Tem incêndio!',                            en:'There\'s a fire!',                           ph:'teng een-SEN-jee-oo'},
+        {pt:'Alguém está se afogando!',                 en:'Someone is drowning!',                       ph:'ahl-GENG es-TAH see ah-foh-GAN-doo'},
+        {pt:'Preciso de ajuda urgente.',                en:'I need urgent help.',                        ph:'preh-SEE-zoo jee ah-ZHOO-dah oor-ZHEN-chee'},
+        {pt:'Onde fica a delegacia mais próxima?',      en:'Where is the nearest police station?',       ph:'ON-jee FEE-kah ah deh-leh-gah-SEE-ah myss PROH-shee-mah'},
+        {pt:'Meu cartão foi clonado.',                  en:'My card has been cloned.',                   ph:'MEH-oo kar-TOWM foy kloh-NAH-doo'},
+    ],
+    small_talk:[
+        {pt:'De onde você é?',                          en:'Where are you from?',                        ph:'jee ON-jee voh-SAY eh'},
+        {pt:'Há quanto tempo você está no Brasil?',     en:'How long have you been in Brazil?',          ph:'ah KWAN-too TEM-poo voh-SAY es-TAH noo brah-ZEEL'},
+        {pt:'O que você faz da vida?',                  en:'What do you do for a living?',               ph:'oo kee voh-SAY fahss dah VEE-dah'},
+        {pt:'Você é casado?',                           en:'Are you married?',                           ph:'voh-SAY eh kah-ZAH-doo'},
+        {pt:'Qual é sua comida favorita?',              en:'What\'s your favourite food?',               ph:'kwahl eh SOO-ah koh-MEE-dah fah-voh-REE-tah'},
+        {pt:'Você gosta de futebol?',                   en:'Do you like football?',                      ph:'voh-SAY GOS-tah jee foo-chee-BOL'},
+        {pt:'Qual é o seu time?',                       en:'Which team do you support?',                 ph:'kwahl eh oo SEH-oo CHEE-mee'},
+        {pt:'Você já foi ao carnaval?',                 en:'Have you ever been to carnival?',            ph:'voh-SAY zhah foy ow kar-nah-VAL'},
+        {pt:'O calor aqui é forte, né?',                en:'It\'s really hot here, isn\'t it?',          ph:'oo kah-LOR ah-KEE eh FOR-chee neh'},
+        {pt:'Você toca algum instrumento?',             en:'Do you play any instrument?',                ph:'voh-SAY TOH-kah ahl-GOONG eens-troo-MEN-too'},
+    ],
+};
+
 function getPhraseLib(diff){
     if(typeof PORTUGUESE_LIBRARY!=='undefined' && PORTUGUESE_LIBRARY.phrases && PORTUGUESE_LIBRARY.phrases[diff] && PORTUGUESE_LIBRARY.phrases[diff].length)
         return PORTUGUESE_LIBRARY.phrases[diff];
     return [];
+}
+
+function getScenarioLib(scenarioId){
+    return SCENARIO_PHRASES[scenarioId] || [];
 }
 
 // ════════════════════════════════════════════════════
@@ -917,8 +1082,64 @@ function rateCard(rating){
     }
 }
 let phraseDiff = 'easy', phrasePool = [], phraseIdx = 0, phraseHistory = [];
+let phraseMode = 'difficulty', currentScenario = 'beach';
 let listType = 'words', listCat = 'power100', listPhraseDiff = 'easy';
 let testType = 'words', testCat = 'power100', testDiff = 'easy', testMode = 'standard';
+
+// ════════════════════════════════════════════════════
+// DARK / LIGHT THEME
+// ════════════════════════════════════════════════════
+const LS_THEME = 'samba_theme_v1';
+function toggleTheme(){
+    const isRio = document.documentElement.classList.toggle('theme-rio');
+    document.getElementById('theme-btn').textContent = isRio ? '🌙' : '☀️';
+    try{ localStorage.setItem(LS_THEME, isRio ? 'rio' : 'midnight'); }catch(e){}
+}
+function loadTheme(){
+    try{
+        const t = localStorage.getItem(LS_THEME);
+        if(t === 'rio'){ document.documentElement.classList.add('theme-rio'); document.getElementById('theme-btn').textContent='🌙'; }
+    }catch(e){}
+}
+
+// ════════════════════════════════════════════════════
+// HAPTIC FEEDBACK
+// ════════════════════════════════════════════════════
+function haptic(type){
+    if(!navigator.vibrate) return;
+    if(type==='correct') navigator.vibrate([40, 60, 40]);   // double pulse
+    if(type==='wrong')   navigator.vibrate(180);             // single firm buzz
+}
+
+// ════════════════════════════════════════════════════
+// SCENARIOS
+// ════════════════════════════════════════════════════
+function buildScenarioButtons(){
+    const wrap = document.getElementById('scenario-scroll');
+    if(!wrap) return;
+    wrap.innerHTML = '';
+    SCENARIOS.forEach(s => {
+        const btn = document.createElement('button');
+        btn.className = 'cat-btn' + (s.id === currentScenario ? ' active' : '');
+        btn.innerHTML = `<span class="cat-icon">${s.icon}</span>${s.label}`;
+        btn.onclick = () => {
+            currentScenario = s.id;
+            wrap.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+            btn.classList.add('active');
+            loadPhrases();
+        };
+        wrap.appendChild(btn);
+    });
+}
+
+function setPhraseMode(mode, btn){
+    phraseMode = mode;
+    document.querySelectorAll('#phrases .list-type-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('phrase-diff-controls').style.display   = mode==='difficulty' ? 'block' : 'none';
+    document.getElementById('phrase-scenario-controls').style.display = mode==='scenario'  ? 'block' : 'none';
+    loadPhrases();
+}
 let quizQs = [], quizIdx = 0, quizScore = 0, quizLog = [];
 let currentQuizItem = null;
 let voices = [];
@@ -1089,7 +1310,7 @@ function prevCard(){
 // PHRASES
 // ════════════════════════════════════════════════════
 function loadPhrases(){
-    phrasePool = shuffle(getPhraseLib(phraseDiff));
+    phrasePool = shuffle(phraseMode === 'scenario' ? getScenarioLib(currentScenario) : getPhraseLib(phraseDiff));
     phraseIdx = 0; phraseHistory = [0];
     showPhraseCard();
 }
@@ -1325,8 +1546,10 @@ function answerChosen(btn,correct,q,wrap){
     const isVerbDrill= testMode==='verbchallenge';
     if(correct){
         btn.classList.add('correct'); quizScore++;
+        haptic('correct');
     } else {
         btn.classList.add('wrong');
+        haptic('wrong');
         wrap.querySelectorAll('.quiz-opt').forEach(b=>{
             let match;
             if(isVerbDrill)  match = b.textContent===verbChallengeQ.answer;
@@ -2069,12 +2292,14 @@ function buildVerbChallengeQ(){
 buildCatButtons('words-cat-scroll', currentCat, (catId,btn,cid)=>{ loadWordCat(catId); setActiveCatBtn(cid,catId); });
 buildCatButtons('list-cat-scroll', listCat, setListCat);
 buildCatButtons('test-cat-scroll', testCat, pickTestCat);
+buildScenarioButtons();
 loadWordCat(currentCat);
 loadPhrases();
 showSetup();
 renderVerbGrid('');
-renderStreak();   // 🔥 show streak on load
-renderMastery();  // 📊 show mastery on load
+renderStreak();
+renderMastery();
+loadTheme();
 
 // ════════════════════════════════════════════════════
 // DRAG-TO-SCROLL — category sliders on desktop
@@ -2100,6 +2325,9 @@ function enableDragScroll(el){
     });
 }
 document.querySelectorAll('.cat-scroll-wrap').forEach(enableDragScroll);
+// also catch scenario scroll (rendered after init)
+const scenWrap = document.getElementById('phrase-scenario-controls');
+if(scenWrap){ const sw = scenWrap.querySelector('.cat-scroll-wrap'); if(sw) enableDragScroll(sw); }
 </script>
 </body>
 </html>
