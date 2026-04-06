@@ -2031,9 +2031,9 @@ function renderVerbTable(){
                 ${v.conj.map((r,i) => `
                 <tr>
                     <td class="vc-pronoun">${r.pro}</td>
-                    <td class="vc-form" onclick="speakText('${r[t.key].replace(/'/g,"\\'")}')" style="cursor:pointer" title="Tap to hear">${highlightForm(v.inf,i,t.key,r[t.key])} 🔊</td>
+                    <td class="vc-form" onclick="speakText('${(r['ex_'+t.key]||r[t.key]).replace(/'/g,"\\'")}')" style="cursor:pointer" title="Tap to hear example">${highlightForm(v.inf,i,t.key,r[t.key])} 🔊</td>
                     <td class="vc-ph">${r[t.ph]}</td>
-                    <td class="vc-example" onclick="speakText('${(r['ex_'+t.key]||'').replace(/'/g,"\\'")}')" style="cursor:pointer" title="Tap to hear example">
+                    <td class="vc-example">
                         ${r['ex_'+t.key] || ''}
                         <em>${r['ex_'+t.key+'_en'] || ''}</em>
                     </td>
