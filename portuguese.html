@@ -176,6 +176,30 @@
         .vc-example em{display:block;color:rgba(148,163,184,0.65);font-style:italic;font-size:0.68rem;margin-top:1px;}
         .verb-note{font-size:0.72rem;color:var(--text-dim);padding:8px 14px 10px;line-height:1.5;}
 
+        /* Irregular stem highlight */
+        .irreg-stem{color:var(--text-dim);}
+        .irreg-end{color:#f59e0b;font-weight:900;}
+        .irreg-whole{color:#fb923c;font-weight:900;}  /* fully irregular forms e.g. fui, vai */
+
+        /* Common pairs panel */
+        .verb-pairs{background:rgba(99,102,241,0.07);border:1px solid rgba(99,102,241,0.25);border-radius:14px;padding:14px 16px;margin-top:2px;}
+        .verb-pairs-title{font-size:0.62rem;font-weight:800;color:#a5b4fc;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;}
+        .pair-row{display:flex;flex-direction:column;gap:2px;padding:8px 0;border-bottom:1px solid rgba(99,102,241,0.15);}
+        .pair-row:last-child{border-bottom:none;padding-bottom:0;}
+        .pair-formula{font-size:0.88rem;font-weight:800;color:var(--text);}
+        .pair-formula .pair-verb{color:#818cf8;}
+        .pair-desc{font-size:0.72rem;color:var(--text-dim);margin-top:2px;}
+        .pair-example{font-size:0.75rem;font-weight:600;color:var(--text);margin-top:4px;font-style:italic;}
+        .pair-example-en{font-size:0.68rem;color:var(--text-dim);}
+
+        /* Verb Challenge quiz box */
+        .quiz-verb-box{width:100%;background:var(--card);border:2px solid #8b5cf6;border-radius:20px;padding:26px 22px;text-align:center;margin-bottom:18px;display:none;flex-direction:column;align-items:center;gap:8px;}
+        .quiz-verb-label{font-size:0.65rem;font-weight:800;color:#c4b5fd;text-transform:uppercase;letter-spacing:0.1em;}
+        .quiz-verb-prompt{font-size:1.05rem;font-weight:700;color:var(--text);line-height:1.4;}
+        .quiz-verb-prompt strong{color:#c4b5fd;font-size:1.2rem;}
+        .quiz-options.verb-opts{grid-template-columns:1fr 1fr;}
+        .quiz-opt.verb-word{font-size:1.05rem;font-weight:800;padding:18px 10px;font-family:inherit;}
+
 
 
         /* Card emoji visual */
@@ -367,6 +391,7 @@
                     <button class="mode-btn active" onclick="pickTestMode('standard',this)">📖 Standard</button>
                     <button class="mode-btn" onclick="pickTestMode('audio',this)">🎧 Audio-First</button>
                     <button class="mode-btn" onclick="pickTestMode('cloze',this)">✏️ Fill-in</button>
+                    <button class="mode-btn" onclick="pickTestMode('verbchallenge',this)">⚡ Verb Drill</button>
                 </div>
             </div>
             <button class="btn-start-test" onclick="beginTest()">START TEST →</button>
@@ -396,6 +421,10 @@
                 <div class="cloze-translation" id="cloze-translation"></div>
                 <button class="quiz-q-hear" onclick="speakCurrentQ()" style="margin-top:6px">🔊 HEAR</button>
                 <div class="cloze-reveal" id="cloze-reveal"></div>
+            </div>
+            <div class="quiz-verb-box" id="quiz-verb-box">
+                <div class="quiz-verb-label">⚡ Verb Challenge</div>
+                <div class="quiz-verb-prompt" id="verb-prompt"></div>
             </div>
             <div class="quiz-options" id="q-options"></div>
         </div>
@@ -1057,6 +1086,10 @@ function pickTestMode(mode, btn){
     testMode = mode;
     btn.parentElement.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
+    // Verb Challenge doesn't use the word/phrase selectors
+    const hideSelectors = mode==='verbchallenge';
+    document.getElementById('test-cat-section').style.display   = hideSelectors ? 'none' : (testType!=='phrases'?'block':'none');
+    document.getElementById('test-diff-section').style.display  = hideSelectors ? 'none' : (testType!=='words'?'block':'none');
 }
 function pickTestType(type, btn){
     testType=type;
@@ -1087,6 +1120,14 @@ function showSetup(){
     document.getElementById('test-results').style.display='none';
 }
 function beginTest(){
+    if(testMode==='verbchallenge'){
+        quizQs=[]; quizIdx=0; quizScore=0; quizLog=[];
+        document.getElementById('test-setup').style.display='none';
+        document.getElementById('test-quiz').style.display='flex';
+        document.getElementById('test-results').style.display='none';
+        showQuestion();
+        return;
+    }
     const pool=buildTestPool();
     if(pool.length<4){
         if(testMode==='cloze') alert('Not enough words with example sentences in this category (need 4+). Try "Words" + a different category.');
@@ -1118,11 +1159,35 @@ function showQuestion(){
     document.getElementById('q-score-live').innerText=`Score: ${quizScore}`;
     document.getElementById('q-progress').style.width=`${(quizIdx/total)*100}%`;
 
-    const isCloze = testMode==='cloze';
-    const isAudio = testMode==='audio';
-    document.getElementById('quiz-standard-box').style.display = (!isAudio && !isCloze) ? 'block' : 'none';
-    document.getElementById('quiz-audio-box').style.display    = isAudio  ? 'flex'  : 'none';
-    document.getElementById('quiz-cloze-box').style.display    = isCloze  ? 'flex'  : 'none';
+    const isCloze   = testMode==='cloze';
+    const isAudio   = testMode==='audio';
+    const isVerbDrill = testMode==='verbchallenge';
+    document.getElementById('quiz-standard-box').style.display = (!isAudio && !isCloze && !isVerbDrill) ? 'block' : 'none';
+    document.getElementById('quiz-audio-box').style.display    = isAudio    ? 'flex'  : 'none';
+    document.getElementById('quiz-cloze-box').style.display    = isCloze   ? 'flex'  : 'none';
+    document.getElementById('quiz-verb-box').style.display     = isVerbDrill ? 'flex' : 'none';
+
+    if(isVerbDrill){
+        // Verb Challenge — generate a fresh question each time
+        const total = 10;
+        document.getElementById('q-counter').innerText=`Question ${quizIdx+1} / ${total}`;
+        document.getElementById('q-score-live').innerText=`Score: ${quizScore}`;
+        document.getElementById('q-progress').style.width=`${(quizIdx/total)*100}%`;
+        verbChallengeQ = buildVerbChallengeQ();
+        const {verb,row,tKey,opts} = verbChallengeQ;
+        document.getElementById('verb-prompt').innerHTML =
+            `Conjugate <strong>${verb.inf}</strong> (${verb.en})<br>for <strong>${row.pro}</strong><br>in the <strong>${TENSE_LABELS[tKey]}</strong>`;
+        const wrap = document.getElementById('q-options');
+        wrap.innerHTML='';
+        wrap.className='quiz-options verb-opts';
+        opts.forEach(opt=>{
+            const b=document.createElement('button');
+            b.className='quiz-opt verb-word'; b.textContent=opt;
+            b.onclick=()=>answerChosen(b, opt===verbChallengeQ.answer, {pt:verb.inf,en:verb.en,_verbq:verbChallengeQ}, wrap);
+            wrap.appendChild(b);
+        });
+        return;
+    }
 
     // Standard mode
     document.getElementById('q-text').innerText = q.pt;
@@ -1178,18 +1243,30 @@ function showQuestion(){
 }
 function answerChosen(btn,correct,q,wrap){
     wrap.querySelectorAll('.quiz-opt').forEach(b=>{b.disabled=true;b.onclick=null;});
-    const isCloze = testMode==='cloze';
+    const isCloze    = testMode==='cloze';
+    const isVerbDrill= testMode==='verbchallenge';
     if(correct){
         btn.classList.add('correct'); quizScore++;
     } else {
         btn.classList.add('wrong');
-        // Reveal the correct answer
         wrap.querySelectorAll('.quiz-opt').forEach(b=>{
-            const match = isCloze ? b.textContent===q.pt : b.textContent===q.en;
+            let match;
+            if(isVerbDrill)  match = b.textContent===verbChallengeQ.answer;
+            else if(isCloze) match = b.textContent===q.pt;
+            else             match = b.textContent===q.en;
             if(match) b.classList.add('reveal');
         });
     }
-    quizLog.push({pt:q.pt, en:q.en, example:q.example||'', example_en:q.example_en||'', ok:correct});
+
+    if(isVerbDrill){
+        const vq = verbChallengeQ;
+        quizLog.push({
+            pt: `${vq.verb.inf} → ${vq.row.pro} (${TENSE_LABELS[vq.tKey]})`,
+            en: vq.answer, ok:correct, _verbdrill:true
+        });
+    } else {
+        quizLog.push({pt:q.pt, en:q.en, example:q.example||'', example_en:q.example_en||'', ok:correct});
+    }
 
     // Audio mode: reveal the Portuguese word
     if(testMode==='audio'){
@@ -1200,13 +1277,12 @@ function answerChosen(btn,correct,q,wrap){
         document.getElementById('audio-pulse-icon').style.animation = 'none';
     }
 
-    // Cloze mode: fill in the blank in the sentence
+    // Cloze mode: fill in the blank
     if(isCloze){
         const revealEl = document.getElementById('cloze-reveal');
         revealEl.textContent = correct ? `✅ ${q.pt}` : `❌ The answer was: ${q.pt}`;
         revealEl.style.display = 'block';
         revealEl.style.color = correct ? '#4ade80' : '#f87171';
-        // Replace blank with the actual word
         const sentenceEl = document.getElementById('cloze-sentence');
         sentenceEl.innerHTML = sentenceEl.innerHTML.replace(
             /<span class="cloze-blank">.*?<\/span>/,
@@ -1214,7 +1290,12 @@ function answerChosen(btn,correct,q,wrap){
         );
     }
 
-    setTimeout(()=>{quizIdx++;if(quizIdx<quizQs.length)showQuestion();else showResults();},1250);
+    const nextDelay = isVerbDrill ? 1100 : 1250;
+    setTimeout(()=>{
+        quizIdx++;
+        if(isVerbDrill){ if(quizIdx<10) showQuestion(); else showResults(); }
+        else { if(quizIdx<quizQs.length) showQuestion(); else showResults(); }
+    }, nextDelay);
 }
 function showResults(){
     document.getElementById('test-quiz').style.display='none';
@@ -1235,14 +1316,18 @@ function showResults(){
     const bd=document.getElementById('results-breakdown'); bd.innerHTML='';
     quizLog.forEach(r=>{
         const row=document.createElement('div');
-        const isClozeResult = testMode==='cloze';
+        const isClozeResult  = testMode==='cloze';
+        const isVerbResult   = testMode==='verbchallenge';
         row.className=`result-row ${r.ok?'r-correct':'r-wrong'}${testMode==='audio'?' result-audio-mode':''}`;
         let modeTag = testMode==='audio' ? ' <span style="font-size:0.65rem;opacity:0.6;margin-left:4px">🎧</span>' : '';
         if(isClozeResult) modeTag = ' <span style="font-size:0.65rem;opacity:0.6;margin-left:4px">✏️</span>';
+        if(isVerbResult)  modeTag = ' <span style="font-size:0.65rem;opacity:0.6;margin-left:4px">⚡</span>';
         const extraLine = isClozeResult && r.example
-            ? `<div class="result-cloze-sentence">"${r.example}"</div>`
-            : '';
-        row.innerHTML=`<div class="result-icon">${r.ok?'✅':'❌'}</div><div><div class="result-q">${r.pt}${modeTag}</div><div class="result-a">${r.en}</div>${extraLine}</div>`;
+            ? `<div class="result-cloze-sentence">"${r.example}"</div>` : '';
+        const answerLine = isVerbResult
+            ? `<div class="result-a">Answer: <strong style="color:var(--text)">${r.en}</strong></div>` 
+            : `<div class="result-a">${r.en}</div>`;
+        row.innerHTML=`<div class="result-icon">${r.ok?'✅':'❌'}</div><div><div class="result-q">${r.pt}${modeTag}</div>${answerLine}${extraLine}</div>`;
         bd.appendChild(row);
     });
 }
@@ -1690,6 +1775,150 @@ function renderVerbGrid(filter){
     renderVerbTable();
 }
 
+// ════════════════════════════════════════════════════
+// IRREGULAR HIGHLIGHT
+// ════════════════════════════════════════════════════
+const IRREG_MAP = {
+    Ser:{
+        pres:{ 0:'whole',1:'whole',2:'whole',3:'whole' },
+        pret:{ 0:'whole',1:'whole',2:'whole',3:'whole' }, fut:{}
+    },
+    Estar:{
+        pres:{ 0:'whole',1:{stem:'est',end:'á'},2:{stem:'est',end:'amos'},3:{stem:'est',end:'ão'} },
+        pret:{ 0:{stem:'est',end:'ive'},1:{stem:'est',end:'eve'},2:{stem:'estive',end:'mos'},3:{stem:'estive',end:'ram'} }, fut:{}
+    },
+    Ter:{
+        pres:{ 0:'whole',1:{stem:'te',end:'m'},2:{stem:'te',end:'mos'},3:'whole' },
+        pret:{ 0:'whole',1:'whole',2:'whole',3:'whole' }, fut:{}
+    },
+    Ir:{
+        pres:{ 0:'whole',1:'whole',2:{stem:'va',end:'mos'},3:'whole' },
+        pret:{ 0:'whole',1:'whole',2:'whole',3:'whole' }, fut:{}
+    },
+    Fazer:{
+        pres:{ 0:{stem:'fa',end:'ço'},1:{stem:'fa',end:'z'},2:{stem:'faz',end:'emos'},3:{stem:'faz',end:'em'} },
+        pret:{ 0:'whole',1:'whole',2:{stem:'fiz',end:'emos'},3:{stem:'fiz',end:'eram'} },
+        fut:{ 0:{stem:'far',end:'ei'},1:{stem:'far',end:'á'},2:{stem:'far',end:'emos'},3:{stem:'far',end:'ão'} }
+    },
+    Poder:{
+        pres:{ 0:{stem:'po',end:'sso'},1:{stem:'pod',end:'e'},2:{stem:'pod',end:'emos'},3:{stem:'pod',end:'em'} },
+        pret:{ 0:'whole',1:'whole',2:'whole',3:'whole' }, fut:{}
+    },
+    Querer:{
+        pres:{ 0:{stem:'quer',end:'o'},1:{stem:'quer',end:''},2:{stem:'quer',end:'emos'},3:{stem:'quer',end:'em'} },
+        pret:{ 0:'whole',1:'whole',2:'whole',3:'whole' }, fut:{}
+    },
+    Saber:{
+        pres:{ 0:'whole',1:{stem:'sab',end:'e'},2:{stem:'sab',end:'emos'},3:{stem:'sab',end:'em'} },
+        pret:{ 0:'whole',1:'whole',2:'whole',3:'whole' }, fut:{}
+    },
+    Vir:{
+        pres:{ 0:'whole',1:'whole',2:'whole',3:'whole' },
+        pret:{ 0:'whole',1:'whole',2:'whole',3:'whole' }, fut:{}
+    },
+    Dar:{
+        pres:{ 0:'whole',1:{stem:'d',end:'á'},2:{stem:'d',end:'amos'},3:{stem:'d',end:'ão'} },
+        pret:{ 0:'whole',1:'whole',2:'whole',3:'whole' }, fut:{}
+    },
+    Dormir:{
+        pres:{ 0:{stem:'d',end:'urmo'} }, pret:{}, fut:{}
+    },
+};
+
+function highlightForm(verbInf, proIdx, tenseKey, form){
+    const vmap = IRREG_MAP[verbInf];
+    if(!vmap) return form;
+    const tmap = vmap[tenseKey];
+    if(!tmap) return form;
+    const info = tmap[proIdx];
+    if(!info) return form;
+    if(info==='whole') return `<span class="irreg-whole">${form}</span>`;
+    if(info.stem!==undefined) return `<span class="irreg-stem">${info.stem}</span><span class="irreg-end">${info.end}</span>`;
+    return form;
+}
+
+// ════════════════════════════════════════════════════
+// COMMON PAIRS
+// ════════════════════════════════════════════════════
+const VERB_PAIRS = {
+    Ir:[
+        { formula:'Ir + infinitivo', desc:'Near future — the most common way to express future in spoken Portuguese',
+          examples:[{pt:'Vou comer agora.',en:'I\'m going to eat now.'},{pt:'Ela vai trabalhar amanhã.',en:'She\'s going to work tomorrow.'}] },
+        { formula:'Ir + embora', desc:'To leave / go away',
+          examples:[{pt:'Vou embora às dez.',en:'I\'m leaving at ten.'},{pt:'Eles foram embora cedo.',en:'They left early.'}] },
+        { formula:'Ir + a pé / de carro / de metrô', desc:'To go by (transport)',
+          examples:[{pt:'Vou a pé.',en:'I\'m going on foot.'},{pt:'Ela vai de metrô.',en:'She goes by metro.'}] },
+    ],
+    Estar:[
+        { formula:'Estar + gerúndio (-ndo)', desc:'Present continuous — what\'s happening right now',
+          examples:[{pt:'Estou estudando.',en:'I\'m studying.'},{pt:'Ele está dormindo.',en:'He\'s sleeping.'}] },
+        { formula:'Estar com + noun', desc:'To feel (hunger, thirst, cold…)',
+          examples:[{pt:'Estou com fome.',en:'I\'m hungry.'},{pt:'Ela está com dor de cabeça.',en:'She has a headache.'}] },
+        { formula:'Estar de + noun', desc:'To be on (holiday, break, diet…)',
+          examples:[{pt:'Estou de férias.',en:'I\'m on holiday.'},{pt:'Ele está de folga.',en:'He\'s off work.'}] },
+    ],
+    Ter:[
+        { formula:'Ter que + infinitivo', desc:'To have to — the everyday way to express obligation',
+          examples:[{pt:'Tenho que ir.',en:'I have to go.'},{pt:'Ela tem que trabalhar.',en:'She has to work.'}] },
+        { formula:'Ter + number + anos', desc:'To be (age) — always use ter for age, never ser',
+          examples:[{pt:'Tenho vinte e cinco anos.',en:'I\'m twenty-five.'},{pt:'Ele tem trinta anos.',en:'He\'s thirty.'}] },
+        { formula:'Ter + ailment', desc:'To have (an illness or pain)',
+          examples:[{pt:'Tenho dor de garganta.',en:'I have a sore throat.'},{pt:'Ela tem febre.',en:'She has a fever.'}] },
+    ],
+    Fazer:[
+        { formula:'Fazer + weather', desc:'Weather expressions — always use fazer',
+          examples:[{pt:'Está fazendo calor.',en:'It\'s hot.'},{pt:'Faz muito frio aqui.',en:'It\'s very cold here.'}] },
+        { formula:'Faz + time + que', desc:'How long something has been going on',
+          examples:[{pt:'Faz dois anos que moro aqui.',en:'I\'ve lived here for two years.'},{pt:'Faz horas que espero.',en:'I\'ve been waiting for hours.'}] },
+        { formula:'Fazer + exercício / academia / ioga', desc:'To work out / exercise',
+          examples:[{pt:'Faço academia toda manhã.',en:'I go to the gym every morning.'},{pt:'Ela faz ioga às terças.',en:'She does yoga on Tuesdays.'}] },
+    ],
+    Poder:[
+        { formula:'Pode + infinitivo?', desc:'Can you…? — the most natural everyday request',
+          examples:[{pt:'Pode repetir, por favor?',en:'Can you repeat that, please?'},{pt:'Pode me dar a conta?',en:'Can you bring me the bill?'}] },
+        { formula:'Não pode + infinitivo', desc:'You can\'t / it\'s not allowed',
+          examples:[{pt:'Não pode estacionar aqui.',en:'You can\'t park here.'},{pt:'Não pode fumar.',en:'No smoking.'}] },
+    ],
+    Querer:[
+        { formula:'Quero + noun / infinitivo', desc:'The go-to phrase for ordering and requesting',
+          examples:[{pt:'Quero um café, por favor.',en:'I want a coffee, please.'},{pt:'Quero reservar uma mesa.',en:'I want to book a table.'}] },
+        { formula:'Não quero + noun', desc:'Politely refusing something',
+          examples:[{pt:'Não quero açúcar, obrigado.',en:'No sugar, thanks.'},{pt:'Não quero incomodar.',en:'I don\'t want to be a bother.'}] },
+    ],
+    Ser:[
+        { formula:'Ser de + place', desc:'To be from (origin)',
+          examples:[{pt:'Sou da Austrália.',en:'I\'m from Australia.'},{pt:'Ela é do Rio.',en:'She\'s from Rio.'}] },
+        { formula:'Ser + profession (no article)', desc:'I\'m a doctor — no "um/uma" needed with professions',
+          examples:[{pt:'Sou médico.',en:'I\'m a doctor.'},{pt:'Ele é professor.',en:'He\'s a teacher.'}] },
+    ],
+    Falar:[
+        { formula:'Falar com + person', desc:'To talk / speak with someone',
+          examples:[{pt:'Falei com ela ontem.',en:'I spoke with her yesterday.'},{pt:'Preciso falar com o gerente.',en:'I need to speak with the manager.'}] },
+        { formula:'Falar sobre + topic', desc:'To talk about a topic',
+          examples:[{pt:'Vamos falar sobre isso depois.',en:'Let\'s talk about that later.'},{pt:'Ele sempre fala sobre trabalho.',en:'He always talks about work.'}] },
+    ],
+    Saber:[
+        { formula:'Saber + infinitivo', desc:'To know how to do something (a skill)',
+          examples:[{pt:'Sei cozinhar bem.',en:'I know how to cook well.'},{pt:'Você sabe nadar?',en:'Do you know how to swim?'}] },
+        { formula:'Não sei', desc:'The most-used three words in the language — I don\'t know',
+          examples:[{pt:'Não sei onde fica.',en:'I don\'t know where it is.'},{pt:'Não sei o que fazer.',en:'I don\'t know what to do.'}] },
+    ],
+    Dar:[
+        { formula:'Dar certo', desc:'To work out / go well — extremely common in conversation',
+          examples:[{pt:'Vai dar certo!',en:'It\'s going to work out!'},{pt:'Não deu certo.',en:'It didn\'t work out.'}] },
+        { formula:'Dar para + infinitivo', desc:'To be possible / feasible',
+          examples:[{pt:'Dá para fazer hoje?',en:'Is it possible to do it today?'},{pt:'Não dá para esperar mais.',en:'We can\'t wait any longer.'}] },
+        { formula:'Dar uma olhada', desc:'To take a look — very common in shops and restaurants',
+          examples:[{pt:'Pode dar uma olhada?',en:'Can you take a look?'},{pt:'Vou dar uma olhada.',en:'I\'ll take a look.'}] },
+    ],
+    Vir:[
+        { formula:'Vir de + place', desc:'To come from (where you\'ve just been or where you\'re from)',
+          examples:[{pt:'Venho de Sydney.',en:'I come from Sydney.'},{pt:'Vim direto do aeroporto.',en:'I came straight from the airport.'}] },
+        { formula:'Vir buscar', desc:'To come and pick up / collect',
+          examples:[{pt:'Vou te vir buscar.',en:'I\'ll come and pick you up.'},{pt:'Pode vir buscar às oito?',en:'Can you pick up at eight?'}] },
+    ],
+};
+
 function renderVerbTable(){
     const v = VERB_DATA[currentVerb];
     const wrap = document.getElementById('verb-table-wrap');
@@ -1701,14 +1930,29 @@ function renderVerbTable(){
         { key:'fut',  ph:'ph_fut',  label:'Future Tense — Futuro',             cls:'future' },
     ];
 
+    const pairs = VERB_PAIRS[v.inf] || [];
+    const pairsHTML = pairs.length ? `
+        <div class="verb-pairs">
+            <div class="verb-pairs-title">🔗 Common Pairs &amp; Constructions</div>
+            ${pairs.map(p=>`
+            <div class="pair-row">
+                <div class="pair-formula"><span class="pair-verb">${v.inf}</span> + ${p.formula.replace(/^[A-ZÀ-ú][a-zÀ-ú]+ \+ /,'')}</div>
+                <div class="pair-desc">${p.desc}</div>
+                ${p.examples.map(ex=>`
+                <div class="pair-example" onclick="speakText('${ex.pt.replace(/'/g,"\\'")}')">
+                    "${ex.pt}" 🔊 <span class="pair-example-en">${ex.en}</span>
+                </div>`).join('')}
+            </div>`).join('')}
+        </div>` : '';
+
     wrap.innerHTML = tenses.map(t => `
         <div class="verb-tense-block">
             <div class="verb-tense-title ${t.cls}">${v.inf} &mdash; ${t.label}</div>
             <table class="verb-conj-table">
-                ${v.conj.map(r => `
+                ${v.conj.map((r,i) => `
                 <tr>
                     <td class="vc-pronoun">${r.pro}</td>
-                    <td class="vc-form" onclick="speakText('${r[t.key].replace(/'/g,"\\'")}')" style="cursor:pointer" title="Tap to hear">${r[t.key]} 🔊</td>
+                    <td class="vc-form" onclick="speakText('${r[t.key].replace(/'/g,"\\'")}')" style="cursor:pointer" title="Tap to hear">${highlightForm(v.inf,i,t.key,r[t.key])} 🔊</td>
                     <td class="vc-ph">${r[t.ph]}</td>
                     <td class="vc-example" onclick="speakText('${(r['ex_'+t.key]||'').replace(/'/g,"\\'")}')" style="cursor:pointer" title="Tap to hear example">
                         ${r['ex_'+t.key] || ''}
@@ -1717,7 +1961,27 @@ function renderVerbTable(){
                 </tr>`).join('')}
             </table>
             ${t.key==='fut' && v.note ? `<div class="verb-note">💡 ${v.note}</div>` : ''}
-        </div>`).join('');
+        </div>`).join('') + pairsHTML;
+}
+
+// ════════════════════════════════════════════════════
+// VERB CHALLENGE — conjugation drill quiz mode
+// ════════════════════════════════════════════════════
+const TENSE_LABELS = { pres:'present tense', pret:'past tense', fut:'future tense' };
+const TENSE_KEYS   = ['pres','pret','fut'];
+let verbChallengeQ = null;
+
+function buildVerbChallengeQ(){
+    const verb   = VERB_DATA[Math.floor(Math.random()*VERB_DATA.length)];
+    const rowIdx = Math.floor(Math.random()*verb.conj.length);
+    const row    = verb.conj[rowIdx];
+    const tKey   = TENSE_KEYS[Math.floor(Math.random()*3)];
+    const answer = row[tKey];
+    const pool = [];
+    VERB_DATA.forEach(v2=>{ v2.conj.forEach(r2=>{ if(r2[tKey]&&r2[tKey]!==answer) pool.push(r2[tKey]); }); });
+    const distractors = [...new Set(shuffle(pool))].slice(0,3);
+    const opts = shuffle([answer,...distractors]);
+    return { verb, row, tKey, answer, opts };
 }
 
 // ════════════════════════════════════════════════════
