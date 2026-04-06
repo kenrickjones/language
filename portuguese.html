@@ -37,7 +37,7 @@
         .cat-scroll-wrap::-webkit-scrollbar{display:none;}
         .cat-scroll-wrap.is-dragging{cursor:grabbing;user-select:none;}
         .cat-scroll{display:flex;gap:8px;padding:4px 2px;width:max-content;}
-        #list-words-controls{width:100%;overflow:hidden;min-width:0;} #test-cat-section{width:100%;overflow:hidden;min-width:0;}
+        #list-words-controls{width:100%;overflow:hidden;min-width:0;} #test-cat-section{width:100%;overflow:hidden;min-width:0;} #phrase-scenario-controls{width:100%;overflow:hidden;min-width:0;}
         .cat-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 14px;background:var(--card);border:2px solid var(--border);border-radius:14px;cursor:pointer;color:var(--text-dim);font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;white-space:nowrap;}
         .cat-btn .cat-icon{font-size:1.4rem;line-height:1;}
         .cat-btn.active{border-color:var(--primary);color:var(--primary);background:rgba(34,197,94,0.08);}
@@ -1136,8 +1136,12 @@ function setPhraseMode(mode, btn){
     phraseMode = mode;
     document.querySelectorAll('#phrases .list-type-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
-    document.getElementById('phrase-diff-controls').style.display   = mode==='difficulty' ? 'block' : 'none';
+    document.getElementById('phrase-diff-controls').style.display    = mode==='difficulty' ? 'block' : 'none';
     document.getElementById('phrase-scenario-controls').style.display = mode==='scenario'  ? 'block' : 'none';
+    if(mode==='scenario'){
+        const sw = document.querySelector('#phrase-scenario-controls .cat-scroll-wrap');
+        if(sw && !sw._dragEnabled){ enableDragScroll(sw); sw._dragEnabled=true; }
+    }
     loadPhrases();
 }
 let quizQs = [], quizIdx = 0, quizScore = 0, quizLog = [];
@@ -2325,9 +2329,6 @@ function enableDragScroll(el){
     });
 }
 document.querySelectorAll('.cat-scroll-wrap').forEach(enableDragScroll);
-// also catch scenario scroll (rendered after init)
-const scenWrap = document.getElementById('phrase-scenario-controls');
-if(scenWrap){ const sw = scenWrap.querySelector('.cat-scroll-wrap'); if(sw) enableDragScroll(sw); }
 </script>
 </body>
 </html>
