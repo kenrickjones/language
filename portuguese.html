@@ -11,7 +11,7 @@
         html.theme-rio{--bg:#fdf6ec;--card:#ffffff;--primary:#16a34a;--shadow:#14532d;--text:#1e293b;--text-dim:#64748b;--border:#e2e8f0;--nav-bg:rgba(253,246,236,0.95);--card-back-text:white;}
         /* Rio-mode overrides for elements that use hardcoded dark colours */
         html.theme-rio .card-front{box-shadow:0 4px 24px rgba(0,0,0,0.08);}
-        html.theme-rio .pronunciation{color:#dcfce7;}
+        html.theme-rio .pronunciation{color:var(--text-dim);}
         html.theme-rio .verb-tense-block{box-shadow:0 2px 8px rgba(0,0,0,0.06);}
         html.theme-rio .quiz-question-box,html.theme-rio .quiz-cloze-box,html.theme-rio .quiz-verb-box,html.theme-rio .quiz-audio-box{box-shadow:0 2px 8px rgba(0,0,0,0.06);}
         html.theme-rio .list-scroll{box-shadow:0 2px 8px rgba(0,0,0,0.06);}
@@ -56,7 +56,7 @@
         .card-back{background:var(--primary);transform:rotateY(180deg);color:white;}
         .btn-hear{background:rgba(255,255,255,0.1);border:1px solid var(--primary);color:var(--primary);padding:8px 15px;border-radius:20px;font-size:0.7rem;font-weight:800;margin-top:15px;cursor:pointer;}
         .card-back .btn-hear{border-color:white;color:white;}
-        .pronunciation{font-size:0.9rem;font-style:italic;color:#dcfce7;margin-top:8px;}
+        .pronunciation{font-size:0.9rem;font-style:italic;color:rgba(220,252,231,0.85);margin-top:8px;}
         .card-counter{font-size:0.7rem;font-weight:800;color:var(--text-dim);margin-top:10px;}
         .card-nav{display:flex;gap:10px;width:100%;margin-top:8px;}
         .btn-prev{flex:1;padding:14px;background:var(--card);color:var(--text-dim);border:1px solid var(--border);border-radius:14px;font-weight:800;cursor:pointer;font-size:0.85rem;}
@@ -305,7 +305,7 @@
 <body>
 <div class="top-nav">
     <a href="index.html" class="home-link">← HOME</a>
-    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Switch theme">🌙</button>
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Switch theme">☀️</button>
     <div class="streak-badge" id="streak-badge" title="Daily streak — complete a test each day to keep it going!">
         🔥 <span class="streak-num" id="streak-num">0</span> day streak
     </div>
