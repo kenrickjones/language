@@ -158,10 +158,6 @@
         .result-a{font-size:0.78rem;color:var(--text-dim);}
         .btn-retry{width:100%;padding:16px;background:var(--primary);color:white;border:none;border-radius:14px;font-weight:800;cursor:pointer;box-shadow:0 4px 0 var(--shadow);font-size:0.95rem;}
 
-        /* Watch */
-        .video-list{width:100%;display:grid;gap:10px;}
-        .video-item{display:flex;align-items:center;background:var(--card);padding:15px;border-radius:12px;text-decoration:none;color:white;border:1px solid var(--border);font-weight:600;font-size:0.9rem;}
-
         /* Verbs */
         .verb-picker{width:100%;display:flex;flex-direction:column;gap:12px;margin-bottom:18px;}
         .verb-search{width:100%;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:0.95rem;font-family:inherit;outline:none;}
@@ -328,7 +324,6 @@
         <button class="nav-btn" onclick="showTab('list',this)">List</button>
         <button class="nav-btn" onclick="showTab('test',this)">Test</button>
         <button class="nav-btn" onclick="showTab('verbs',this)">Verbs</button>
-        <button class="nav-btn" onclick="showTab('watch',this)">Watch</button>
         <button class="nav-btn" onclick="showTab('chat',this)">Chat</button>
     </nav>
 
@@ -538,16 +533,6 @@
         <div class="verb-table-wrap" id="verb-table-wrap"></div>
     </div>
 
-    <!-- WATCH -->
-    <div id="watch" class="content-section">
-        <div class="video-list">
-            <a href="https://www.youtube.com/watch?v=PkZnDv_ZNGk" target="_blank" class="video-item">▶️ Portuguese in 30 Min (Basics)</a>
-            <a href="https://www.youtube.com/watch?v=gQkHOcLHpbk" target="_blank" class="video-item">▶️ 100 Phrases for Beginners</a>
-            <a href="https://www.youtube.com/watch?v=XQBN3TlPVHo" target="_blank" class="video-item">▶️ Brazilian Pronunciation Guide</a>
-            <a href="https://www.youtube.com/watch?v=pBrBCouyIvk" target="_blank" class="video-item">▶️ Essential Verbs (Speaking Brazilian)</a>
-            <a href="https://www.youtube.com/c/PortuguesePod101" target="_blank" class="video-item">▶️ PortuguesePod101 Channel →</a>
-        </div>
-    </div>
     <!-- CHAT -->
     <div id="chat" class="content-section">
         <div class="chat-scenario-bar" id="chat-scenario-bar"></div>
@@ -2387,13 +2372,15 @@ document.querySelectorAll('.cat-scroll-wrap').forEach(enableDragScroll);
 // ════════════════════════════════════════════════════
 // CHAT BUDDY — AI conversation practice
 // ════════════════════════════════════════════════════
+const TR_INSTRUCTION = '\n\nIMPORTANT: At the very end of every reply, on its own line, append exactly: [[TR:english translation of your portuguese message here]] — replace the placeholder with a natural English translation of what you said (excluding any Dica correction note). Never skip this.';
+
 const CHAT_SCENARIOS = [
-    { id:'free',        label:'Free Chat',          icon:'💬', prompt:'You are a friendly, warm Brazilian local having a casual conversation. Speak naturally in Brazilian Portuguese. If the user writes in English, gently respond in Portuguese but include a brief English note in brackets so they can follow. If they make a grammar mistake, naturally correct it at the end of your message with a short note like "(Dica: use X instead of Y)". Keep the conversation light, curious and flowing — ask follow-up questions.' },
-    { id:'cafe',        label:'Café',               icon:'☕', prompt:'You are a cheerful Brazilian café owner. The user is a customer practising their Portuguese. Speak only in Brazilian Portuguese. Play your role naturally — take orders, suggest items, make small talk. If they make a grammar mistake, naturally weave a correction into your response with a short "(Dica: ...)" note. Keep it warm and realistic.' },
-    { id:'market',      label:'Market',             icon:'🛒', prompt:'You are a friendly vendor at a Brazilian market (feira). The user is a customer practising Portuguese. Describe your produce, negotiate prices, react to their requests. Speak in natural Brazilian Portuguese. Correct grammar mistakes gently with a "(Dica: ...)" note when they occur.' },
-    { id:'beach',       label:'Praia',              icon:'🏖️', prompt:'You are a relaxed Brazilian beach local. The user has just arrived at the beach and wants to chat. Speak in casual, natural Brazilian Portuguese — use contractions and informal speech like a real carioca or paulistano would. Correct grammar mistakes gently with a "(Dica: ...)" note. Talk about the sea, the sun, local spots, plans for the day.' },
-    { id:'lost',        label:'Getting Lost',       icon:'🗺️', prompt:'You are a helpful person on a São Paulo street. The user is asking for directions and practising Portuguese. Speak in natural Brazilian Portuguese. Give realistic directions, react to their confusion, help them navigate. Correct grammar mistakes gently with a "(Dica: ...)" note.' },
-    { id:'doctor',      label:'At the Doctor',      icon:'🩺', prompt:'You are a calm, professional Brazilian doctor seeing a patient who is practising Portuguese. Ask about symptoms, give advice, answer questions — all in natural Brazilian Portuguese. Correct grammar mistakes gently with a "(Dica: ...)" note. Keep it realistic but reassuring.' },
+    { id:'free',    label:'Free Chat',      icon:'💬', prompt:'You are a friendly, warm Brazilian local having a casual conversation. Speak naturally in Brazilian Portuguese. If the user writes in English, gently respond in Portuguese. If they make a grammar mistake, correct it at the end of your message with a short "(Dica: use X instead of Y)" note. Keep the conversation light and flowing — ask follow-up questions.' + TR_INSTRUCTION },
+    { id:'cafe',    label:'Café',           icon:'☕', prompt:'You are a cheerful Brazilian café owner. The user is a customer practising their Portuguese. Speak in Brazilian Portuguese. Take orders, suggest items, make small talk. Correct grammar mistakes gently with a "(Dica: ...)" note.' + TR_INSTRUCTION },
+    { id:'market',  label:'Market',         icon:'🛒', prompt:'You are a friendly vendor at a Brazilian market (feira). The user is a customer practising Portuguese. Describe produce, negotiate prices, react to requests. Speak in natural Brazilian Portuguese. Correct grammar mistakes with a "(Dica: ...)" note.' + TR_INSTRUCTION },
+    { id:'beach',   label:'Praia',          icon:'🏖️', prompt:'You are a relaxed Brazilian beach local. Speak in casual Brazilian Portuguese — informal and natural like a real carioca or paulistano. Correct grammar mistakes with a "(Dica: ...)" note.' + TR_INSTRUCTION },
+    { id:'lost',    label:'Getting Lost',   icon:'🗺️', prompt:'You are a helpful person on a São Paulo street. The user is asking for directions and practising Portuguese. Give realistic directions in natural Brazilian Portuguese. Correct grammar mistakes with a "(Dica: ...)" note.' + TR_INSTRUCTION },
+    { id:'doctor',  label:'At the Doctor',  icon:'🩺', prompt:'You are a calm Brazilian doctor. Ask about symptoms, give advice — all in natural Brazilian Portuguese. Correct grammar mistakes with a "(Dica: ...)" note.' + TR_INSTRUCTION },
 ];
 
 let chatHistory = [];      // [{role, content}]
@@ -2472,8 +2459,8 @@ async function sendChat(){
         });
         const data = await response.json();
         const reply = data.content?.[0]?.text || 'Desculpa, não entendi. Pode repetir?';
-
-        chatHistory.push({ role:'assistant', content: reply });
+        // Store history without the [[TR:...]] tag so it doesn't pollute context
+        chatHistory.push({ role:'assistant', content: reply.replace(/\[\[TR:[\s\S]*?\]\]/g,'').trim() });
         typing.style.display = 'none';
         appendAIMsg(reply);
     } catch(err) {
@@ -2498,13 +2485,18 @@ function appendMsg(role, text){
     scrollChat();
 }
 
-function appendAIMsg(text){
+function appendAIMsg(rawText){
     const msgs = document.getElementById('chat-messages');
     const div = document.createElement('div');
     div.className = 'msg ai';
 
-    // Split off any (Dica: ...) correction so it renders distinctly
-    const dicaMatch = text.match(/(\(Dica:.*?\))/i);
+    // Extract embedded translation [[TR:...]]
+    const trMatch = rawText.match(/\[\[TR:([\s\S]*?)\]\]/);
+    const translation = trMatch ? trMatch[1].trim() : null;
+    let text = rawText.replace(/\[\[TR:[\s\S]*?\]\]/g, '').trim();
+
+    // Extract (Dica: ...) correction
+    const dicaMatch = text.match(/(\(Dica:[^)]*\))/i);
     let mainText = text;
     let dicaText = '';
     if(dicaMatch){
@@ -2522,46 +2514,28 @@ function appendAIMsg(text){
         bubble.appendChild(dica);
     }
 
-    // Tap to translate
+    // Tap to translate — use pre-embedded translation, no extra API call needed
     const hint = document.createElement('div');
     hint.className = 'msg-tap-hint';
-    hint.textContent = 'tap to translate';
+    hint.textContent = translation ? 'tap to translate' : '';
 
-    let translationShown = false;
-    bubble.onclick = async () => {
-        if(translationShown) return;
-        translationShown = true;
-        hint.textContent = '⏳ translating…';
-        const translation = await translateText(mainText);
-        const tDiv = document.createElement('div');
-        tDiv.className = 'msg-translation';
-        tDiv.textContent = '🇬🇧 ' + translation;
-        div.insertBefore(tDiv, hint);
-        hint.textContent = '';
-    };
+    if(translation){
+        let shown = false;
+        bubble.onclick = () => {
+            if(shown) return;
+            shown = true;
+            const tDiv = document.createElement('div');
+            tDiv.className = 'msg-translation';
+            tDiv.textContent = '🇬🇧 ' + translation;
+            div.insertBefore(tDiv, hint);
+            hint.textContent = '';
+        };
+    }
 
     div.appendChild(bubble);
     div.appendChild(hint);
     msgs.appendChild(div);
     scrollChat();
-}
-
-async function translateText(text){
-    try {
-        const r = await fetch('https://api.anthropic.com/v1/messages', {
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({
-                model:'claude-sonnet-4-20250514',
-                max_tokens:400,
-                messages:[{ role:'user', content:`Translate this Brazilian Portuguese into natural English. Reply with ONLY the translation, nothing else:\n\n${text}` }]
-            })
-        });
-        const d = await r.json();
-        return d.content?.[0]?.text?.trim() || '(translation unavailable)';
-    } catch(e){
-        return '(translation unavailable)';
-    }
 }
 
 function escHtml(t){
