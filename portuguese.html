@@ -267,6 +267,43 @@
         .mastery-bar-fill{height:100%;background:linear-gradient(90deg,#22c55e,#4ade80);border-radius:4px;transition:width 0.6s cubic-bezier(.4,0,.2,1);}
 
         @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+        /* ── Chat Tab ───────────────────────────────── */
+        .chat-wrap{width:100%;display:flex;flex-direction:column;height:calc(100vh - 280px);min-height:340px;max-height:620px;}
+        .chat-scenario-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+        .chat-scenario-btn{padding:6px 12px;border-radius:20px;border:1px solid var(--border);background:var(--card);color:var(--text-dim);font-size:0.65rem;font-weight:800;cursor:pointer;white-space:nowrap;}
+        .chat-scenario-btn.active{border-color:var(--primary);color:var(--primary);background:rgba(34,197,94,0.08);}
+        .chat-messages{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:4px 2px 8px;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
+        .chat-messages::-webkit-scrollbar{width:4px;}
+        .chat-messages::-webkit-scrollbar-track{background:transparent;}
+        .chat-messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+        .msg{display:flex;flex-direction:column;max-width:88%;gap:3px;animation:fadeIn 0.2s ease;}
+        .msg.ai{align-self:flex-start;}
+        .msg.user{align-self:flex-end;}
+        .msg-bubble{padding:11px 14px;border-radius:18px;font-size:0.9rem;line-height:1.5;font-weight:500;cursor:pointer;position:relative;}
+        .msg.ai .msg-bubble{background:var(--card);border:1px solid var(--border);color:var(--text);border-bottom-left-radius:4px;}
+        .msg.user .msg-bubble{background:var(--primary);color:white;border-bottom-right-radius:4px;cursor:default;}
+        .msg-bubble .correction{display:block;margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.15);font-size:0.78rem;color:#fde68a;font-style:italic;}
+        .msg.ai .msg-bubble .correction{border-top-color:var(--border);color:#f59e0b;}
+        .msg-translation{font-size:0.75rem;color:var(--text-dim);padding:4px 6px;animation:fadeIn 0.2s ease;font-style:italic;max-width:100%;}
+        .msg-tap-hint{font-size:0.6rem;color:var(--text-dim);opacity:0.6;margin-top:1px;}
+        .msg.ai .msg-bubble:hover{border-color:var(--primary);opacity:0.95;}
+        .chat-typing{align-self:flex-start;padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:18px;border-bottom-left-radius:4px;display:none;}
+        .chat-typing span{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--text-dim);margin:0 2px;animation:bounce 1.2s infinite;}
+        .chat-typing span:nth-child(2){animation-delay:0.2s;}
+        .chat-typing span:nth-child(3){animation-delay:0.4s;}
+        @keyframes bounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-6px);}}
+        .chat-input-row{display:flex;gap:8px;margin-top:8px;align-items:flex-end;}
+        .chat-input{flex:1;padding:12px 14px;background:var(--card);border:1px solid var(--border);border-radius:14px;color:var(--text);font-size:0.9rem;font-family:inherit;outline:none;resize:none;min-height:44px;max-height:120px;line-height:1.4;}
+        .chat-input:focus{border-color:var(--primary);}
+        .chat-send{width:44px;height:44px;background:var(--primary);border:none;border-radius:12px;color:white;font-size:1.1rem;cursor:pointer;flex-shrink:0;box-shadow:0 3px 0 var(--shadow);display:flex;align-items:center;justify-content:center;}
+        .chat-send:disabled{opacity:0.45;cursor:default;box-shadow:none;}
+        .chat-send:active:not(:disabled){transform:translateY(1px);box-shadow:0 2px 0 var(--shadow);}
+        .chat-reset{width:100%;padding:9px;background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--text-dim);font-size:0.68rem;font-weight:800;cursor:pointer;margin-top:6px;letter-spacing:0.04em;}
+        .chat-reset:hover{border-color:var(--primary);color:var(--primary);}
+        .chat-empty{text-align:center;padding:30px 16px;color:var(--text-dim);}
+        .chat-empty-icon{font-size:2.8rem;margin-bottom:10px;}
+        .chat-empty p{font-size:0.82rem;line-height:1.6;}
     </style>
 </head>
 <body>
@@ -292,6 +329,7 @@
         <button class="nav-btn" onclick="showTab('test',this)">Test</button>
         <button class="nav-btn" onclick="showTab('verbs',this)">Verbs</button>
         <button class="nav-btn" onclick="showTab('watch',this)">Watch</button>
+        <button class="nav-btn" onclick="showTab('chat',this)">Chat</button>
     </nav>
 
     <!-- WORDS -->
@@ -510,9 +548,25 @@
             <a href="https://www.youtube.com/c/PortuguesePod101" target="_blank" class="video-item">▶️ PortuguesePod101 Channel →</a>
         </div>
     </div>
+    <!-- CHAT -->
+    <div id="chat" class="content-section">
+        <div class="chat-scenario-bar" id="chat-scenario-bar"></div>
+        <div class="chat-wrap">
+            <div class="chat-messages" id="chat-messages">
+                <div class="chat-empty" id="chat-empty">
+                    <div class="chat-empty-icon">🇧🇷</div>
+                    <p><strong>Oi! Tudo bem?</strong><br>Pick a scenario above and start chatting.<br><span style="font-size:0.72rem;opacity:0.7">Tap any of my messages to see a translation.</span></p>
+                </div>
+            </div>
+            <div class="chat-typing" id="chat-typing"><span></span><span></span><span></span></div>
+            <div class="chat-input-row">
+                <textarea class="chat-input" id="chat-input" placeholder="Type in Portuguese or English…" rows="1" onkeydown="chatKeydown(event)" oninput="autoResize(this)"></textarea>
+                <button class="chat-send" id="chat-send" onclick="sendChat()" title="Send">➤</button>
+            </div>
+            <button class="chat-reset" onclick="resetChat()">↺ NEW CONVERSATION</button>
+        </div>
+    </div>
 </div>
-
-<script>
 // ════════════════════════════════════════════════════
 // WORD LIBRARY — categories, each item: {pt, en, ph}
 // ════════════════════════════════════════════════════
@@ -2329,6 +2383,198 @@ function enableDragScroll(el){
     });
 }
 document.querySelectorAll('.cat-scroll-wrap').forEach(enableDragScroll);
+
+// ════════════════════════════════════════════════════
+// CHAT BUDDY — AI conversation practice
+// ════════════════════════════════════════════════════
+const CHAT_SCENARIOS = [
+    { id:'free',        label:'Free Chat',          icon:'💬', prompt:'You are a friendly, warm Brazilian local having a casual conversation. Speak naturally in Brazilian Portuguese. If the user writes in English, gently respond in Portuguese but include a brief English note in brackets so they can follow. If they make a grammar mistake, naturally correct it at the end of your message with a short note like "(Dica: use X instead of Y)". Keep the conversation light, curious and flowing — ask follow-up questions.' },
+    { id:'cafe',        label:'Café',               icon:'☕', prompt:'You are a cheerful Brazilian café owner. The user is a customer practising their Portuguese. Speak only in Brazilian Portuguese. Play your role naturally — take orders, suggest items, make small talk. If they make a grammar mistake, naturally weave a correction into your response with a short "(Dica: ...)" note. Keep it warm and realistic.' },
+    { id:'market',      label:'Market',             icon:'🛒', prompt:'You are a friendly vendor at a Brazilian market (feira). The user is a customer practising Portuguese. Describe your produce, negotiate prices, react to their requests. Speak in natural Brazilian Portuguese. Correct grammar mistakes gently with a "(Dica: ...)" note when they occur.' },
+    { id:'beach',       label:'Praia',              icon:'🏖️', prompt:'You are a relaxed Brazilian beach local. The user has just arrived at the beach and wants to chat. Speak in casual, natural Brazilian Portuguese — use contractions and informal speech like a real carioca or paulistano would. Correct grammar mistakes gently with a "(Dica: ...)" note. Talk about the sea, the sun, local spots, plans for the day.' },
+    { id:'lost',        label:'Getting Lost',       icon:'🗺️', prompt:'You are a helpful person on a São Paulo street. The user is asking for directions and practising Portuguese. Speak in natural Brazilian Portuguese. Give realistic directions, react to their confusion, help them navigate. Correct grammar mistakes gently with a "(Dica: ...)" note.' },
+    { id:'doctor',      label:'At the Doctor',      icon:'🩺', prompt:'You are a calm, professional Brazilian doctor seeing a patient who is practising Portuguese. Ask about symptoms, give advice, answer questions — all in natural Brazilian Portuguese. Correct grammar mistakes gently with a "(Dica: ...)" note. Keep it realistic but reassuring.' },
+];
+
+let chatHistory = [];      // [{role, content}]
+let chatScenario = CHAT_SCENARIOS[0];
+let chatBusy = false;
+
+function buildChatScenarioBar(){
+    const bar = document.getElementById('chat-scenario-bar');
+    bar.innerHTML = '';
+    CHAT_SCENARIOS.forEach(s => {
+        const btn = document.createElement('button');
+        btn.className = 'chat-scenario-btn' + (s.id === chatScenario.id ? ' active' : '');
+        btn.textContent = s.icon + ' ' + s.label;
+        btn.onclick = () => {
+            chatScenario = s;
+            bar.querySelectorAll('.chat-scenario-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            resetChat();
+        };
+        bar.appendChild(btn);
+    });
+}
+
+function resetChat(){
+    chatHistory = [];
+    chatBusy = false;
+    const msgs = document.getElementById('chat-messages');
+    msgs.innerHTML = `<div class="chat-empty" id="chat-empty">
+        <div class="chat-empty-icon">${chatScenario.icon}</div>
+        <p><strong>${chatScenario.label}</strong><br>Send a message to start the conversation.<br><span style="font-size:0.72rem;opacity:0.7">Tap any of my messages to see a translation.</span></p>
+    </div>`;
+    document.getElementById('chat-input').value = '';
+    document.getElementById('chat-send').disabled = false;
+    autoResize(document.getElementById('chat-input'));
+}
+
+function chatKeydown(e){
+    if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendChat(); }
+}
+
+function autoResize(el){
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+async function sendChat(){
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim();
+    if(!text || chatBusy) return;
+
+    // Clear empty state
+    const emptyEl = document.getElementById('chat-empty');
+    if(emptyEl) emptyEl.remove();
+
+    appendMsg('user', text);
+    chatHistory.push({ role:'user', content: text });
+    input.value = '';
+    autoResize(input);
+
+    chatBusy = true;
+    document.getElementById('chat-send').disabled = true;
+    const typing = document.getElementById('chat-typing');
+    typing.style.display = 'flex';
+    scrollChat();
+
+    try {
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                model: 'claude-sonnet-4-20250514',
+                max_tokens: 1000,
+                system: chatScenario.prompt,
+                messages: chatHistory,
+            })
+        });
+        const data = await response.json();
+        const reply = data.content?.[0]?.text || 'Desculpa, não entendi. Pode repetir?';
+
+        chatHistory.push({ role:'assistant', content: reply });
+        typing.style.display = 'none';
+        appendAIMsg(reply);
+    } catch(err) {
+        typing.style.display = 'none';
+        appendAIMsg('_(Desculpa — tive um problema técnico. Tenta de novo!)_');
+    }
+
+    chatBusy = false;
+    document.getElementById('chat-send').disabled = false;
+    scrollChat();
+}
+
+function appendMsg(role, text){
+    const msgs = document.getElementById('chat-messages');
+    const div = document.createElement('div');
+    div.className = `msg ${role}`;
+    const bubble = document.createElement('div');
+    bubble.className = 'msg-bubble';
+    bubble.textContent = text;
+    div.appendChild(bubble);
+    msgs.appendChild(div);
+    scrollChat();
+}
+
+function appendAIMsg(text){
+    const msgs = document.getElementById('chat-messages');
+    const div = document.createElement('div');
+    div.className = 'msg ai';
+
+    // Split off any (Dica: ...) correction so it renders distinctly
+    const dicaMatch = text.match(/(\(Dica:.*?\))/i);
+    let mainText = text;
+    let dicaText = '';
+    if(dicaMatch){
+        mainText = text.replace(dicaMatch[0], '').trim();
+        dicaText = dicaMatch[0];
+    }
+
+    const bubble = document.createElement('div');
+    bubble.className = 'msg-bubble';
+    bubble.innerHTML = escHtml(mainText).replace(/\n/g,'<br>');
+    if(dicaText){
+        const dica = document.createElement('span');
+        dica.className = 'correction';
+        dica.textContent = dicaText;
+        bubble.appendChild(dica);
+    }
+
+    // Tap to translate
+    const hint = document.createElement('div');
+    hint.className = 'msg-tap-hint';
+    hint.textContent = 'tap to translate';
+
+    let translationShown = false;
+    bubble.onclick = async () => {
+        if(translationShown) return;
+        translationShown = true;
+        hint.textContent = '⏳ translating…';
+        const translation = await translateText(mainText);
+        const tDiv = document.createElement('div');
+        tDiv.className = 'msg-translation';
+        tDiv.textContent = '🇬🇧 ' + translation;
+        div.insertBefore(tDiv, hint);
+        hint.textContent = '';
+    };
+
+    div.appendChild(bubble);
+    div.appendChild(hint);
+    msgs.appendChild(div);
+    scrollChat();
+}
+
+async function translateText(text){
+    try {
+        const r = await fetch('https://api.anthropic.com/v1/messages', {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({
+                model:'claude-sonnet-4-20250514',
+                max_tokens:400,
+                messages:[{ role:'user', content:`Translate this Brazilian Portuguese into natural English. Reply with ONLY the translation, nothing else:\n\n${text}` }]
+            })
+        });
+        const d = await r.json();
+        return d.content?.[0]?.text?.trim() || '(translation unavailable)';
+    } catch(e){
+        return '(translation unavailable)';
+    }
+}
+
+function escHtml(t){
+    return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function scrollChat(){
+    const msgs = document.getElementById('chat-messages');
+    requestAnimationFrame(()=>{ msgs.scrollTop = msgs.scrollHeight; });
+}
+
+// init chat bar
+buildChatScenarioBar();
 </script>
 </body>
 </html>
